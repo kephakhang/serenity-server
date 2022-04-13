@@ -1,0 +1,22 @@
+{
+      "requestId": "12345678917",
+      "tenantId": "dev:oem:us",
+      "moldId": "test",
+      "data": {
+        "cycleTime": {
+          "hourly": [30],
+          "weyekly": [33],
+          "daily": [37]
+        },
+        "shotCount": {
+          "hourly": [300],
+          "weyekly": [330],
+          "daily": [370]
+        },
+        "temperature": {
+          "hourly": [300, 400, 500],
+          "weekly": [300, 400, 500],
+          "daily": [300, 400, 500]
+        }
+    }
+}
