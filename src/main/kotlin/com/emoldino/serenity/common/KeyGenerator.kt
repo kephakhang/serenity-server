@@ -2,6 +2,11 @@ package com.emoldino.serenity.common
 
 import com.emoldino.serenity.extensions.sha256
 import com.emoldino.serenity.server.auth.BcryptHasher
+import com.emoldino.serenity.server.env.Env
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.encodeToJsonElement
+import org.hibernate.ogm.datastore.redis.impl.SerializationStrategy
 import java.nio.ByteBuffer
 import java.security.NoSuchAlgorithmException
 import java.text.SimpleDateFormat
@@ -139,6 +144,31 @@ class KeyGenerator {
     @JvmStatic
     fun main(argv: Array<String>) {
       System.out.println(KeyGenerator.generateKey())
+
+      val body = Json {
+        "requestId" to "12345678915"
+        "tenantId" to "dev:oem:us"
+        "moldId" to "test"
+        "data" to Json {
+          "cycleTime" to Json {
+            "hourly" to arrayOf(30)
+            "weyekly" to arrayOf(33)
+            "daily" to arrayOf(37)
+          }
+          "shotCount" to Json {
+            "hourly" to arrayOf(300)
+            "weyekly" to arrayOf(330)
+            "daily" to arrayOf(370)
+          }
+          "temperature" to Json {
+            "hourly" to arrayOf(300, 400, 500)
+            "weekly" to arrayOf(300, 400, 500)
+            "daily" to arrayOf(300, 400, 500)
+          }
+        }
+      }
+
+      System.out.println(body.encodeToString(body.serializersModule))
     }
   }
 }

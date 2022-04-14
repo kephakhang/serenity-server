@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.25, for Win64 (x86_64)
 --
--- Host: localhost    Database: serenity
+-- Host: localhost    Database: serenty
 -- ------------------------------------------------------
 -- Server version	8.0.25
 
@@ -527,26 +527,21 @@ DROP TABLE IF EXISTS `tb_company_member`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `tb_company_member` (
-  `id` char(36) NOT NULL COMMENT '가입회사 사용자 고유 ID',
-  `te_id` char(36) NOT NULL COMMENT 'tenant id',
-  `mb_id` char(36) DEFAULT NULL COMMENT '사용자 ID',
-  `co_id` char(36) DEFAULT NULL COMMENT '가입회사 대행사 고유 ID',
-  `cm_otp` varchar(32) DEFAULT NULL COMMENT 'OTP 암호',
+  `id` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '가입회사 사용자 고유 ID',
+  `te_id` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'tenant id',
+  `mb_id` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '사용자 ID',
+  `co_id` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '가입회사 대행사 고유 ID',
+  `cm_otp` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'OTP 암호',
   `cm_status` int NOT NULL DEFAULT '0' COMMENT '상태 flag(-3: blocked, -2: withdrawal, -1: dormant, 0:wait, 1:company-otp-ceritified)',
   `cm_level` int NOT NULL DEFAULT '10' COMMENT '레벨 flag(0:guest, 10:co member, 11:co manager, 12:co admin)',
   `reg_datetime` datetime NOT NULL COMMENT '등록시각',
   `mod_datetime` datetime NOT NULL COMMENT '변경시각',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `co_id` (`co_id`,`mb_id`),
-  KEY `mb_id` (`mb_id`),
-  KEY `te_id` (`te_id`),
-  KEY `reg_datetime` (`reg_datetime`),
-  KEY `mod_datetime` (`mod_datetime`),
-  KEY `cm_status` (`cm_status`),
-  KEY `cm_level` (`cm_level`),
-  CONSTRAINT `tb_company_member_ibfk_1` FOREIGN KEY (`co_id`) REFERENCES `tb_company` (`id`) ON DELETE SET NULL,
-  CONSTRAINT `tb_company_member_ibfk_2` FOREIGN KEY (`mb_id`) REFERENCES `tb_member` (`id`) ON DELETE SET NULL,
-  CONSTRAINT `tb_company_member_ibfk_3` FOREIGN KEY (`te_id`) REFERENCES `tb_tenant` (`id`) ON DELETE CASCADE
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `te_co_mb_uidx` (`te_id`,`co_id`,`mb_id`) USING BTREE,
+  KEY `reg_datetime` (`reg_datetime`) USING BTREE,
+  KEY `mod_datetime` (`mod_datetime`) USING BTREE,
+  KEY `cm_status` (`cm_status`) USING BTREE,
+  KEY `cm_level` (`cm_level`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -819,4 +814,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-04-03 16:16:05
+-- Dump completed on 2022-04-13 14:27:53

@@ -29,10 +29,10 @@ import java.util.*
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
--private val logger = KotlinLogging.logger {}
 
-class Consumer<K, V>(private val consumer: KafkaConsumer<K, V>, val topic: String) :
-  ClosableJob -----------------------------------------------
+private val logger = KotlinLogging.logger {}
+
+class Consumer<K, V>(private val consumer: KafkaConsumer<K, V>, val topic: String) : ClosableJob {
   private val closed: AtomicBoolean = AtomicBoolean(false)
   private var finished = CountDownLatch(1)
 
@@ -70,7 +70,7 @@ class Consumer<K, V>(private val consumer: KafkaConsumer<K, V>, val topic: Strin
                 val message: KafkaEvent = record.value() as KafkaEvent
                 try {
                   sendDataToAi(Env.objectMapper.valueToTree(message.data))
-                } catch(ex: Exception) {
+                } catch (ex: Exception) {
                   logger.error("sendDataToAi : ", ex)
                 }
               }
@@ -112,7 +112,7 @@ class Consumer<K, V>(private val consumer: KafkaConsumer<K, V>, val topic: Strin
     val moldId = message.get("moldId").asText()
     val data: JsonNode = message.get("data")
     val paramsNum = data.get("paramsNum")
-    val dataTypeList = (data.get("dataType") as ArrayNode).map{it -> it.asText()}.toList()
+    val dataTypeList = (data.get("dataType") as ArrayNode).map { it -> it.asText() }.toList()
     val startTime = data.get("period").get("startTime").asText()
     val endTime = data.get("period").get("endTime").asText()
     val scale: JsonNode = data.get("scale")
@@ -121,30 +121,53 @@ class Consumer<K, V>(private val consumer: KafkaConsumer<K, V>, val topic: Strin
     logger.debug("get data of AI from Kafka", Env.gson.toJson(message))
 
     //ToDo : Just Test Code
-    val body = Json {
-      "requestId" to requestId
-      "tenantId" to tenantId
-      "moldId" to moldId
-      "data" to Json {
-        "cycleTime" to Json {
-          "hourly" to arrayOf(30)
-          "weyekly" to arrayOf(33)
-          "daily" to arrayOf(37)
-        }
-        "shotCount" to Json {
-          "hourly" to arrayOf(300)
-          "weyekly" to arrayOf(330)
-          "daily" to arrayOf(370)
-        }
-        "temperature" to Json {
-          "hourly" to arrayOf(300, 400, 500)
-          "weekly" to arrayOf(300, 400, 500)
-          "daily" to arrayOf(300, 400, 500)
-        }
-      }
-    }
+//    val body = Json {
+//      "requestId" to requestId
+//      "tenantId" to tenantId
+//      "moldId" to moldId
+//      "data" to Json {
+//        "cycleTime" to Json {
+//          "hourly" to arrayOf(30)
+//          "weyekly" to arrayOf(33)
+//          "daily" to arrayOf(37)
+//        }
+//        "shotCount" to Json {
+//          "hourly" to arrayOf(300)
+//          "weyekly" to arrayOf(330)
+//          "daily" to arrayOf(370)
+//        }
+//        "temperature" to Json {
+//          "hourly" to arrayOf(300, 400, 500)
+//          "weekly" to arrayOf(300, 400, 500)
+//          "daily" to arrayOf(300, 400, 500)
+//        }
+//      }
+//    }
 
-    val requestBody: String = Env.gson.toJson(body)
+    //val requestBody: String = body.toString()
+
+    val requestBody: String = "{\n" +
+            "      \"requestId\": \"12345678917\",\n" +
+            "      \"tenantId\": \"dev:oem:us\",\n" +
+            "      \"moldId\": \"test\",\n" +
+            "      \"data\": {\n" +
+            "        \"cycleTime\": {\n" +
+            "          \"hourly\": [30],\n" +
+            "          \"weyekly\": [33],\n" +
+            "          \"daily\": [37]\n" +
+            "        },\n" +
+            "        \"shotCount\": {\n" +
+            "          \"hourly\": [300],\n" +
+            "          \"weyekly\": [330],\n" +
+            "          \"daily\": [370]\n" +
+            "        },\n" +
+            "        \"temperature\": {\n" +
+            "          \"hourly\": [300, 400, 500],\n" +
+            "          \"weekly\": [300, 400, 500],\n" +
+            "          \"daily\": [300, 400, 500]\n" +
+            "        }\n" +
+            "    }\n" +
+            "}"
     logger.debug("/api/deepchain/callback : requestBody : " + requestBody)
 
     val client = HttpClient.newBuilder().build()
@@ -154,11 +177,11 @@ class Consumer<K, V>(private val consumer: KafkaConsumer<K, V>, val topic: Strin
       .POST(HttpRequest.BodyPublishers.ofString(requestBody))
       .build()
     val response = client.send(request, HttpResponse.BodyHandlers.ofString())
-    logger.debug("/api/deepchain/callback : " + response.body())
+    logger.debug("/api/deepchain/callback : responseBody " + response.body())
     if (response.statusCode() === 200) {
-      logger.debug("/api/deepchain/callback : " + Env.gson.toJson(mapOf("result" to "success", "body" to body)))
+      logger.debug("/api/deepchain/callback : " + Env.gson.toJson(mapOf("result" to "success")))
     } else {
-      logger.error("/api/deepchain/callback : " + Env.gson.toJson(mapOf("status" to response.statusCode(), "result" to "failure", "reason" to response.body(), "body" to body)))
+      logger.error("/api/deepchain/callback : Error : " + response.statusCode() + ":" + response.body())
     }
 
     /*ToDo : add the real logic
@@ -205,12 +228,12 @@ class Consumer<K, V>(private val consumer: KafkaConsumer<K, V>, val topic: Strin
 
   companion object {
     @JvmStatic
-    fun main(companion object {) {
+    fun main(argv: Array<String>) {
       //ToDo : Just Test Code
       val body = Json {
-        "requestId" to requestId
-        "tenantId" to tenantId
-        "moldId" to moldId
+        "requestId" to "12345678915"
+        "tenantId" to "dev:oem:us"
+        "moldId" to "test"
         "data" to Json {
           "cycleTime" to Json {
             "hourly" to arrayOf(30)
@@ -227,25 +250,39 @@ class Consumer<K, V>(private val consumer: KafkaConsumer<K, V>, val topic: Strin
             "weekly" to arrayOf(300, 400, 500)
             "daily" to arrayOf(300, 400, 500)
           }
-        }------------------------------------------------------------------------------------------------------------------------------------------------
+        }
       }
 
-      val requestBody: String = Env.gson.toJson(body)
-      logger.debug("/api/deepchain/callback : requestBody : " + requestBody)
+      logger.debug(body.toString())
+/*
+    val requestBody: String = Env.gson.toJson(body)
+    logger.debug("/api/deepchain/callback : requestBody : " + requestBody)
 
-      val client = HttpClient.newBuilder().build()
-      val request = HttpRequest.newBuilder()
-        .uri(URI.create(Env.aiServerUrl + "/api/deepchain/callback"))
-        .header("Content-Type", "application/json")
-        .POST(HttpRequest.BodyPublishers.ofString(requestBody))
-        .build()
-      val response = client.send(request, HttpResponse.BodyHandlers.ofString())
-      logger.debug("/api/deepchain/callback : " + response.body())
-      if (response.statusCode() === 200) {
-        logger.debug("/api/deepchain/callback : " + Env.gson.toJson(mapOf("result" to "success", "body" to body)))
-      } else {
-        logger.error("/api/deepchain/callback : " + Env.gson.toJson(mapOf("status" to response.statusCode(), "result" to "failure", "reason" to response.body(), "body" to body)))
-      }-+---------------------------------------------------
+    val client = HttpClient.newBuilder().build()
+    val request = HttpRequest.newBuilder()
+      .uri(URI.create(Env.aiServerUrl + "/api/deepchain/callback"))
+      .header("Content-Type", "application/json")
+      .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+      .build()
+    val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+    logger.debug("/api/deepchain/callback : " + response.body())
+    if (response.statusCode() === 200) {
+      logger.debug("/api/deepchain/callback : " + Env.gson.toJson(mapOf("result" to "success", "body" to body)))
+    } else {
+      logger.error(
+        "/api/deepchain/callback : " + Env.gson.toJson(
+          mapOf(
+            "status" to response.statusCode(),
+            "result" to "failure",
+            "reason" to response.body(),
+            "body" to body
+          )
+        )
+      )
+    }
+
+*/
+    }
   }
 }
 
@@ -273,4 +310,5 @@ fun <K, V> buildConsumer(
   }
   return Consumer(KafkaConsumer(consumerProps), topic)
 }
+
 
