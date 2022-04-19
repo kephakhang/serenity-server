@@ -19,6 +19,7 @@ fun <K, V> buildProducer(environment: ApplicationEnvironment): KafkaProducer<K, 
     this[ProducerConfig.CLIENT_ID_CONFIG] = producerConfig.property("client.id").getString()
     this[ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG] = producerConfig.property("key.serializer").getString()
     this[ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG] = producerConfig.property("value.serializer").getString()
+//    this[ProducerConfig.CLIENT_DNS_LOOKUP_CONFIG] = "default"
 //        this["ssl.truststore.location"] = producerConfig.property("ssl.truststore.location").getString()
 //        this["ssl.truststore.password"] = producerConfig.property("ssl.truststore.password").getString()
 //        this["ssl.keystore.location"] = producerConfig.property("ssl.keystore.location").getString()

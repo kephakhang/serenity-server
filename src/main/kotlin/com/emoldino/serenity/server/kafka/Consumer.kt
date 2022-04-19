@@ -13,6 +13,7 @@ import io.ktor.response.*
 import io.ktor.util.*
 import kotlinx.serialization.json.Json
 import mu.KotlinLogging
+import org.apache.kafka.clients.ClientDnsLookup
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.errors.WakeupException
@@ -147,9 +148,9 @@ class Consumer<K, V>(private val consumer: KafkaConsumer<K, V>, val topic: Strin
     //val requestBody: String = body.toString()
 
     val requestBody: String = "{\n" +
-            "      \"requestId\": \"12345678917\",\n" +
-            "      \"tenantId\": \"dev:oem:us\",\n" +
-            "      \"moldId\": \"test\",\n" +
+            "      \"requestId\": \"" + requestId + "\" ,\n" +
+            "      \"tenantId\": \"" + tenantId + "\" ,\n" +
+            "      \"moldId\": \"" + moldId + "\" ,\n" +
             "      \"data\": {\n" +
             "        \"cycleTime\": {\n" +
             "          \"hourly\": [30],\n" +
@@ -295,11 +296,11 @@ fun <K, V> buildConsumer(
   val consumerProps = Properties().apply {
     this[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = consumerConfig.property("bootstrap.servers").getString().split(",")
     this[ConsumerConfig.CLIENT_ID_CONFIG] = topic + "-" + consumerConfig.property("client.id").getString()
-    this[ConsumerConfig.GROUP_ID_CONFIG] =
-      consumerConfig.property("group.id").getString() + "-" + ComputerIdentifier.generateHostId()
+    this[ConsumerConfig.GROUP_ID_CONFIG] = consumerConfig.property("group.id").getString()
     this[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = consumerConfig.property("key.deserializer").getString()
     this[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = consumerConfig.property("value.deserializer").getString()
     this[ConsumerConfig.AUTO_OFFSET_RESET_CONFIG] = "latest"
+//    this[ConsumerConfig.CLIENT_DNS_LOOKUP_CONFIG] = "default"
 //        this["ssl.truststore.location"] = consumerConfig.property("ssl.truststore.location").getString()
 //        this["ssl.truststore.password"] = consumerConfig.property("ssl.truststore.password").getString()
 //        this["ssl.keystore.location"] = consumerConfig.property("ssl.keystore.location").getString()
