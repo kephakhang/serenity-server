@@ -12,6 +12,8 @@ import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import kotlin.jvm.Throws
 
 @Throws(Exception::class)
@@ -38,7 +40,7 @@ fun Route.sso(ssoService: SsoService) {
 
     post("/sso/signup") {
       val signup = call.receive<SignupDto>()
-      logger.debug("/sso/signup", Env.gson.toJson(signup))
+      logger.debug("/sso/signup", Json.encodeToString(signup))
       val user = ssoService.register(signup)
       call.respond(user)
     }

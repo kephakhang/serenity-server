@@ -16,7 +16,7 @@ data class TenantDto(
 
   val name: String = "",
 
-  val type: Int = 0, //0:Unknown, 1:OEM, 2:MoldMaker, 3:Supply
+  val type: Int = 0, //0:OWN, 1:OEM, 2:MoldMaker, 3:Supply
 
   val description: String = "",
 
@@ -28,7 +28,7 @@ data class TenantDto(
 //
 //  val jdbcPass: String? = null,
 //
-//  val hostUrl: String? = null,
+  val hostUrl: String? = null,
 //
 //  val enable: Boolean = true,
 

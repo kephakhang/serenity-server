@@ -1,6 +1,5 @@
 package com.emoldino.serenity.server.model
 
-
 import com.google.gson.internal.LinkedTreeMap
 
 enum class Channel(val value: String, val no: Int) {

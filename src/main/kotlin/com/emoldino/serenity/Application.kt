@@ -6,10 +6,7 @@ import com.emoldino.serenity.common.BackgroundJob
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.google.gson.GsonBuilder
-import com.emoldino.serenity.common.BigDecimalSerializer
 import com.emoldino.serenity.common.KeyGenerator
-import com.emoldino.serenity.common.TimestampSerializer
 import com.emoldino.serenity.exception.EmolError
 import com.emoldino.serenity.exception.EmolException
 import com.emoldino.serenity.exception.ErrorCode
@@ -17,14 +14,15 @@ import com.emoldino.serenity.extensions.stackTraceString
 import com.emoldino.serenity.server.auth.JwtConfig
 import com.emoldino.serenity.server.env.Env
 import com.emoldino.serenity.server.jpa.own.dto.Response
+import com.emoldino.serenity.server.jpa.own.dto.TenantDto
 import com.emoldino.serenity.server.jpa.own.dto.UserDto
 import com.emoldino.serenity.server.jpa.own.repository.AdminRepository
 import com.emoldino.serenity.server.jpa.own.repository.MemberDetailRepository
 import com.emoldino.serenity.server.jpa.own.repository.MemberRepository
+import com.emoldino.serenity.server.jpa.own.repository.TenantRepository
 import com.emoldino.serenity.server.kafka.KafkaEventService
 import com.emoldino.serenity.server.kafka.buildConsumer
 import com.emoldino.serenity.server.kafka.buildProducer
-import com.emoldino.serenity.server.model.Channel
 import com.emoldino.serenity.server.route.*
 import com.emoldino.serenity.server.service.AdminService
 import com.emoldino.serenity.server.service.SsoService
@@ -43,17 +41,16 @@ import io.ktor.routing.*
 import io.ktor.util.*
 import io.ktor.util.date.*
 import io.ktor.webjars.*
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import mu.KotlinLogging
-import java.math.BigDecimal
-import java.sql.Timestamp
 import java.time.Duration
-import java.time.ZoneId
-import javax.servlet.http.HttpServletResponse
 import kotlin.concurrent.thread
 import com.emoldino.serenity.server.route.deepchain
+import com.emoldino.serenity.server.service.TenantService
+import org.apache.kafka.clients.producer.KafkaProducer
+import java.util.concurrent.ConcurrentHashMap
+
 
 fun main(args: Array<String>): Unit = io.ktor.server.jetty.EngineMain.main(args)
 
@@ -65,8 +62,8 @@ private val logger = KotlinLogging.logger {}
 fun Application.module(testing: Boolean = false) {
 
   //val random = Random(Date().time)
-  val gson = GsonBuilder().registerTypeAdapter(Timestamp::class.java, TimestampSerializer())
-    .registerTypeAdapter(BigDecimal::class.java, BigDecimalSerializer()).create()
+//  val gson = GsonBuilder().registerTypeAdapter(Timestamp::class.java, TimestampSerializer())
+//    .registerTypeAdapter(BigDecimal::class.java, BigDecimalSerializer()).create()
   //val pushServerMap = ConcurrentHashMap<String, PushServer<User>>()
 
   var applicable = environment.config.config("ktor.deployment").property("applicable").getString().toBoolean()
@@ -151,40 +148,6 @@ fun Application.module(testing: Boolean = false) {
     }
   }
 
-//    val topic = environment.config.config("ktor.kafka.consumer").property("topic").getString()
-    val topic = "test"
-    Env.kafkaEventProducer = buildProducer<String, Any>(environment)
-    Env.kafkaEventService = KafkaEventService(topic, Env.kafkaEventProducer)
-//
-//    val cosumerJobs: ArrayList<BackgroundJob> = ArrayList<BackgroundJob>()
-
-  // Appicable="false" 이면 Consumer 를 띄우지 않는다.
-//
-//  if (applicable.equals("true")) {
-//      for (channel in Channel.values()) {
-//          val topic: String = channel.value
-//          val conf = BackgroundJob.JobConfiguration()
-//          conf.name = "Kafka-User-Consumer-" + topic + "-Job"
-//          @Suppress("UNCHECKED_CAST")
-//          conf.job = buildConsumer<String, Any>(environment, topic)
-//          val consumerJob = BackgroundJob(conf)
-//          conf.job?.let { thread(name = conf.name) { it.run() } }
-//          cosumerJobs.add(consumerJob)
-//      }
-//  }
-
-
-
-  //ToDo : 백그라운드 Job 이 한개일 경우 사용
-    install(BackgroundJob.BackgroundJobFeature) {
-        name = "Kafka-User-Consumer-Transaction-Job"
-        val conf = BackgroundJob.JobConfiguration()
-        conf.job = buildConsumer<String, String>(environment, "test")
-        val consumerJob = BackgroundJob(conf)
-        conf.job?.let { thread(name = conf.name) { it.run() } }
-    }
-
-
   // https://ktor.io/servers/features/forward-headers.html
   install(XForwardedHeaderSupport)
 
@@ -217,6 +180,7 @@ fun Application.module(testing: Boolean = false) {
   val adminService: AdminService = AdminService(AdminRepository())
   val userService: UserService = UserService(MemberRepository())
   val ssoService: SsoService = SsoService(MemberRepository(), MemberDetailRepository())
+  val tenantService: TenantService = TenantService(TenantRepository())
 
   // ref : https://github.com/AndreasVolkmann/realworld-kotlin-ktor
   install(Authentication) {
@@ -378,6 +342,31 @@ fun Application.module(testing: Boolean = false) {
     test()
     deepchain()
   }
+
+  Env.kafkaEventProducer = buildProducer(environment, tenantService)
+  val cosumerJobs: ArrayList<BackgroundJob> = ArrayList<BackgroundJob>()
+
+  if (applicable.equals("true")) { // Appicable="false" 이면 Consumer 를 띄우지 않는다.
+      for (key in Env.tenantMap) {
+          val topic = key.key
+          val conf = BackgroundJob.JobConfiguration()
+          conf.name = "Kafka-User-Consumer-" + topic + "-Job"
+          @Suppress("UNCHECKED_CAST")
+          conf.job = buildConsumer<String, Any>(environment, topic)
+          val consumerJob = BackgroundJob(conf)
+          conf.job?.let { thread(name = conf.name) { it.run() } }
+          cosumerJobs.add(consumerJob)
+      }
+  }
+
+  //ToDo : 백그라운드 Job 이 한개일 경우 사용
+//  install(BackgroundJob.BackgroundJobFeature) {
+//    name = "Kafka-User-Consumer-Transaction-Job"
+//    val conf = BackgroundJob.JobConfiguration()
+//    conf.job = buildConsumer<String, String>(environment, "test")
+//    val consumerJob = BackgroundJob(conf)
+//    conf.job?.let { thread(name = conf.name) { it.run() } }
+//  }
 
   logger.debug("Application", "start... OK")
 }

@@ -22,6 +22,8 @@ import io.ktor.locations.get
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import mu.KotlinLogging
 import java.net.URI
 import java.net.http.HttpClient
@@ -32,34 +34,17 @@ import java.time.Instant
 
 fun Route.deepchain() {
 
-  get("/api/ai/launch") {
+  post("/api/ai/launch") {
     call.respondRedirect(Env.aiServerUrl + "/api/deepchain/launch")
-//    val launch = call.receive<Body>()
-//    val values = mapOf("requestId" to "1234567", "aiType" to "EM_AI_ANOM", "hostUrl" to Env.serenityServerUrl, "moldId" to "test")
-//
-//    val requestBody: String = Env.objectMapper
-//      .writeValueAsString(values)
-//
-//    val client = HttpClient.newBuilder().build()
-//    val request = HttpRequest.newBuilder()
-//      .uri(URI.create(Env.aiServerUrl + "/launch"))
-//      .POST(HttpRequest.BodyPublishers.ofString(requestBody))
-//      .build()
-//    val response = client.send(request, HttpResponse.BodyHandlers.ofString())
-//    if( response.statusCode() === 200) {
-//      call.respond(mapOf("result" to "success"))
-//    } else {
-//      call.respond(mapOf("status" to response.statusCode(), "result" to "failure", "reason" to response.body()))
-//    }
   }
 
   post("/api/ai/fetchData") {
-    val fetch = call.receive<Body>()
-    val fetchStr = Env.gson.toJson(fetch)
+    val fetch: Body = call.receive<Body>()
+    val fetchStr = Json.encodeToString(fetch)
     logger.debug("/api/ai/fetchData : ${fetchStr}")
-    val event = KafkaEvent(MicroService.DEEP_CHAIN.no, Instant.now(), fetch)
+    val event = KafkaEvent(MicroService.AI.no, Instant.now(), fetch)
     try {
-      Env.kafkaEventService?.send(event)
+      Env.kafkaEventServiceMap[fetch.tenantId]?.send(event)
       call.respond(mapOf("result" to "success"))
     } catch (ex: Exception) {
       call.respond(mapOf("status" to 500, "result" to "failure", "reason" to ex.localizedMessage))
@@ -71,23 +56,20 @@ fun Route.deepchain() {
     System.out.println("/status from deepchain : " + status.toString())
     System.out.flush()
     logger.debug("/status from deepchain : " + status.toString())
-//    val requestId = status["requestId"]
-//    val moldId = status["moldId"]
-//    val results = status["results"]
-
     call.respond(HttpStatusCode.OK)
   }
 
   post("/api/ai/results") {
     val results = call.receive<Body>()
-    System.out.println("/results from deepchain : " + results.toString())
-    System.out.flush()
-    logger.debug("/results from deepchain : " +  results.toString())
-//    val requestId = results["requestId"]
-//    val moldId = results["moldId"]
-//    val data = results["results"]
+    val strResults = Json.encodeToString(results)
+    logger.debug("/results from deepchain : " +  strResults)
 
-    call.respond(HttpStatusCode.OK)
+    if (results.tenantId.equals("test")) {
+      logger.debug("/api/ai/results : " + Json.encodeToString(mapOf("result" to "success")))
+      call.respond(HttpStatusCode.OK)
+    } else {
+      call.respondRedirect(Env.tenantMap[results.tenantId]?.hostUrl + "/mms/ai/results")
+    }
   }
 }
 

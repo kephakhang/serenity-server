@@ -1,8 +1,6 @@
 @file:Suppress("NAME_SHADOWING")
 package com.emoldino.serenity.server.websocket
 
-import com.google.gson.Gson
-import io.ktor.features.origin
 import io.ktor.http.cio.websocket.*
 import io.ktor.websocket.WebSocketServerSession
 import kotlinx.coroutines.*
@@ -10,7 +8,8 @@ import com.emoldino.serenity.exception.InvalidMessageException
 import com.emoldino.serenity.server.env.Env
 import com.emoldino.serenity.server.env.clientIp
 import com.emoldino.serenity.server.model.*
-import com.emoldino.serenity.server.service.SsoService
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import mu.KotlinLogging
 import java.io.File
 import java.io.FileOutputStream
@@ -28,7 +27,7 @@ private val logger = KotlinLogging.logger {}
  * Class in charge of the logic of the push server.
  * It contains handlers to events and commands to send messages to specific users in the server.
  */
-class PushServer<Any>(val gson: Gson) {
+class PushServer<Any>() {
 //    var auth = SsoService()
     val random = Random(Date().time) // only for demo
 
@@ -63,7 +62,7 @@ class PushServer<Any>(val gson: Gson) {
         launch {
                 try {
                     if( socket.isActive ) {
-                        socket.outgoing.send(Frame.Text(gson.toJson(message)))
+                        socket.outgoing.send(Frame.Text(Json.encodeToString(message)))
                     } else {
                         close(socket, CloseReason.Codes.GOING_AWAY, "sendTo : a socket error")
                     }
@@ -78,7 +77,7 @@ class PushServer<Any>(val gson: Gson) {
      */
     fun CoroutineScope.sendTo(socketList: List<WebSocketServerSession>, message: Message) {
         launch {
-            socketList.send(Frame.Text(gson.toJson(message)));
+            socketList.send(Frame.Text(Json.encodeToString(message)));
         }
     }
 
@@ -406,7 +405,7 @@ class PushServer<Any>(val gson: Gson) {
 
                         FileOutputStream(File("./log/" + topic + dateStr + ".log"), true).bufferedWriter()
                             .use { writer ->
-                                writer.append(gson.toJson(message) + "\n")
+                                writer.append(Json.encodeToString(message) + "\n")
                                 writer.close()
                             }
                     }
@@ -453,7 +452,7 @@ class PushServer<Any>(val gson: Gson) {
                 }
             }
         } finally {
-            logger.debug(Env.message("app.server.broadcast"), gson.toJson(message))
+            logger.debug(Env.message("app.server.broadcast"), Json.encodeToString(message))
         }
     }
 
