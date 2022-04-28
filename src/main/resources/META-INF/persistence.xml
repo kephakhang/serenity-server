@@ -6,7 +6,7 @@
     <persistence-unit name="serenity">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <!--exclude-unlisted-classes>false</exclude-unlisted-classes-->
-        <!--class>com.emoldino.serenity.server.jpa.own.entity.Member</class>
+        <class>com.emoldino.serenity.server.jpa.own.entity.Member</class>
         <class>com.emoldino.serenity.server.jpa.own.entity.MemberDetail</class>
         <class>com.emoldino.serenity.server.jpa.own.entity.Admin</class>
         <class>com.emoldino.serenity.server.jpa.own.entity.Agent</class>
@@ -20,7 +20,7 @@
         <class>com.emoldino.serenity.server.jpa.own.entity.Company</class>
         <class>com.emoldino.serenity.server.jpa.own.entity.CompanyMember</class>
         <class>com.emoldino.serenity.server.jpa.own.entity.Group</class>
-        <class>com.emoldino.serenity.server.jpa.own.entity.Tenant</class-->
+        <class>com.emoldino.serenity.server.jpa.own.entity.Tenant</class>
         <properties>
             <!-- 속성 설정 -->
         </properties>

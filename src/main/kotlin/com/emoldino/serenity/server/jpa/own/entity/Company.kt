@@ -9,11 +9,11 @@ import com.emoldino.serenity.server.jpa.common.entity.BaseEntity
 import java.time.LocalDate
 import javax.persistence.*
 
-@Entity
+@Entity(name = "Company")
 //@ApiModel("가입한 회사")
 @Table(name = Env.tablePrefix + "company")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-class Company(
+open class Company(
 
   @JsonIgnore
   @ManyToOne(fetch = FetchType.LAZY)

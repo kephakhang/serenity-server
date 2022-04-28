@@ -8,7 +8,7 @@ import java.io.Serializable
 import javax.persistence.*
 
 
-@Entity
+@Entity(name = "BoardWriteDetail")
 @Table(name = Env.tablePrefix + "board_write_detail")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 open class BoardWriteDetail(

@@ -8,7 +8,7 @@ import com.emoldino.serenity.server.jpa.common.entity.BaseEntity
 //import io.swagger.annotations.ApiModelProperty
 import javax.persistence.*
 
-@Entity
+@Entity(name = "CompanyMember")
 //@ApiModel("가입한 회사 사용자 정보")
 @Table(name = Env.tablePrefix + "company_member")
 @JsonInclude(JsonInclude.Include.NON_NULL)

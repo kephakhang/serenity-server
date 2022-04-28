@@ -13,7 +13,7 @@ import javax.persistence.*
 /**
  * 대행사 상세
  */
-@Entity
+@Entity(name = "AgentDetail")
 //@ApiModel("대행사 상세")
 @Table(name = Env.tablePrefix + "agent_detail")
 @JsonInclude(JsonInclude.Include.NON_NULL)

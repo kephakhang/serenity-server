@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
 import mu.KotlinLogging
 import java.util.concurrent.TimeUnit
 
-val logger = KotlinLogging.logger(Routing::class.java.name)
+val logger = KotlinLogging.logger {}
 const val CRLF = "\n"
 const val REQUEST_PREFIX = "Request: "
 const val RESPONSE_PREFIX = "Response: "
@@ -118,7 +118,7 @@ fun loggging(
     if (response != null && response is Response) {
         msg.append(CRLF).append("-------------------------------")
             .append(CRLF).append(RESPONSE_PREFIX)
-        msg.append(CRLF).append(Env.objectMapper.writeValueAsString(response))
+        msg.append(CRLF).append(Env.gson.toJson(response))
     }
 
     msg.append(CRLF).append("################################")

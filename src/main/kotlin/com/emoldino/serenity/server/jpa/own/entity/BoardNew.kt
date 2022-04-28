@@ -8,10 +8,10 @@ import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Table
 
-@Entity
+@Entity(name = "BoardNew")
 @Table(name = Env.tablePrefix + "board_new")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-class BoardNew(
+open class BoardNew(
 
   @Column(name = "bo_id", columnDefinition = "char(36)", nullable = false)
   var boId: String = "",

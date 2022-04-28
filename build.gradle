@@ -124,6 +124,7 @@ dependencies {
     implementation "com.sultanofcardio:mailman:$mail_version"
     implementation "org.mindrot:jbcrypt:$jbcrypt_version"
     implementation "p6spy:p6spy:$p6spy_version"
+    implementation "com.google.code.gson:gson:$gson_version"
 //    implementation("org.openapitools:openapi-generator:$openapi_generator_version") {
 //        exclude group: "org.slf4j", module: "slf4j-simple"
 //    }

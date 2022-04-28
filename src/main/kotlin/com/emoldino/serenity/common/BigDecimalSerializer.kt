@@ -1,19 +1,17 @@
 package com.emoldino.serenity.common
 
-
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
 import java.math.BigDecimal
+import javax.persistence.AttributeConverter
+import javax.persistence.Converter
 
 
-class BigDecimalSerializer : KSerializer<BigDecimal> {
-  override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("BigDecimal", PrimitiveKind.DOUBLE)
-  override fun serialize(encoder: Encoder, value: BigDecimal): Unit =
-    encoder.encodeDouble(value.toDouble())
-  override fun deserialize(decoder: Decoder): BigDecimal =
-    decoder.decodeDouble().toBigDecimal()
+@Converter
+class BigDecimalSerializer : AttributeConverter<BigDecimal, Double> {
+  open override fun convertToDatabaseColumn(attribute: BigDecimal?): Double? {
+    return attribute?.toDouble()
+  }
+
+  open override fun convertToEntityAttribute(dbData: Double?): BigDecimal? {
+      return dbData?.toBigDecimal()
+  }
 }

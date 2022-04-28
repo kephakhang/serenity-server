@@ -9,10 +9,10 @@ import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Table
 
-@Entity
+@Entity(name = "Board")
 @Table(name = Env.tablePrefix + "board")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-class Board(
+open class Board(
 
   /**
    * 게시판 테이블명

@@ -6,10 +6,10 @@ import com.emoldino.serenity.server.jpa.common.entity.BaseEntity
 //import io.swagger.annotations.ApiModelProperty
 import javax.persistence.*
 
-@Entity
+@Entity(name = "BoardWrite")
 @Table(name = Env.tablePrefix + "board_write")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-class BoardWrite(
+open class BoardWrite(
 
   @Column(name = "bo_id", columnDefinition = "char(36)", nullable = false)
   var boId: String = "",

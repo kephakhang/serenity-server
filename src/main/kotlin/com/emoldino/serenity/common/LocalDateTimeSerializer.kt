@@ -1,21 +1,19 @@
 package com.emoldino.serenity.common
 
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.encoding.Decoder
-import java.time.Instant
 import java.time.LocalDateTime
-import java.time.ZoneOffset
-import kotlin.reflect.KClass
+import javax.persistence.AttributeConverter
+import javax.persistence.Converter
+import java.sql.Timestamp;
 
 
-class LocalDateTimeSerializer : KSerializer<LocalDateTime> {
-  override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("LocalDateTime", PrimitiveKind.LONG)
-  override fun serialize(encoder: Encoder, value: LocalDateTime): Unit =
-    encoder.encodeLong(value.toInstant(ZoneOffset.UTC).toEpochMilli())
-  override fun deserialize(decoder: Decoder): LocalDateTime =
-    LocalDateTime.ofInstant(Instant.ofEpochSecond(decoder.decodeLong()), ZoneOffset.UTC)
+@Converter(autoApply = true)
+class LocalDateTimeSerializer :
+  AttributeConverter<LocalDateTime, Timestamp> {
+  override fun convertToDatabaseColumn(locDateTime: LocalDateTime?): Timestamp? {
+    return if (locDateTime === null) null else Timestamp.valueOf(locDateTime)
+  }
+
+  override fun convertToEntityAttribute(sqlTimestamp: Timestamp): LocalDateTime? {
+    return if (sqlTimestamp === null) null else sqlTimestamp.toLocalDateTime()
+  }
 }

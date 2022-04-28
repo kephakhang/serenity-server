@@ -8,11 +8,11 @@ import com.emoldino.serenity.server.jpa.own.dto.UserDto
 //import io.swagger.annotations.ApiModelProperty
 import javax.persistence.*
 
-@Entity
+@Entity(name = "Member")
 //@ApiModel("사용자")
 @Table(name = Env.tablePrefix + "member")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-class Member(
+open class Member(
 
   @Column(name = "mb_email_hash", columnDefinition = "char(64)", nullable = false)
   var mbEmailHash: String = "",

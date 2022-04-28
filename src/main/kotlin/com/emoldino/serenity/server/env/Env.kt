@@ -4,31 +4,28 @@ package com.emoldino.serenity.server.env
 
 import com.emoldino.serenity.server.jpa.own.dto.TenantDto
 import com.emoldino.serenity.server.kafka.KafkaEventService
+import com.emoldino.serenity.server.model.ChannelList
+import com.emoldino.serenity.server.model.Event
+import com.emoldino.serenity.server.model.Message
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer
+import com.google.gson.Gson
 import com.sultanofcardio.models.MailServer
 import com.typesafe.config.ConfigFactory
-import com.emoldino.serenity.server.model.ChannelList
-import com.emoldino.serenity.server.model.Event
-import com.emoldino.serenity.server.model.Message
-import com.emoldino.serenity.server.service.TenantService
 import io.ktor.config.*
 import mu.KotlinLogging
 import org.apache.kafka.clients.admin.Admin
-import org.apache.kafka.clients.admin.AdminClient
-import org.apache.kafka.clients.admin.AdminClientConfig
-import org.apache.kafka.clients.admin.NewTopic
 import org.apache.kafka.clients.producer.KafkaProducer
 import java.security.MessageDigest
-import java.sql.Timestamp
 import java.text.SimpleDateFormat
 import java.time.Clock
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -49,7 +46,7 @@ class Env {
     var branch = "local"
     var aiServerUrl = "http://13.125.216.230:3006"
     lateinit var serenityServerUrl: String
-    lateinit var kafkaEventProducer: KafkaProducer<String, Any>
+    var kafkaEventProducer: KafkaProducer<String, Any>? = null
     val kafkaEventServiceMap: ConcurrentHashMap<String,KafkaEventService> = ConcurrentHashMap<String,KafkaEventService>()
     const val tablePrefix = "tb_"
 
@@ -85,7 +82,7 @@ class Env {
       dbConfig["hibernate.show_sql"] = "true"
       dbConfig["hibernate.format_sql"] = "true"
       dbConfig["hibernate.use_sql_comments"] = "true"
-      dbConfig["hibernate.id.new_generator_mappings"] = "true"
+      dbConfig["hibernate.id.new_generator_mappings"] = "false"
       dbConfig["hibernate.generate_statistics"] = "false"
       dbConfig["hibernate.connection.charSet"] = "UTF-8"
       dbConfig["hibernate.hbm2ddl.auto"] = "validate"
@@ -125,6 +122,7 @@ class Env {
     }
 
     var objectMapper: ObjectMapper = ObjectMapper()
+    val gson: Gson = Gson()
 
     init {
       val javaTimeModule = JavaTimeModule()
@@ -198,7 +196,7 @@ class Env {
     fun error(): Message {
       return Message(
         null,
-        Timestamp.valueOf(LocalDateTime.now(ZoneId.of("UTC"))).time,
+        LocalDateTime.now().toEpochSecond(ZoneOffset.UTC),
         Event.ERROR.value,
         ChannelList()
       );

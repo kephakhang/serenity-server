@@ -11,11 +11,11 @@ import javax.persistence.*
 /**
  * 대행사
  */
-@Entity
+@Entity(name = "Agent")
 //@ApiModel("대행사")
 @Table(name = Env.tablePrefix + "agent")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-class Agent(
+open class Agent(
 
   /**
    * agent sha256(email)

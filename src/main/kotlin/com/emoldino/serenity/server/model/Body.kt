@@ -12,5 +12,5 @@ data class Body(
   val requestId: String,
   val tenantId: String,
   val type: String,
-  val data: Any
+  val data: LinkedHashMap<String, Any>
 )

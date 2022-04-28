@@ -7,10 +7,10 @@ import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Table
 
-@Entity
+@Entity(name = "BoardGood")
 @Table(name = Env.tablePrefix + "board_good")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-class BoardGood(
+open class BoardGood(
 
   @Column(name = "bo_id", columnDefinition = "char(36)", nullable = false)
   var boId: String = "",

@@ -21,7 +21,7 @@
     </appender>
     <if condition='"${RUN_ENV}".contains("local")' >
         <then>
-            <root level="info">
+            <root level="debug">
                 <appender-ref ref="STDOUT"/>
                 <appender-ref ref="RUN"/>
             </root>
@@ -30,6 +30,14 @@
                 <appender-ref ref="RUN"/>
             </logger>
             <logger name="io.netty" level="info">
+                <appender-ref ref="STDOUT"/>
+                <appender-ref ref="RUN"/>
+            </logger>
+            <logger name="org.apache" level="info">
+                <appender-ref ref="STDOUT"/>
+                <appender-ref ref="RUN"/>
+            </logger>
+            <logger name="com.mchange" level="info">
                 <appender-ref ref="STDOUT"/>
                 <appender-ref ref="RUN"/>
             </logger>
@@ -41,13 +49,19 @@
     </if>
     <if condition='"${RUN_ENV}".contains("dev")' >
         <then>
-            <root level="info">
+            <root level="debug">
                 <appender-ref ref="RUN"/>
             </root>
             <logger name="org.eclipse.jetty" level="info">
                 <appender-ref ref="RUN"/>
             </logger>
             <logger name="io.netty" level="info">
+                <appender-ref ref="RUN"/>
+            </logger>
+            <logger name="org.apache" level="info">
+                <appender-ref ref="RUN"/>
+            </logger>
+            <logger name="com.mchange" level="info">
                 <appender-ref ref="RUN"/>
             </logger>
             <logger name="com.emoldino.serenity" level="debug">

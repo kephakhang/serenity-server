@@ -38,7 +38,7 @@ class BaseEntity : Serializable {
 //  @ApiModelProperty("등록시각")
   @CreationTimestamp
   @Convert(converter  = LocalDateTimeSerializer::class)
-  @Column(name = "reg_datetime", nullable = false, updatable = false)
+  @Column(name = "reg_datetime", columnDefinition = "DATETIME", nullable = false, updatable = false)
   lateinit var regDatetime: LocalDateTime
 
   /**
@@ -46,7 +46,8 @@ class BaseEntity : Serializable {
    */
 //  @ApiModelProperty("수정시각")
   @UpdateTimestamp
-  @Column(name = "mod_datetime", nullable = false)
+  @Convert(converter  = LocalDateTimeSerializer::class)
+  @Column(name = "mod_datetime", columnDefinition = "DATETIME", nullable = false)
   lateinit var modDatetime: LocalDateTime
 
   override fun equals(other: Any?): Boolean {

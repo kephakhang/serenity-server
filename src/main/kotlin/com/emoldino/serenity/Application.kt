@@ -66,7 +66,7 @@ fun Application.module(testing: Boolean = false) {
 //    .registerTypeAdapter(BigDecimal::class.java, BigDecimalSerializer()).create()
   //val pushServerMap = ConcurrentHashMap<String, PushServer<User>>()
 
-  var applicable = environment.config.config("ktor.deployment").property("applicable").getString().toBoolean()
+  val applicable: Boolean = environment.config.config("ktor.deployment").property("applicable").getString().toBoolean()
   if (testing || !applicable) {
     return
   }
@@ -333,6 +333,36 @@ fun Application.module(testing: Boolean = false) {
     logger.debug("### Route completed: ${call.route} : ${call.callId} ]")
   }
 
+  Env.kafkaEventProducer = buildProducer(environment, tenantService)
+  logger.debug("buildProducer is OK")
+
+  logger.debug("cosumerJobs are starting")
+  val cosumerJobs: ArrayList<BackgroundJob> = ArrayList<BackgroundJob>()
+  if (applicable) { // Appicable="false" 이면 Consumer 를 띄우지 않는다.
+    for (key in Env.tenantMap.keys()) {
+        val topic: String = key
+        logger.debug("cosumerJobs : ${topic}")
+        val conf = BackgroundJob.JobConfiguration()
+        conf.name = "Kafka-User-Consumer-" + topic + "-Job"
+        @Suppress("UNCHECKED_CAST")
+        conf.job = buildConsumer<String, Any>(environment, topic)
+        val consumerJob = BackgroundJob(conf)
+        conf.job?.let { thread(name = conf.name) { it.run() } }
+        cosumerJobs.add(consumerJob)
+        logger.debug("conumserJon run : ${conf.name} ")
+    }
+    val topic = "test"
+    val conf = BackgroundJob.JobConfiguration()
+    conf.name = "Kafka-User-Consumer-" + topic + "-Job"
+    @Suppress("UNCHECKED_CAST")
+    conf.job = buildConsumer<String, Any>(environment, topic)
+    val consumerJob = BackgroundJob(conf)
+    conf.job?.let { thread(name = conf.name) { it.run() } }
+    cosumerJobs.add(consumerJob)
+    logger.debug("conumserJon run : ${conf.name} ")
+  }
+  logger.debug("cosumerJobs are all running :  OK")
+
   routing {
     authenticate("api") {
       user(userService)
@@ -343,30 +373,5 @@ fun Application.module(testing: Boolean = false) {
     deepchain()
   }
 
-  Env.kafkaEventProducer = buildProducer(environment, tenantService)
-  val cosumerJobs: ArrayList<BackgroundJob> = ArrayList<BackgroundJob>()
-
-  if (applicable.equals("true")) { // Appicable="false" 이면 Consumer 를 띄우지 않는다.
-      for (key in Env.tenantMap) {
-          val topic = key.key
-          val conf = BackgroundJob.JobConfiguration()
-          conf.name = "Kafka-User-Consumer-" + topic + "-Job"
-          @Suppress("UNCHECKED_CAST")
-          conf.job = buildConsumer<String, Any>(environment, topic)
-          val consumerJob = BackgroundJob(conf)
-          conf.job?.let { thread(name = conf.name) { it.run() } }
-          cosumerJobs.add(consumerJob)
-      }
-  }
-
-  //ToDo : 백그라운드 Job 이 한개일 경우 사용
-//  install(BackgroundJob.BackgroundJobFeature) {
-//    name = "Kafka-User-Consumer-Transaction-Job"
-//    val conf = BackgroundJob.JobConfiguration()
-//    conf.job = buildConsumer<String, String>(environment, "test")
-//    val consumerJob = BackgroundJob(conf)
-//    conf.job?.let { thread(name = conf.name) { it.run() } }
-//  }
-
-  logger.debug("Application", "start... OK")
+  logger.debug("Application start... OK")
 }

@@ -9,10 +9,10 @@ import javax.persistence.Entity
 import javax.persistence.Table
 
 
-@Entity
+@Entity(name = "BoardFile")
 @Table(name = Env.tablePrefix + "board_file")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-class BoardFile(
+open class BoardFile(
 
 
   /**

@@ -1,40 +1,28 @@
 package com.emoldino.serenity.server.kafka
 
 import com.emoldino.serenity.common.ClosableJob
-import com.emoldino.serenity.common.ComputerIdentifier
 import com.emoldino.serenity.extensions.stackTraceString
 import com.emoldino.serenity.server.env.Env
-import com.emoldino.serenity.server.jpa.own.enum.MicroService
 import com.emoldino.serenity.server.model.*
-import com.emoldino.serenity.server.websocket.PushServer
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.node.ArrayNode
 import io.ktor.application.*
-import io.ktor.http.*
-import io.ktor.response.*
 import io.ktor.util.*
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import mu.KotlinLogging
-import org.apache.kafka.clients.ClientDnsLookup
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.errors.WakeupException
 import org.eclipse.jetty.http.HttpStatus
-import java.net.Authenticator
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
-import java.sql.Timestamp
 import java.time.Duration
-import java.time.LocalDateTime
-import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 import java.util.*
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.collections.LinkedHashMap
 
 private val logger = KotlinLogging.logger {}
 
@@ -62,7 +50,7 @@ class Consumer<K, V>(private val consumer: KafkaConsumer<K, V>, val topic: Strin
             )
             logger.debug("record.value() : " + record.value().toString())
 
-            if ((Env.branch == "master" && record.key()
+            if ((Env.branch === "master" && record.key()
                 .toString() != Env.owner) || record.value() is Throwable
             ) { // DeSerialization 오류시 Exception Return from consumer
               logger.warn(Env.message("app.kafka.consumer.unknownRecord"), record.value() as Throwable)
@@ -71,11 +59,11 @@ class Consumer<K, V>(private val consumer: KafkaConsumer<K, V>, val topic: Strin
             }
 
             val message: KafkaEvent = record.value() as KafkaEvent
-            val body: Body = message.data as Body
+            val body: Body = message.data
             if (topic.equals(body.tenantId)) {
               when(body.type) {
                 IntegrationType.AI.value -> {
-                  fetchDataFromMms(message.data)
+                  fetchDataFromMms(body)
                 }
               }
             }
@@ -109,51 +97,25 @@ class Consumer<K, V>(private val consumer: KafkaConsumer<K, V>, val topic: Strin
     }
   }
 
-  fun fetchDataFromMms(message: Body) {
+  fun fetchDataFromMms(body: Body) {
 
-    val requestId = message.requestId
-    val tenantId = message.tenantId
-//    val data: JsonNode = message.get("data")
-//    val paramsNum = data.get("paramsNum")
-//    val dataTypeList = (data.get("dataType") as ArrayNode).map { it -> it.asText() }.toList()
-//    val startTime = data.get("period").get("startTime").asText()
-//    val endTime = data.get("period").get("endTime").asText()
-//    val scale: JsonNode = data.get("scale")
+    val requestId = body.requestId
+    val tenantId = body.tenantId
+    val moldId = body.data["moldId"] as String
+    val lst = "20210428101141" //body.data["lst"] as String
+    val aiType = "EM_AI_ANOM" //body.data["aiType"] as String
 
-    val strMessage = Json.encodeToString(message)
-    logger.debug("get data of AI from Kafka", strMessage)
-
-    //ToDo : Just Test Code
-//    val body = Json {
-//      "requestId" to requestId
-//      "tenantId" to tenantId
-//      "moldId" to moldId
-//      "data" to Json {
-//        "cycleTime" to Json {
-//          "hourly" to arrayOf(30)
-//          "weyekly" to arrayOf(33)
-//          "daily" to arrayOf(37)
-//        }
-//        "shotCount" to Json {
-//          "hourly" to arrayOf(300)
-//          "weyekly" to arrayOf(330)
-//          "daily" to arrayOf(370)
-//        }
-//        "temperature" to Json {
-//          "hourly" to arrayOf(300, 400, 500)
-//          "weekly" to arrayOf(300, 400, 500)
-//          "daily" to arrayOf(300, 400, 500)
-//        }
-//      }
-//    }
-
-    //val requestBody: String = body.toString()
+    val strMessage = Env.gson.toJson(body)
+    logger.debug("get data of AI from Kafka ${strMessage}")
 
     val requestBody: String = "{\n" +
         "      \"requestId\": \"" + requestId + "\" ,\n" +
         "      \"tenantId\": \"" + tenantId + "\" ,\n" +
-        "      \"moldId\": \"test-mold\" ,\n" +
+        "      \"type\": \"ai\" ,\n" +
         "      \"data\": {\n" +
+        "        \"moldId\": \"" + moldId + "\" ,\n" +
+        "        \"lst\": \"" + lst + "\" ,\n" +
+        "        \"aiType\": \"" + aiType + "\" ,\n" +
         "        \"cycleTime\": {\n" +
         "          \"hourly\": [30],\n" +
         "          \"weyekly\": [33],\n" +
@@ -171,27 +133,36 @@ class Consumer<K, V>(private val consumer: KafkaConsumer<K, V>, val topic: Strin
         "        }\n" +
         "    }\n" +
         "}"
-    logger.debug("/mms/ai/fetchData : requestBody : " + requestBody)
+    logger.debug("/api/integration/ai/fetchData : requestBody : " + requestBody)
 
-    if (!message.tenantId.equals("test")) {
-      val mmsUrl = Env.tenantMap[message.tenantId]?.hostUrl + "/mms/ai/fetchData"
-      val client = HttpClient.newBuilder().build()
-      val request = HttpRequest.newBuilder()
-        .uri(URI.create(mmsUrl))
-        .header("Content-Type", "application/json")
-        .POST(HttpRequest.BodyPublishers.ofString(strMessage))
-        .build()
-      val response = client.send(request, HttpResponse.BodyHandlers.ofString())
-      logger.debug("/mms/ai/fetchData : responseBody " + response.body())
-      if (response.statusCode() === 200) {
-        logger.debug("/mms/ai/fetchData : " + Json.encodeToString(mapOf("result" to "success")))
-        sendCallbackToAi(response.statusCode(), response.body())
-      } else {
-        com.emoldino.serenity.server.route.logger.error("/mms/ai/fetchData : Error : " + response.statusCode() + ":" + response.body())
-        sendCallbackToAi(response.statusCode(), response.body())
+    if (!body.tenantId.equals("test")) {
+      logger.debug("fetchDataFromMms : tenantId : ${body.tenantId}")
+      var mmsUrl = Env.tenantMap[body.tenantId]?.hostUrl
+      mmsUrl?.let { it
+        var mmsApiUrl = it + "/api/integration/ai/fetchData"
+        mmsApiUrl = mmsApiUrl.replace("//api", "/api")
+        logger.debug("fetchDataFromMms : mmsUrl : ${mmsApiUrl}")
+        val client = HttpClient.newBuilder().build()
+        val request = HttpRequest.newBuilder()
+          .uri(URI.create(mmsApiUrl))
+          .header("Content-Type", "application/json")
+          .POST(HttpRequest.BodyPublishers.ofString(strMessage))
+          .build()
+        val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+        logger.debug("/api/integration/ai/fetchData : responseBody " + response.body())
+        if (response.statusCode() === 200) {
+          logger.debug("/api/integration/ai/fetchData : " + Env.gson.toJson(mapOf("result" to "success")))
+          sendCallbackToAi(response.statusCode(), response.body())
+        } else {
+          logger.error("/api/integration/ai/fetchData : Error : ${response.statusCode()} : + ${response.body()}")
+          sendCallbackToAi(response.statusCode(), response.body())
+        }
+      }
+
+      if (mmsUrl === null) {
+        logger.error("fetchDataFromMms : mmsUrl is null")
       }
     } else {
-      com.emoldino.serenity.server.route.logger.debug("/api/ai/results : " + Json.encodeToString(mapOf("result" to "success")))
       sendCallbackToAi(HttpStatus.OK_200, requestBody)
     }
   }
@@ -207,7 +178,7 @@ class Consumer<K, V>(private val consumer: KafkaConsumer<K, V>, val topic: Strin
     val response = client.send(request, HttpResponse.BodyHandlers.ofString())
     logger.debug("/api/deepchain/callback : responseBody " + response.body())
     if (response.statusCode() === 200) {
-      logger.debug("/api/deepchain/callback : " + Json.encodeToString(mapOf("result" to "success")))
+      logger.debug("/api/deepchain/callback : " + Env.gson.toJson(mapOf("result" to "success")))
     } else {
       logger.error("/api/deepchain/callback : Error : " + response.statusCode() + ":" + response.body())
     }

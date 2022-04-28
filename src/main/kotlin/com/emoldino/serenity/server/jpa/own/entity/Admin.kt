@@ -13,11 +13,11 @@ import javax.persistence.Table
 /**
  * 관리자
  */
-@Entity
+@Entity(name = "Admin")
 //@ApiModel("관리자")
 @Table(name = Env.tablePrefix + "admin")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-class Admin(
+open class Admin(
 
   /**
    * admin sha256(email)

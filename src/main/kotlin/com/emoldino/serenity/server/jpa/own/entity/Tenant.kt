@@ -1,32 +1,30 @@
 package com.emoldino.serenity.server.jpa.own.entity
 
-import com.fasterxml.jackson.annotation.JsonInclude
+//import io.swagger.annotations.ApiModel
+//import io.swagger.annotations.ApiModelProperty
+import com.emoldino.serenity.common.LocalDateTimeSerializer
 import com.emoldino.serenity.server.env.Env
 import com.emoldino.serenity.server.jpa.common.entity.BaseEntity
 import com.emoldino.serenity.server.jpa.own.dto.TenantDto
-import com.emoldino.serenity.server.jpa.own.dto.UserDto
+import com.fasterxml.jackson.annotation.JsonInclude
+import org.eclipse.jdt.internal.compiler.parser.Parser.name
 import org.hibernate.annotations.CreationTimestamp
-import org.hibernate.annotations.GenericGenerator
+import org.hibernate.annotations.Type
 import org.hibernate.annotations.UpdateTimestamp
-import java.io.Serializable
 import java.time.LocalDateTime
-//import io.swagger.annotations.ApiModel
-//import io.swagger.annotations.ApiModelProperty
 import javax.persistence.*
 
-@Entity
+@Entity(name = "Tenant")
 //@ApiModel("Tenant")
 @Table(name = Env.tablePrefix + "tenant")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-class Tenant (
+open class Tenant (
 
   /**
    * 고유 ID(UUID)
    */
 //  @ApiModelProperty("고유 UUID")
   @Id
-  @GeneratedValue(generator = "id")
-  @GenericGenerator(name = "id", strategy = "com.emoldino.serenity.server.jpa.own.id.UuidGenerator")
   @Column(name = "id", columnDefinition = "char(36)")
   var id: String? = null,
 
@@ -52,10 +50,11 @@ class Tenant (
   @Column(name = "country_id", nullable = false)
   var countryId: String = "",
 
-  @Column(name = "host_url", nullable = true)
-  var hostUrl: String? = null,
+  @Column(name = "host_url", nullable = false)
+  var hostUrl: String = "",
 
-  @Column(name = "enable", nullable = false)
+  @Column(name = "enable", columnDefinition = "BIT", nullable = false)
+//  @Type(type = "org.hibernate.type.NumericBooleanType")
   var enable: Boolean = true,
 
   /**
@@ -63,24 +62,28 @@ class Tenant (
    */
 //  @ApiModelProperty("등록시각")
   @CreationTimestamp
-  @Column(name = "reg_datetime", nullable = false, updatable = false)
-  var regDatetime: LocalDateTime,
+  @Convert(converter  = LocalDateTimeSerializer::class)
+  @Column(name = "reg_datetime", columnDefinition = "DATETIME", nullable = false, updatable = false)
+  var regDatetime: LocalDateTime = LocalDateTime.MIN,
 
   /**
    * 변경시각
    */
 //  @ApiModelProperty("수정시각")
   @UpdateTimestamp
-  @Column(name = "mod_datetime", nullable = false)
-  var modDatetime: LocalDateTime
+  @Convert(converter  = LocalDateTimeSerializer::class)
+  @Column(name = "mod_datetime", columnDefinition = "DATETIME", nullable = false)
+  var modDatetime: LocalDateTime = LocalDateTime.MIN
 
-)  : Serializable {
+)  {
 
   fun toTenantDto(): TenantDto {
     return TenantDto(
       id = id,
       name = name,
+      type = type,
       description = description,
+      hostUrl = hostUrl,
       countryCode = countryId,
       regDatetime =  regDatetime,
       modDatetime = modDatetime

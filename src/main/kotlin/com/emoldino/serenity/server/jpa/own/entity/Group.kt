@@ -9,10 +9,10 @@ import javax.persistence.Entity
 import javax.persistence.Table
 
 
-@Entity
+@Entity(name = "Group")
 @Table(name = Env.tablePrefix + "group")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-class Group(
+open class Group(
 
   @Column(name = "gr_name", nullable = false)
   var grName: String = "",

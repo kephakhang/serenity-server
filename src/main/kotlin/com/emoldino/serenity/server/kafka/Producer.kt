@@ -1,26 +1,31 @@
 package com.emoldino.serenity.server.kafka
 
+import com.emoldino.serenity.extensions.stackTraceString
 import com.emoldino.serenity.server.env.Env
-import com.emoldino.serenity.server.jpa.own.dto.TenantDto
 import com.emoldino.serenity.server.jpa.own.entity.QAdmin.admin
 import com.emoldino.serenity.server.service.TenantService
 import io.ktor.application.*
 import io.ktor.util.*
 import kotlinx.coroutines.suspendCancellableCoroutine
+import mu.KotlinLogging
 import org.apache.kafka.clients.admin.Admin
-import org.apache.kafka.clients.admin.AdminClientConfig
+import org.apache.kafka.clients.admin.ListTopicsResult
 import org.apache.kafka.clients.admin.NewTopic
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.clients.producer.RecordMetadata
+import org.apache.kafka.common.PartitionInfo
+import org.eclipse.jetty.util.LazyList.getList
 import java.util.*
-import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
+
+private val logger = KotlinLogging.logger {}
+
 @KtorExperimentalAPI
-fun buildProducer(environment: ApplicationEnvironment, tenantService: TenantService): KafkaProducer<String, Any> {
+fun buildProducer(environment: ApplicationEnvironment, tenantService: TenantService): KafkaProducer<String, Any>? {
   val producerConfig = environment.config.config("ktor.kafka.producer")
   val producerProps = Properties().apply {
     this[ProducerConfig.BOOTSTRAP_SERVERS_CONFIG] = producerConfig.property("bootstrap.servers").getString().split(",")
@@ -37,27 +42,50 @@ fun buildProducer(environment: ApplicationEnvironment, tenantService: TenantServ
 //        this["ssl.endpoint.identification.algorithm"] = producerConfig.property("ssl.endpoint.identification.algorithm").getString()
   }
 
-  Env.kafkaAdmin = Admin.create(producerProps)
-  val producer = KafkaProducer<String, Any>(producerProps)
+  try {
+    Env.kafkaAdmin = Admin.create(producerProps)
+    val producer = KafkaProducer<String, Any>(producerProps)
 
-  tenantService.getList().map{it -> {
-    Env.tenantMap.put(it.id!!, it)
-    val partitions = producer.partitionsFor(it.id!!)
-    if (partitions === null || partitions.isEmpty()) {
-      val topic: NewTopic = NewTopic(it.id!!, 3, 3)
-      Env.kafkaAdmin.createTopics(Collections.singleton(topic))
+    val listTopics: ListTopicsResult = Env.kafkaAdmin.listTopics()
+    val names = listTopics.names().get()
+    logger.debug("topic list : ${names}")
+
+    val tenantList = tenantService.getList()
+
+    logger.debug("tenant list : ${tenantList}")
+
+    for (i in tenantList.indices) {
+      val it = tenantList[i]
+      Env.tenantMap.put(it.id!!, it)
+      if (!names.contains(it.id!!)) {
+        val topic: NewTopic = NewTopic(it.id!!, 3, 3)
+        logger.debug("createTopics : ${topic}")
+        try {
+          Env.kafkaAdmin.createTopics(Collections.singleton(topic))
+        } catch (ex: Exception) {
+          logger.error("createTopics() ERROR : ${it.id!!} : ${ex.stackTraceString}")
+        }
+      }
+      logger.debug("add KafkaEventService : ${it.id!!}")
+      Env.kafkaEventServiceMap.put(it.id!!, KafkaEventService(it.id!!, producer))
     }
-    Env.kafkaEventServiceMap.put(it.id!!, KafkaEventService(it.id!!, producer))
-  }}
 
-  val testPartitions = producer.partitionsFor("test")
-  if (testPartitions === null || testPartitions.isEmpty()) {
-    val topic: NewTopic = NewTopic("test", 3, 3)
-    Env.kafkaAdmin.createTopics(Collections.singleton(topic))
+    if (!names.contains("test")) {
+      val topic: NewTopic = NewTopic("test", 3, 3)
+      logger.debug("createTopics : test")
+      try {
+        Env.kafkaAdmin.createTopics(Collections.singleton(topic))
+      } catch (ex: Exception) {
+        logger.error("createTopics() ERROR : test  : ${ex.stackTraceString}")
+      }
+    }
+    Env.kafkaEventServiceMap.put("test", KafkaEventService("test", producer))
+
+    return producer
+  } catch(ex: Exception) {
+    logger.error("buildProducer : ERROR : ${ex.stackTraceString}")
+    return null
   }
-  Env.kafkaEventServiceMap.put("test", KafkaEventService("test", producer))
-
-  return producer
 }
 
 suspend inline fun <reified K : Any, reified V : Any> KafkaProducer<K, V>.dispatch(record: ProducerRecord<K, V>) =

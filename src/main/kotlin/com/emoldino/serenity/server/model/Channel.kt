@@ -1,6 +1,6 @@
 package com.emoldino.serenity.server.model
 
-import com.google.gson.internal.LinkedTreeMap
+import java.util.*
 
 enum class Channel(val value: String, val no: Int) {
   TEST("test", 0),
@@ -11,4 +11,4 @@ enum class Channel(val value: String, val no: Int) {
 }
 
 //channel: ["ticker", "orderbook:btc_krw,eth_krw"]
-typealias ChannelList = LinkedTreeMap<String, Any>
+typealias ChannelList = TreeMap<String, Any>

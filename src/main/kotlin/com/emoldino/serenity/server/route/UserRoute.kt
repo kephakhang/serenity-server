@@ -6,7 +6,6 @@ import com.emoldino.serenity.server.service.UserService
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.http.*
-import io.ktor.locations.get
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*

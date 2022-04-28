@@ -12,7 +12,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.persistence.*
 
-@Entity
+@Entity(name = "MemberDetail")
 //@ApiModel("사용자 상세정보")
 @Table(name = Env.tablePrefix + "member_detail")
 @Cacheable

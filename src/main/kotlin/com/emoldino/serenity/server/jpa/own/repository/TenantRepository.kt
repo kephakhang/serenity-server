@@ -20,6 +20,6 @@ class TenantRepository : Querydsl4RepositorySupport<Tenant>(Env.em, Tenant::clas
   }
 
   fun findAll(): List<Tenant> {
-    return selectFrom(tenant).where(tenant.enable.eq(true)).fetch()
+    return selectFrom(tenant).where(tenant.enable.isTrue).fetch()
   }
 }

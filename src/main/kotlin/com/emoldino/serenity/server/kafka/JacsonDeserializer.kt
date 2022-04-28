@@ -21,16 +21,9 @@ class JacksonDeserializer(
 
   override fun deserialize(topic: String, data: ByteArray): Any {
     try {
-
-      when (topic) {
-        Channel.TEST.value -> {
           val kafkaEvent: KafkaEvent = objectMapper.readValue<KafkaEvent>(data)
           logger.debug { "kafka data : " + String(data, StandardCharsets.UTF_8) }
           return kafkaEvent
-        }
-        else -> throw Exception("unknown topic data format")
-      }
-
     } catch (e: Throwable) {
       logger.warn { "deserializing JSON message error : " + e.stackTraceString }
       return e

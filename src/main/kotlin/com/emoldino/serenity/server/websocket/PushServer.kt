@@ -99,10 +99,10 @@ class PushServer<Any>() {
             val error = Env.error()
             val errData: ChannelList = error.data as ChannelList
             if( message == null )
-                errData.put("request_message", "Unknown" as Any)
+                errData.put("request_message", "Unknown")
             else
-                errData.put("request_message", message as Any)
-            errData.put("err_description", errorMessage  as Any)
+                errData.put("request_message", message)
+            errData.put("err_description", errorMessage)
 
             sendTo(socket, error)
         }
