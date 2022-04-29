@@ -20,100 +20,105 @@ import javax.persistence.EntityManager
 import kotlin.reflect.KClass
 
 val logger = KotlinLogging.logger(Querydsl4RepositorySupport::class.java.name)
+
 /**
  * Querydsl 4.x 버전에 맞춘 Querydsl 지원 라이브러리
  *
  */
 @Suppress("UNCHECKED_CAST")
 open class Querydsl4RepositorySupport<T>(val entityManager: EntityManager, val domainClass: KClass<Any>) {
-  var queryFactory: JPAQueryFactory
-  var builder: PathBuilder<*>
+    var queryFactory: JPAQueryFactory
+    var builder: PathBuilder<*>
 
-  //  lateinit var querydsl: Querydsl
-  val batchSize = 300
+    //  lateinit var querydsl: Querydsl
+    val batchSize = 300
 
-  init {
-    val path: EntityPath<T> = EntityPathBase<T>(domainClass.java as Class<T>, "entity")
-    builder = PathBuilder(path.type, path.metadata)
+    init {
+        val path: EntityPath<T> = EntityPathBase<T>(domainClass.java as Class<T>, "entity")
+        builder = PathBuilder(path.type, path.metadata)
 //    querydsl = Querydsl(
 //      entityManager,
 //      builder
 //    )
-    queryFactory = JPAQueryFactory(entityManager)
-  }
-
-
-  //ref : https://stackoverflow.com/questions/13072378/how-can-i-convert-a-spring-data-sort-to-a-querydsl-orderspecifier
-  open fun ordable(sort: Sort): MutableList<OrderSpecifier<*>> {
-
-    val specifiers: MutableList<OrderSpecifier<*>> = mutableListOf()
-
-    for (o in sort) {
-
-      specifiers.add(
-        OrderSpecifier<Comparable<Any>>(
-          if (o?.isAscending == true) Order.ASC else Order.DESC,
-          builder[o?.property] as Expression<Comparable<Any>>
-        )
-      )
+        queryFactory = JPAQueryFactory(entityManager)
     }
 
-    return specifiers
-  }
 
-  fun select(): JPAQuery<T> {
-    //ToDo : Unchecked cast : JPAQuery<*>! to JPAQuery<T> ??? fix it
-    return queryFactory.query() as JPAQuery<T>
-  }
+    //ref : https://stackoverflow.com/questions/13072378/how-can-i-convert-a-spring-data-sort-to-a-querydsl-orderspecifier
+    open fun ordable(sort: Sort): MutableList<OrderSpecifier<*>> {
 
-  fun select(expr: Expression<T>?): JPAQuery<T> {
-    return queryFactory.select(expr)  as JPAQuery<T>
-  }
+        val specifiers: MutableList<OrderSpecifier<*>> = mutableListOf()
 
-  fun selectFrom(from: EntityPath<T>?): JPAQuery<T> {
-    return queryFactory.selectFrom(from)  as JPAQuery<T>
-  }
+        for (o in sort) {
 
-  fun selectOne(): JPAQuery<T> {
-    return queryFactory.selectOne()  as JPAQuery<T>
-  }
+            specifiers.add(
+                OrderSpecifier<Comparable<Any>>(
+                    if (o?.isAscending == true) Order.ASC else Order.DESC,
+                    builder[o?.property] as Expression<Comparable<Any>>
+                )
+            )
+        }
 
-
-
-  fun insert(entity: T): T {
-    if (entity is BaseEntity) {
-      entity.id = KeyGenerator.uuid()
-      entity.regDatetime =  LocalDateTime.now(Clock.systemUTC())
-      entity.modDatetime = entity.regDatetime
+        return specifiers
     }
-    entityManager.persist(entity)
-    return entity
-  }
 
-  fun update(entity: T): T {
-    if (entity is BaseEntity) {
-      entity.modDatetime = entity.regDatetime
+    fun select(): JPAQuery<T> {
+        //ToDo : Unchecked cast : JPAQuery<*>! to JPAQuery<T> ??? fix it
+        return queryFactory.query() as JPAQuery<T>
     }
-    return entityManager.merge(entity)
-  }
 
-  fun delete(entity: T) {
-    entityManager.remove(entity)
-  }
-
-  inline fun transaction(body: () -> Unit) {
-    try {
-      entityManager.transaction.begin()
-      body()
-      entityManager.transaction.commit()
-    } catch(ex: Exception) {
-      logger.error("trnsaction error", ex)
-      entityManager.transaction.rollback()
-      throw EmolException(ErrorCode.E10006, HttpStatusCode.InternalServerError.value, ex, "error occurs in db orm transaction")
+    fun select(expr: Expression<T>?): JPAQuery<T> {
+        return queryFactory.select(expr) as JPAQuery<T>
     }
-  }
 
-  /*
+    fun selectFrom(from: EntityPath<T>?): JPAQuery<T> {
+        return queryFactory.selectFrom(from) as JPAQuery<T>
+    }
+
+    fun selectOne(): JPAQuery<T> {
+        return queryFactory.selectOne() as JPAQuery<T>
+    }
+
+
+    fun insert(entity: T): T {
+        if (entity is BaseEntity) {
+            entity.id = KeyGenerator.uuid()
+            entity.regDatetime = LocalDateTime.now(Clock.systemUTC())
+            entity.modDatetime = entity.regDatetime
+        }
+        entityManager.persist(entity)
+        return entity
+    }
+
+    fun update(entity: T): T {
+        if (entity is BaseEntity) {
+            entity.modDatetime = entity.regDatetime
+        }
+        return entityManager.merge(entity)
+    }
+
+    fun delete(entity: T) {
+        entityManager.remove(entity)
+    }
+
+    inline fun transaction(body: () -> Unit) {
+        try {
+            entityManager.transaction.begin()
+            body()
+            entityManager.transaction.commit()
+        } catch (ex: Exception) {
+            logger.error("trnsaction error", ex)
+            entityManager.transaction.rollback()
+            throw EmolException(
+                ErrorCode.E10006,
+                HttpStatusCode.InternalServerError.value,
+                ex,
+                "error occurs in db orm transaction"
+            )
+        }
+    }
+
+    /*
   fun applyPagination(
     pageable: Pageable,
     jpaQuery: JPAQuery<*>

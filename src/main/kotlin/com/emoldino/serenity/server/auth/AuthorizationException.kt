@@ -4,6 +4,6 @@ import io.ktor.http.*
 
 class AuthorizationException : Exception() {
 
-  val status = HttpStatusCode.Forbidden
+    val status = HttpStatusCode.Forbidden
 
 }

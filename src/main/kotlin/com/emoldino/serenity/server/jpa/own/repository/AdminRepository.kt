@@ -4,8 +4,7 @@ import com.querydsl.core.types.dsl.PathBuilder
 import com.emoldino.serenity.extensions.sha256
 import com.emoldino.serenity.server.env.Env
 import com.emoldino.serenity.server.jpa.common.repository.Querydsl4RepositorySupport
-import com.emoldino.serenity.server.jpa.own.entity.Admin
-import com.emoldino.serenity.server.jpa.own.entity.QAdmin
+import com.emoldino.serenity.server.jpa.own.entity.*
 import kotlin.reflect.KClass
 
 

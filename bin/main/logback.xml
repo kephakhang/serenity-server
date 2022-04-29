@@ -1,0 +1,88 @@
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{YYYY-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="RUN" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/run.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>c:/logs/run.%d{yyyy-MM-dd-HH-mm}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>30MB</maxFileSize>
+        </triggeringPolicy>
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>%relative [%thread] %-5level %logger{35} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <if condition='"${RUN_ENV}".contains("local")' >
+        <then>
+            <root level="debug">
+                <appender-ref ref="STDOUT"/>
+                <appender-ref ref="RUN"/>
+            </root>
+            <logger name="org.eclipse.jetty" level="info">
+                <appender-ref ref="STDOUT"/>
+                <appender-ref ref="RUN"/>
+            </logger>
+            <logger name="io.netty" level="info">
+                <appender-ref ref="STDOUT"/>
+                <appender-ref ref="RUN"/>
+            </logger>
+            <logger name="org.apache" level="info">
+                <appender-ref ref="STDOUT"/>
+                <appender-ref ref="RUN"/>
+            </logger>
+            <logger name="com.mchange" level="info">
+                <appender-ref ref="STDOUT"/>
+                <appender-ref ref="RUN"/>
+            </logger>
+            <logger name="com.emoldino.serenity" level="debug">
+                <appender-ref ref="STDOUT"/>
+                <appender-ref ref="RUN"/>
+            </logger>
+        </then>
+    </if>
+    <if condition='"${RUN_ENV}".contains("dev")' >
+        <then>
+            <root level="debug">
+                <appender-ref ref="RUN"/>
+            </root>
+            <logger name="org.eclipse.jetty" level="info">
+                <appender-ref ref="RUN"/>
+            </logger>
+            <logger name="io.netty" level="info">
+                <appender-ref ref="RUN"/>
+            </logger>
+            <logger name="org.apache" level="info">
+                <appender-ref ref="RUN"/>
+            </logger>
+            <logger name="com.mchange" level="info">
+                <appender-ref ref="RUN"/>
+            </logger>
+            <logger name="com.emoldino.serenity" level="debug">
+                <appender-ref ref="RUN"/>
+            </logger>
+        </then>
+    </if>
+    <if condition='"${RUN_ENV}".contains("prod")' >
+        <then>
+            <root level="error">
+                <appender-ref ref="RUN"/>
+            </root>
+            <logger name="org.eclipse.jetty" level="info">
+                <appender-ref ref="RUN"/>
+            </logger>
+            <logger name="io.netty" level="info">
+                <appender-ref ref="RUN"/>
+            </logger>
+            <logger name="com.emoldino.serenity" level="info">
+                <appender-ref ref="RUN"/>
+            </logger>
+        </then>
+    </if>
+</configuration>
