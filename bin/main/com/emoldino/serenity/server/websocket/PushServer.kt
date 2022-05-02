@@ -1,8 +1,9 @@
 @file:Suppress("NAME_SHADOWING")
+
 package com.emoldino.serenity.server.websocket
 
-import io.ktor.http.cio.websocket.*
-import io.ktor.websocket.WebSocketServerSession
+import io.ktor.websocket.*
+import io.ktor.server.websocket.WebSocketServerSession
 import kotlinx.coroutines.*
 import com.emoldino.serenity.exception.InvalidMessageException
 import com.emoldino.serenity.server.env.Env
@@ -28,7 +29,7 @@ private val logger = KotlinLogging.logger {}
  * It contains handlers to events and commands to send messages to specific users in the server.
  */
 class PushServer<Any>() {
-//    var auth = SsoService()
+    //    var auth = SsoService()
     val random = Random(Date().time) // only for demo
 
     /**
@@ -38,15 +39,15 @@ class PushServer<Any>() {
     val channelMap = ConcurrentHashMap<String, ConcurrentHashMap<Int, Boolean>>()
     val sessionCountMap = ConcurrentHashMap<String, AtomicInteger>()
 
-    fun connectionCounts(): ConnectionCounts{
+    fun connectionCounts(): ConnectionCounts {
         val list = ArrayList<SubscriptionCount>()
-        for(entry in this.channelMap.entries) {
+        for (entry in this.channelMap.entries) {
             val subscription = SubscriptionCount(entry.key, entry.value.size)
             list.add(subscription)
         }
 
-        for(entry in Env.topicConsumeCounts) {
-            val subscription = SubscriptionCount("["+entry.key+" 데이타]", entry.value)
+        for (entry in Env.topicConsumeCounts) {
+            val subscription = SubscriptionCount("[" + entry.key + " 데이타]", entry.value)
             list.add(subscription)
         }
 
@@ -60,15 +61,15 @@ class PushServer<Any>() {
      */
     fun CoroutineScope.sendTo(socket: WebSocketServerSession, message: Message) {
         launch {
-                try {
-                    if( socket.isActive ) {
-                        socket.outgoing.send(Frame.Text(Json.encodeToString(message)))
-                    } else {
-                        close(socket, CloseReason.Codes.GOING_AWAY, "sendTo : a socket error")
-                    }
-                } catch(e: Throwable) {
+            try {
+                if (socket.isActive) {
+                    socket.outgoing.send(Frame.Text(Json.encodeToString(message)))
+                } else {
                     close(socket, CloseReason.Codes.GOING_AWAY, "sendTo : a socket error")
                 }
+            } catch (e: Throwable) {
+                close(socket, CloseReason.Codes.GOING_AWAY, "sendTo : a socket error")
+            }
         }
     }
 
@@ -86,7 +87,8 @@ class PushServer<Any>() {
      */
     fun sendAck(socket: WebSocketServerSession, event: Event) {
         GlobalScope.launch {
-            val message: Message = Message(null, Timestamp.valueOf(LocalDateTime.now(ZoneId.of("UTC"))).time, event.value,  Any())
+            val message: Message =
+                Message(null, Timestamp.valueOf(LocalDateTime.now(ZoneId.of("UTC"))).time, event.value, Any())
             sendTo(socket, message)
         }
     }
@@ -98,7 +100,7 @@ class PushServer<Any>() {
         GlobalScope.launch {
             val error = Env.error()
             val errData: ChannelList = error.data as ChannelList
-            if( message == null )
+            if (message == null)
                 errData.put("request_message", "Unknown")
             else
                 errData.put("request_message", message)
@@ -132,27 +134,31 @@ class PushServer<Any>() {
         val ip = socket.call.clientIp
 
         var count = sessionCountMap.get(ip)
-        if( count == null ) {
+        if (count == null) {
             count = AtomicInteger()
             count.incrementAndGet()
             sessionCountMap.put(ip, count)
             @Suppress("UNCHECKED_CAST")
             sessionMap.put(socket.hashCode(), Session(socket, null as Any))
-            sendAck(socket, Event.CONNECTED) ;
+            sendAck(socket, Event.CONNECTED);
 
         } else {
 
             val current = count.get()
-            if( current >= Env.connectionsLimit ) {
+            if (current >= Env.connectionsLimit) {
                 GlobalScope.launch {
-                    close(socket, CloseReason.Codes.VIOLATED_POLICY, "connect : same client's connections limit is over")
+                    close(
+                        socket,
+                        CloseReason.Codes.VIOLATED_POLICY,
+                        "connect : same client's connections limit is over"
+                    )
                 }
             } else {
                 count.incrementAndGet()
                 sessionCountMap.put(ip, count)
                 @Suppress("UNCHECKED_CAST")
                 sessionMap.put(socket.hashCode(), Session(socket, null as Any))
-                sendAck(socket, Event.CONNECTED) ;
+                sendAck(socket, Event.CONNECTED);
             }
 
         }
@@ -165,7 +171,7 @@ class PushServer<Any>() {
     suspend fun userJoin(socket: WebSocketServerSession, session: Any, message: Message) {
         // Checks if this user is already registered in the server and gives him/her a temporal name if required.
 
-        if ( session != null ){
+        if (session != null) {
             var channels: List<String>? = null
 
             //Subscription Channel Validation check
@@ -175,29 +181,29 @@ class PushServer<Any>() {
 
                 @Suppress("UNCHECKED_CAST")
                 channels = data.get("channels") as List<String>
-            } catch(e: Throwable) {
+            } catch (e: Throwable) {
                 throw InvalidMessageException("subscription channels info is not valid")
             }
 
 
-            for(channel in channels) {
+            for (channel in channels) {
                 logger.debug { "userJoin : " + channel }
                 val f1: List<String> = channel.split(":")
-                if( f1.size == 1 ) {
+                if (f1.size == 1) {
                     val topic = channel.trim()
 
                     //Topioc 명 유효성 체크 [
                     var isTopic = false
-                    Channel.values().forEach {
-                        v -> run {
-                            if( v.value == topic ) {
+                    Channel.values().forEach { v ->
+                        run {
+                            if (v.value == topic) {
                                 isTopic = true
                                 return@forEach
                             }
                         }
                     }
 
-                    if( !isTopic ) {
+                    if (!isTopic) {
                         throw InvalidMessageException("unknown topic error : " + topic)
                     }
                     // ]
@@ -209,27 +215,27 @@ class PushServer<Any>() {
                     }
                     map.put(socket.hashCode(), true)
                     channelMap.put(topic, map)
-                } else if( f1.size > 1 ) {
+                } else if (f1.size > 1) {
                     val topic = f1[0]
 
                     //Topioc 명 유효성 체크 [
                     var isTopic = false
-                    Channel.values().forEach {
-                        v -> run {
-                            if( v.value == topic ) {
+                    Channel.values().forEach { v ->
+                        run {
+                            if (v.value == topic) {
                                 isTopic = true
                                 return@forEach
                             }
                         }
                     }
 
-                    if( !isTopic ) {
+                    if (!isTopic) {
                         throw InvalidMessageException("unknown topic error : " + topic)
                     }
                     // ]
 
                     val currencyList = f1[1].split(",")
-                    for(currency in currencyList) {
+                    for (currency in currencyList) {
                         var key = topic + ":" + currency.trim()
                         logger.debug { "subscribe key : " + key }
                         var map = channelMap.get(key)
@@ -258,8 +264,8 @@ class PushServer<Any>() {
     suspend fun close(socket: WebSocketServerSession?, code: CloseReason.Codes, message: String) {
         try {
 
-            if( socket != null ) {
-                for(entry in channelMap.entries) {
+            if (socket != null) {
+                for (entry in channelMap.entries) {
                     entry.value.remove(socket.hashCode())
                     channelMap.put(entry.key, entry.value)
                 }
@@ -270,7 +276,7 @@ class PushServer<Any>() {
                 val ip = socket.call.clientIp
 
                 var count = sessionCountMap.get(ip)
-                if( count != null ) {
+                if (count != null) {
 
                     val current = count.get()
 
@@ -278,9 +284,13 @@ class PushServer<Any>() {
                     sessionCountMap.put(ip, count)
                 }
 
-                try { socket.close(CloseReason(code, message)) } catch (e: Throwable) {}
+                try {
+                    socket.close(CloseReason(code, message))
+                } catch (e: Throwable) {
+                }
             }
-        } catch(e: Throwable) {}
+        } catch (e: Throwable) {
+        }
     }
 
 
@@ -297,39 +307,38 @@ class PushServer<Any>() {
 
             @Suppress("UNCHECKED_CAST")
             channels = data.get("channels") as List<String>
-        } catch(e: Throwable) {
+        } catch (e: Throwable) {
             throw InvalidMessageException("unsubscription channels info is not valid")
         }
 
-        for(channel in channels) {
+        for (channel in channels) {
             logger.debug { "userLeft : " + channels }
             val f1 = channel.split(":")
-            if( f1.size == 1 ) {
+            if (f1.size == 1) {
                 val topic = channel.trim()
 
                 //Topioc 명 유효성 체크 [
                 var isTopic = false
-                Channel.values().forEach {
-                        v -> run {
-                        if( v.value == topic ) {
+                Channel.values().forEach { v ->
+                    run {
+                        if (v.value == topic) {
                             isTopic = true
                             return@forEach
                         }
                     }
                 }
 
-                if( !isTopic ) {
+                if (!isTopic) {
                     throw InvalidMessageException("unknown topic error : " + topic)
                 }
                 // ]
 
                 val map = channelMap.get(topic)
-                if( map != null ) {
+                if (map != null) {
                     map.remove(socket.hashCode())
                     channelMap.put(channel, map)
                 }
-                channelMap.forEach {
-                    k, v ->
+                channelMap.forEach { k, v ->
                     run {
                         if (k.startsWith(topic)) {
                             val map: ConcurrentHashMap<Int, Boolean>? = channelMap.get(k)
@@ -340,27 +349,27 @@ class PushServer<Any>() {
                         }
                     }
                 }
-            } else if( f1.size > 1 ) {
+            } else if (f1.size > 1) {
                 val topic = f1[0]
 
                 //Topioc 명 유효성 체크 [
                 var isTopic = false
-                Channel.values().forEach {
-                        v -> run {
-                        if( v.value == topic ) {
+                Channel.values().forEach { v ->
+                    run {
+                        if (v.value == topic) {
                             isTopic = true
                             return@forEach
                         }
                     }
                 }
 
-                if( !isTopic ) {
+                if (!isTopic) {
                     throw InvalidMessageException("unknown topic error : " + topic)
                 }
                 // ]
 
                 val currencyList = f1[1].split(",")
-                for(currency in currencyList) {
+                for (currency in currencyList) {
                     val key = topic + ":" + currency.trim()
                     val map = channelMap.get(key)
                     if (map != null) {
@@ -379,7 +388,7 @@ class PushServer<Any>() {
     /**
      * Sends a [message] to all the users in the server, including all the connections per user.
      */
-    fun broadcast(topic: String, message: Message)  {
+    fun broadcast(topic: String, message: Message) {
         logger.debug(Env.message("app.server.broadcastStart"))
 
         try {
@@ -393,7 +402,7 @@ class PushServer<Any>() {
                     val dateStr = df.format(current)
 
                     val count: Int? = Env.topicConsumeCounts.get(topic + dateStr)
-                    if( count == null ) {
+                    if (count == null) {
                         Env.topicConsumeCounts.put(topic + dateStr, 1)
                     } else {
                         Env.topicConsumeCounts.put(topic + dateStr, count + 1)
@@ -415,26 +424,26 @@ class PushServer<Any>() {
                 val map = ConcurrentHashMap<Int, Boolean>()
                 var key = topic
                 var tmp = this.channelMap.get(key)
-                if( tmp != null ) {
+                if (tmp != null) {
                     map.putAll(tmp)
                 }
 
-                when(topic) {
-                    Channel.TICKER.value-> {
+                when (topic) {
+                    Channel.TICKER.value -> {
                         key = topic + ":" + (message.data as Ticker).currency_pair
                         tmp = this.channelMap.get(key)
                         if (tmp != null) {
                             map.putAll(tmp)
                         }
                     }
-                    Channel.ORDERBOOK.value-> {
+                    Channel.ORDERBOOK.value -> {
                         key = topic + ":" + (message.data as Orderbook).currency_pair
                         tmp = this.channelMap.get(key)
                         if (tmp != null) {
                             map.putAll(tmp)
                         }
                     }
-                    Channel.TRANSACTION.value-> {
+                    Channel.TRANSACTION.value -> {
                         key = topic + ":" + (message.data as Transaction).currency_pair
                         tmp = this.channelMap.get(key)
                         if (tmp != null) {
@@ -442,10 +451,10 @@ class PushServer<Any>() {
                         }
                     }
                 }
-                map.forEach {
-                    k, v ->  GlobalScope.launch {
+                map.forEach { k, v ->
+                    GlobalScope.launch {
                         val session = sessionMap.get(k)
-                        if( session != null ) {
+                        if (session != null) {
                             sendTo(session.socketSession, message)
                         }
                     }
@@ -463,7 +472,7 @@ class PushServer<Any>() {
     suspend fun List<WebSocketServerSession>.send(frame: Frame) {
         forEach {
             try {
-                if( it.isActive ) {
+                if (it.isActive) {
                     it.send(frame.copy())
                 } else {
                     close(it, CloseReason.Codes.GOING_AWAY, "list.send() error...")

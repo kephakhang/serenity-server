@@ -1,7 +1,7 @@
 #!/bin/sh
 
 
-./gradlew -Pprofile=local build --exclude-task test --stacktrace
+gradle build --exclude-task test --stacktrace
 
 #export PWD =`pwd`
 

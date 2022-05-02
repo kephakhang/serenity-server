@@ -6,9 +6,9 @@ import com.emoldino.serenity.server.jpa.own.dto.SignupDto
 import com.emoldino.serenity.server.jpa.own.dto.UserDto
 import com.emoldino.serenity.server.jpa.own.entity.Member
 import com.emoldino.serenity.server.jpa.own.repository.MemberRepository
-import io.ktor.application.*
-import io.ktor.request.*
-import io.ktor.response.*
+import io.ktor.server.application.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
 
 class UserService(val db: MemberRepository) {
 
@@ -19,7 +19,7 @@ class UserService(val db: MemberRepository) {
     }
 
     fun getList(pageno: Long, pagesize: Long): List<UserDto> {
-        return db.findAll((pageno-1)*pagesize, pagesize).map{it -> it.toUserDto()}.toList()
+        return db.findAll((pageno - 1) * pagesize, pagesize).map { it -> it.toUserDto() }.toList()
     }
 
     @Throws(Exception::class)

@@ -44,7 +44,7 @@ class Env {
         var topicLogging: Boolean = false
         val topicLogRollingPeriod: Long = 7L
         var branch = "local"
-        var aiServerUrl = "http://13.125.216.230:3006"
+        lateinit var aiServerUrl: String
         lateinit var serenityServerUrl: String
         var kafkaEventProducer: KafkaProducer<String, Any>? = null
         val kafkaEventServiceMap: ConcurrentHashMap<String, KafkaEventService> =

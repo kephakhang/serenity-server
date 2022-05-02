@@ -3,11 +3,11 @@ package com.emoldino.serenity.server.route
 import com.emoldino.serenity.server.jpa.own.dto.LoginDto
 import com.emoldino.serenity.server.jpa.own.dto.SignupDto
 import com.emoldino.serenity.server.service.AdminService
-import io.ktor.application.*
-import io.ktor.request.*
-import io.ktor.response.*
-import io.ktor.routing.*
-import io.ktor.routing.Route.*
+import io.ktor.server.application.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
+import io.ktor.server.routing.Route.*
 import kotlin.jvm.Throws
 
 

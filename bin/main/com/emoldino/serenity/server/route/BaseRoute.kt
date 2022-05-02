@@ -11,12 +11,12 @@ import com.emoldino.serenity.server.env.Env
 import com.emoldino.serenity.server.jpa.own.dto.Response
 import com.emoldino.serenity.server.jpa.own.dto.UserDto
 import com.emoldino.serenity.server.service.UserService
-import io.ktor.application.*
-import io.ktor.auth.*
+import io.ktor.server.application.*
+import io.ktor.server.auth.*
 import io.ktor.http.*
-import io.ktor.request.*
-import io.ktor.response.*
-import io.ktor.routing.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -31,7 +31,9 @@ const val RESPONSE_PREFIX = "Response: "
 
 private fun isHtml(requestUri: String): Boolean {
     return try {
-        if ( "/(.+\\.(ico|js|css|html|jpg|jpeg|png|gif|svg|mp3|mp4))".toRegex().containsMatchIn(requestUri) ) true else false
+        if ("/(.+\\.(ico|js|css|html|jpg|jpeg|png|gif|svg|mp3|mp4))".toRegex()
+                .containsMatchIn(requestUri)
+        ) true else false
     } catch (ex: Exception) {
         false
     }
@@ -129,13 +131,13 @@ fun loggging(
     } else {
         logger.debug(
             if (msg.length > 20480) msg.substring(0, 20480)
-                + "..... (more data. len:" + msg.length + ")" else msg
+                    + "..... (more data. len:" + msg.length + ")" else msg
                 .toString().replace("\\t".toRegex(), "\t").replace("\\n".toRegex(), "\n")
         )
     }
 }
 
-inline fun aop(call: ApplicationCall, withAuth:Boolean=true, body: () -> Unit): UserDto? {
+inline fun aop(call: ApplicationCall, withAuth: Boolean = true, body: () -> Unit): UserDto? {
     val CRLF = "\n"
     val REQUEST_PREFIX = "Request: "
     val RESPONSE_PREFIX = "Response: "
@@ -148,9 +150,12 @@ inline fun aop(call: ApplicationCall, withAuth:Boolean=true, body: () -> Unit): 
     val startTime = System.nanoTime()
 
     try {
-        val session = call.request.call.authentication.principal<UserDto>() ?: throw SessionNotFoundException(null, "User Not Found")
+        val session = call.request.call.authentication.principal<UserDto>() ?: throw SessionNotFoundException(
+            null,
+            "User Not Found"
+        )
         body()
-    } catch(ex: EmolException) {
+    } catch (ex: EmolException) {
         logger.error("routing error : ${ex.stackTraceString}")
         isException = true
         val err = EmolError.error(ex)
@@ -159,7 +164,7 @@ inline fun aop(call: ApplicationCall, withAuth:Boolean=true, body: () -> Unit): 
             // background coroutine like thread
             call.respond(HttpStatusCode(err.status, err.description), response)
         }
-    } catch(t: Throwable) {
+    } catch (t: Throwable) {
         logger.error("routing error : ${t.stackTraceString}")
         isException = true
         val err = EmolError.error(ErrorCode.E00000)

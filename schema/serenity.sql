@@ -1,13 +1,13 @@
--- MySQL dump 10.13  Distrib 8.0.25, for Win64 (x86_64)
+-- MySQL dump 10.14  Distrib 5.5.68-MariaDB, for Linux (x86_64)
 --
--- Host: localhost    Database: serenty
+-- Host: emoldino-dev.csmnutrnrwsm.us-east-2.rds.amazonaws.com    Database: serenty
 -- ------------------------------------------------------
--- Server version	8.0.25
+-- Server version	5.7.22-log
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8mb4 */;
+/*!40101 SET NAMES utf8 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
@@ -21,7 +21,7 @@
 
 DROP TABLE IF EXISTS `tb_admin`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `tb_admin` (
   `id` char(36) NOT NULL COMMENT '관리자 고유 ID',
   `te_id` char(36) NOT NULL COMMENT 'tenant id',
@@ -31,8 +31,8 @@ CREATE TABLE `tb_admin` (
   `am_mobile` varchar(64) NOT NULL COMMENT 'admin mobile',
   `am_reg_no` varchar(64) DEFAULT NULL COMMENT '사번',
   `am_otp` varchar(32) DEFAULT NULL COMMENT 'OTP 암호',
-  `am_level` int DEFAULT '1000' COMMENT '레벨(1000:관리자)',
-  `am_status` int DEFAULT '0' COMMENT '상태 flag(-3: blocked, -2: withdrawal, -1: dormant, 0:wait, 1:ceritified)',
+  `am_level` int(11) DEFAULT '1000' COMMENT '레벨(1000:관리자)',
+  `am_status` int(11) DEFAULT '0' COMMENT '상태 flag(-3: blocked, -2: withdrawal, -1: dormant, 0:wait, 1:ceritified)',
   `am_memo` varchar(256) DEFAULT NULL COMMENT '메모',
   `am_registrant_id` char(36) DEFAULT NULL COMMENT '등록자 admin ID',
   `am_modifier_id` char(36) DEFAULT NULL COMMENT '수정자 admin ID',
@@ -47,7 +47,7 @@ CREATE TABLE `tb_admin` (
   KEY `am_level` (`am_level`),
   KEY `te_id` (`te_id`),
   CONSTRAINT `tb_admin_ibfk_1` FOREIGN KEY (`te_id`) REFERENCES `tb_tenant` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='관리자';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='관리자';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -65,7 +65,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `tb_agent`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `tb_agent` (
   `id` char(36) NOT NULL COMMENT '대행사 고유 ID',
   `te_id` char(36) NOT NULL COMMENT 'tenant id',
@@ -74,8 +74,8 @@ CREATE TABLE `tb_agent` (
   `ag_password` varchar(255) NOT NULL COMMENT 'agent password',
   `ag_otp` varchar(32) DEFAULT NULL COMMENT 'OTP 암호',
   `ag_code` varchar(32) NOT NULL,
-  `ag_status` int NOT NULL DEFAULT '0' COMMENT '상태 flag(-3: blocked, -2: withdrawal, -1: dormant, 0:wait, 1:agent-otp-ceritified)',
-  `ag_level` int NOT NULL DEFAULT '100' COMMENT '레벨 flag(100:agent user, 101:agent admin',
+  `ag_status` int(11) NOT NULL DEFAULT '0' COMMENT '상태 flag(-3: blocked, -2: withdrawal, -1: dormant, 0:wait, 1:agent-otp-ceritified)',
+  `ag_level` int(11) NOT NULL DEFAULT '100' COMMENT '레벨 flag(100:agent user, 101:agent admin',
   `reg_datetime` datetime NOT NULL COMMENT '등록시각',
   `mod_datetime` datetime NOT NULL COMMENT '변경시각',
   PRIMARY KEY (`id`),
@@ -87,7 +87,7 @@ CREATE TABLE `tb_agent` (
   KEY `ag_level` (`ag_level`),
   KEY `te_id` (`te_id`),
   CONSTRAINT `tb_agent_ibfk_1` FOREIGN KEY (`te_id`) REFERENCES `tb_tenant` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='대행사';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='대행사';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -105,7 +105,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `tb_agent_detail`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `tb_agent_detail` (
   `ag_id` char(36) DEFAULT NULL COMMENT '대행사 고유 ID (join id)',
   `te_id` char(36) NOT NULL COMMENT 'tenant id',
@@ -133,7 +133,7 @@ CREATE TABLE `tb_agent_detail` (
   KEY `mod_datetime` (`mod_datetime`),
   CONSTRAINT `tb_agent_detail_ibfk_1` FOREIGN KEY (`ag_id`) REFERENCES `tb_agent` (`id`) ON DELETE SET NULL,
   CONSTRAINT `tb_agent_detail_ibfk_2` FOREIGN KEY (`te_id`) REFERENCES `tb_tenant` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='대행사 상세';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='대행사 상세';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -151,7 +151,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `tb_board`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `tb_board` (
   `id` char(36) NOT NULL COMMENT '게시판 고유 ID',
   `te_id` char(36) NOT NULL COMMENT 'tenant id',
@@ -159,47 +159,47 @@ CREATE TABLE `tb_board` (
   `gr_id` char(36) NOT NULL COMMENT '게시판 그룹 고유 ID',
   `bo_subject` varchar(255) NOT NULL,
   `bo_mobile_subject` varchar(255) NOT NULL,
-  `bo_device` int NOT NULL DEFAULT '2' COMMENT '0:pc, 1:mobile, 2:both',
+  `bo_device` int(11) NOT NULL DEFAULT '2' COMMENT '0:pc, 1:mobile, 2:both',
   `bo_admin` varchar(255) DEFAULT NULL,
-  `bo_list_level` int NOT NULL DEFAULT '1',
-  `bo_read_level` int NOT NULL DEFAULT '1',
-  `bo_write_level` int NOT NULL DEFAULT '1',
-  `bo_reply_level` int NOT NULL DEFAULT '1',
-  `bo_comment_level` int NOT NULL DEFAULT '1',
-  `bo_upload_level` int NOT NULL DEFAULT '1',
-  `bo_download_level` int NOT NULL DEFAULT '1',
-  `bo_html_level` int NOT NULL DEFAULT '1',
-  `bo_link_level` int NOT NULL DEFAULT '1',
-  `bo_count_delete` int NOT NULL DEFAULT '1',
-  `bo_count_modify` int NOT NULL DEFAULT '1',
-  `bo_read_point` int NOT NULL DEFAULT '-1',
-  `bo_write_point` int NOT NULL DEFAULT '5',
-  `bo_comment_point` int NOT NULL DEFAULT '1',
-  `bo_download_point` int NOT NULL DEFAULT '-20',
-  `bo_use_category` int NOT NULL DEFAULT '0',
+  `bo_list_level` int(11) NOT NULL DEFAULT '1',
+  `bo_read_level` int(11) NOT NULL DEFAULT '1',
+  `bo_write_level` int(11) NOT NULL DEFAULT '1',
+  `bo_reply_level` int(11) NOT NULL DEFAULT '1',
+  `bo_comment_level` int(11) NOT NULL DEFAULT '1',
+  `bo_upload_level` int(11) NOT NULL DEFAULT '1',
+  `bo_download_level` int(11) NOT NULL DEFAULT '1',
+  `bo_html_level` int(11) NOT NULL DEFAULT '1',
+  `bo_link_level` int(11) NOT NULL DEFAULT '1',
+  `bo_count_delete` int(11) NOT NULL DEFAULT '1',
+  `bo_count_modify` int(11) NOT NULL DEFAULT '1',
+  `bo_read_point` int(11) NOT NULL DEFAULT '-1',
+  `bo_write_point` int(11) NOT NULL DEFAULT '5',
+  `bo_comment_point` int(11) NOT NULL DEFAULT '1',
+  `bo_download_point` int(11) NOT NULL DEFAULT '-20',
+  `bo_use_category` int(11) NOT NULL DEFAULT '0',
   `bo_category_list` text,
-  `bo_use_sideview` int NOT NULL DEFAULT '0',
-  `bo_use_file_content` int NOT NULL DEFAULT '0',
-  `bo_use_secret` int NOT NULL DEFAULT '0',
-  `bo_use_dhtml_editor` int NOT NULL DEFAULT '0',
+  `bo_use_sideview` int(11) NOT NULL DEFAULT '0',
+  `bo_use_file_content` int(11) NOT NULL DEFAULT '0',
+  `bo_use_secret` int(11) NOT NULL DEFAULT '0',
+  `bo_use_dhtml_editor` int(11) NOT NULL DEFAULT '0',
   `bo_select_editor` varchar(50) DEFAULT NULL,
-  `bo_use_rss_view` int NOT NULL DEFAULT '0',
-  `bo_use_good` int NOT NULL DEFAULT '0',
-  `bo_use_nogood` int NOT NULL DEFAULT '0',
-  `bo_use_name` int NOT NULL DEFAULT '0',
-  `bo_use_signature` int NOT NULL DEFAULT '0',
-  `bo_use_ip_view` int NOT NULL DEFAULT '0',
-  `bo_use_list_view` int NOT NULL DEFAULT '0',
-  `bo_use_list_file` int NOT NULL DEFAULT '0',
-  `bo_use_list_content` int NOT NULL DEFAULT '0',
-  `bo_table_width` int NOT NULL DEFAULT '128',
-  `bo_subject_len` int NOT NULL DEFAULT '70',
-  `bo_mobile_subject_len` int NOT NULL DEFAULT '30',
-  `bo_page_rows` int NOT NULL DEFAULT '15',
-  `bo_mobile_page_rows` int NOT NULL DEFAULT '15',
-  `bo_new` int NOT NULL DEFAULT '24',
-  `bo_hot` int NOT NULL DEFAULT '100',
-  `bo_image_width` int NOT NULL DEFAULT '835',
+  `bo_use_rss_view` int(11) NOT NULL DEFAULT '0',
+  `bo_use_good` int(11) NOT NULL DEFAULT '0',
+  `bo_use_nogood` int(11) NOT NULL DEFAULT '0',
+  `bo_use_name` int(11) NOT NULL DEFAULT '0',
+  `bo_use_signature` int(11) NOT NULL DEFAULT '0',
+  `bo_use_ip_view` int(11) NOT NULL DEFAULT '0',
+  `bo_use_list_view` int(11) NOT NULL DEFAULT '0',
+  `bo_use_list_file` int(11) NOT NULL DEFAULT '0',
+  `bo_use_list_content` int(11) NOT NULL DEFAULT '0',
+  `bo_table_width` int(11) NOT NULL DEFAULT '128',
+  `bo_subject_len` int(11) NOT NULL DEFAULT '70',
+  `bo_mobile_subject_len` int(11) NOT NULL DEFAULT '30',
+  `bo_page_rows` int(11) NOT NULL DEFAULT '15',
+  `bo_mobile_page_rows` int(11) NOT NULL DEFAULT '15',
+  `bo_new` int(11) NOT NULL DEFAULT '24',
+  `bo_hot` int(11) NOT NULL DEFAULT '100',
+  `bo_image_width` int(11) NOT NULL DEFAULT '835',
   `bo_skin` varchar(255) NOT NULL DEFAULT 'basic',
   `bo_mobile_skin` varchar(255) NOT NULL DEFAULT 'basic',
   `bo_include_head` varchar(255) DEFAULT NULL,
@@ -209,27 +209,27 @@ CREATE TABLE `tb_board` (
   `bo_content_tail` text,
   `bo_mobile_content_tail` text,
   `bo_insert_content` text,
-  `bo_gallery_cols` int NOT NULL DEFAULT '4',
-  `bo_gallery_width` int NOT NULL DEFAULT '128',
-  `bo_gallery_height` int NOT NULL DEFAULT '128',
-  `bo_mobile_gallery_width` int NOT NULL DEFAULT '100',
-  `bo_mobile_gallery_height` int NOT NULL DEFAULT '100',
-  `bo_upload_size` int NOT NULL DEFAULT '1048576',
-  `bo_reply_order` int NOT NULL DEFAULT '1',
-  `bo_use_search` int NOT NULL DEFAULT '0',
-  `bo_order` int NOT NULL DEFAULT '0',
-  `bo_count_write` int NOT NULL DEFAULT '0',
-  `bo_count_comment` int NOT NULL DEFAULT '0',
-  `bo_write_min` int NOT NULL DEFAULT '0',
-  `bo_write_max` int NOT NULL DEFAULT '0',
-  `bo_comment_min` int NOT NULL DEFAULT '0',
-  `bo_comment_max` int NOT NULL DEFAULT '0',
+  `bo_gallery_cols` int(11) NOT NULL DEFAULT '4',
+  `bo_gallery_width` int(11) NOT NULL DEFAULT '128',
+  `bo_gallery_height` int(11) NOT NULL DEFAULT '128',
+  `bo_mobile_gallery_width` int(11) NOT NULL DEFAULT '100',
+  `bo_mobile_gallery_height` int(11) NOT NULL DEFAULT '100',
+  `bo_upload_size` int(11) NOT NULL DEFAULT '1048576',
+  `bo_reply_order` int(11) NOT NULL DEFAULT '1',
+  `bo_use_search` int(11) NOT NULL DEFAULT '0',
+  `bo_order` int(11) NOT NULL DEFAULT '0',
+  `bo_count_write` int(11) NOT NULL DEFAULT '0',
+  `bo_count_comment` int(11) NOT NULL DEFAULT '0',
+  `bo_write_min` int(11) NOT NULL DEFAULT '0',
+  `bo_write_max` int(11) NOT NULL DEFAULT '0',
+  `bo_comment_min` int(11) NOT NULL DEFAULT '0',
+  `bo_comment_max` int(11) NOT NULL DEFAULT '0',
   `bo_notice` text,
-  `bo_upload_count` int NOT NULL DEFAULT '0',
-  `bo_use_email` int NOT NULL DEFAULT '0',
-  `bo_use_cert` int NOT NULL DEFAULT '0' COMMENT 'general:0, cert:1, adult:2, hp-cert:3, hp-adult:4',
-  `bo_use_sns` int NOT NULL DEFAULT '0',
-  `bo_use_captcha` int NOT NULL DEFAULT '0',
+  `bo_upload_count` int(11) NOT NULL DEFAULT '0',
+  `bo_use_email` int(11) NOT NULL DEFAULT '0',
+  `bo_use_cert` int(11) NOT NULL DEFAULT '0' COMMENT 'general:0, cert:1, adult:2, hp-cert:3, hp-adult:4',
+  `bo_use_sns` int(11) NOT NULL DEFAULT '0',
+  `bo_use_captcha` int(11) NOT NULL DEFAULT '0',
   `bo_sort_field` varchar(255) DEFAULT NULL,
   `bo_1_subj` varchar(255) DEFAULT NULL,
   `bo_2_subj` varchar(255) DEFAULT NULL,
@@ -258,7 +258,7 @@ CREATE TABLE `tb_board` (
   KEY `reg_datetime` (`reg_datetime`),
   KEY `mod_datetime` (`mod_datetime`),
   KEY `te_id` (`te_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -276,22 +276,22 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `tb_board_file`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `tb_board_file` (
   `id` char(36) NOT NULL COMMENT '게시판 첨부파일 고유 ID',
   `te_id` char(36) NOT NULL COMMENT 'tenant id',
   `bo_id` char(36) NOT NULL COMMENT '게시판 정보 테이블 Join ID',
   `wr_id` char(36) NOT NULL COMMENT '게시판 작성(write) 글 고유 ID',
-  `bf_no` int NOT NULL DEFAULT '0' COMMENT '게시판 1개 글에 첨부된 파일 순번',
+  `bf_no` int(11) NOT NULL DEFAULT '0' COMMENT '게시판 1개 글에 첨부된 파일 순번',
   `bf_source` varchar(64) NOT NULL COMMENT '첨부파일 원래 이름',
   `bf_fname` varchar(64) NOT NULL COMMENT '첨부파일 upload 후 생성된 파일명',
   `bf_path` varchar(255) NOT NULL COMMENT '첨부파일 위치 or url',
-  `bf_download` int NOT NULL DEFAULT '0' COMMENT '다운로드된 수',
+  `bf_download` int(11) NOT NULL DEFAULT '0' COMMENT '다운로드된 수',
   `bf_content` text COMMENT '메타 정보(필요한경우)',
-  `bf_filesize` int NOT NULL,
-  `bf_width` int NOT NULL,
-  `bf_height` int NOT NULL,
-  `bf_status` int NOT NULL DEFAULT '1' COMMENT '0:deleted, 1:use',
+  `bf_filesize` int(11) NOT NULL,
+  `bf_width` int(11) NOT NULL,
+  `bf_height` int(11) NOT NULL,
+  `bf_status` int(11) NOT NULL DEFAULT '1' COMMENT '0:deleted, 1:use',
   `bf_ext` varchar(4) NOT NULL COMMENT 'jpg, git, png, mp3, mp4, pdf...',
   `reg_datetime` datetime NOT NULL COMMENT '등록시각',
   `mod_datetime` datetime NOT NULL COMMENT '변경시각',
@@ -300,7 +300,7 @@ CREATE TABLE `tb_board_file` (
   KEY `reg_datetime` (`reg_datetime`),
   KEY `mod_datetime` (`mod_datetime`),
   KEY `te_id` (`te_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -318,7 +318,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `tb_board_good`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `tb_board_good` (
   `id` char(36) NOT NULL,
   `te_id` char(36) NOT NULL COMMENT 'tenant id',
@@ -333,7 +333,7 @@ CREATE TABLE `tb_board_good` (
   KEY `reg_datetime` (`reg_datetime`),
   KEY `mod_datetime` (`mod_datetime`),
   KEY `te_id` (`te_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -351,7 +351,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `tb_board_new`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `tb_board_new` (
   `id` char(36) NOT NULL,
   `te_id` char(36) NOT NULL COMMENT 'tenant id',
@@ -366,7 +366,7 @@ CREATE TABLE `tb_board_new` (
   KEY `reg_datetime` (`reg_datetime`),
   KEY `mod_datetime` (`mod_datetime`),
   KEY `te_id` (`te_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -384,7 +384,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `tb_board_write`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `tb_board_write` (
   `id` char(36) NOT NULL,
   `te_id` char(36) NOT NULL COMMENT 'tenant id',
@@ -392,18 +392,18 @@ CREATE TABLE `tb_board_write` (
   `mb_id` char(36) NOT NULL,
   `wr_subject` varchar(255) NOT NULL,
   `wr_name` varchar(64) NOT NULL,
-  `wr_num` int NOT NULL DEFAULT '0',
+  `wr_num` int(11) NOT NULL DEFAULT '0',
   `wr_reply` varchar(10) NOT NULL,
-  `wr_parent` int NOT NULL DEFAULT '0',
-  `wr_is_comment` int NOT NULL DEFAULT '0',
-  `wr_comment` int NOT NULL DEFAULT '0',
+  `wr_parent` int(11) NOT NULL DEFAULT '0',
+  `wr_is_comment` int(11) NOT NULL DEFAULT '0',
+  `wr_comment` int(11) NOT NULL DEFAULT '0',
   `wr_comment_reply` varchar(5) NOT NULL,
   `wr_category` varchar(64) NOT NULL COMMENT '게시판 내 서브 카테고리 명',
-  `wr_option` int NOT NULL DEFAULT '0' COMMENT 'html1:0, html2:1, secret:2, mail:3',
-  `wr_hit` int NOT NULL DEFAULT '0',
-  `wr_good` int NOT NULL DEFAULT '0',
-  `wr_nogood` int NOT NULL DEFAULT '0',
-  `wr_file` int NOT NULL DEFAULT '0',
+  `wr_option` int(11) NOT NULL DEFAULT '0' COMMENT 'html1:0, html2:1, secret:2, mail:3',
+  `wr_hit` int(11) NOT NULL DEFAULT '0',
+  `wr_good` int(11) NOT NULL DEFAULT '0',
+  `wr_nogood` int(11) NOT NULL DEFAULT '0',
+  `wr_file` int(11) NOT NULL DEFAULT '0',
   `reg_datetime` datetime NOT NULL COMMENT '등록시각',
   `mod_datetime` datetime NOT NULL COMMENT '변경시각',
   PRIMARY KEY (`id`),
@@ -411,7 +411,7 @@ CREATE TABLE `tb_board_write` (
   KEY `reg_datetime` (`reg_datetime`),
   KEY `mod_datetime` (`mod_datetime`),
   KEY `te_id` (`te_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -429,14 +429,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `tb_board_write_detail`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `tb_board_write_detail` (
   `wr_id` char(36) DEFAULT NULL,
   `wr_content` text NOT NULL,
   `wr_link1` text,
   `wr_link2` text,
-  `wr_link1_hit` int DEFAULT NULL,
-  `wr_link2_hit` int DEFAULT NULL,
+  `wr_link1_hit` int(11) DEFAULT NULL,
+  `wr_link2_hit` int(11) DEFAULT NULL,
   `wr_password` varchar(255) DEFAULT NULL,
   `wr_email` varchar(255) DEFAULT NULL,
   `wr_homepage` varchar(255) DEFAULT NULL,
@@ -455,7 +455,7 @@ CREATE TABLE `tb_board_write_detail` (
   `wr_10` varchar(255) DEFAULT NULL,
   KEY `wr_id` (`wr_id`),
   CONSTRAINT `tb_board_write_detail_ibfk_1` FOREIGN KEY (`wr_id`) REFERENCES `tb_board_write` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -473,7 +473,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `tb_company`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `tb_company` (
   `id` char(36) NOT NULL COMMENT '가입회사 고유 ID',
   `te_id` char(36) NOT NULL COMMENT 'tenant id',
@@ -481,11 +481,11 @@ CREATE TABLE `tb_company` (
   `mb_id` char(36) DEFAULT NULL COMMENT '가입회사 등록 member 고유 ID',
   `co_code` varchar(32) NOT NULL COMMENT '가입회사 코드',
   `co_name` varchar(64) NOT NULL COMMENT '가입회사명',
-  `co_type` int NOT NULL DEFAULT '0' COMMENT '0:개인, 1:법인, 2:협동조합...',
+  `co_type` int(11) NOT NULL DEFAULT '0' COMMENT '0:개인, 1:법인, 2:협동조합...',
   `co_reg_no` varchar(32) NOT NULL COMMENT '가입회사 사업자번호',
   `co_contract_start` date DEFAULT NULL,
   `co_contract_end` date DEFAULT NULL,
-  `co_status` int NOT NULL DEFAULT '0' COMMENT '상태 flag(-3: blocked, -2: withdrawal, -1: dormant, 0:wait, 1:company-otp-ceritified)',
+  `co_status` int(11) NOT NULL DEFAULT '0' COMMENT '상태 flag(-3: blocked, -2: withdrawal, -1: dormant, 0:wait, 1:company-otp-ceritified)',
   `co_prop` varchar(8192) DEFAULT NULL COMMENT '상세정보 JSON',
   `co_phone` varchar(64) DEFAULT NULL,
   `co_fax` varchar(64) DEFAULT NULL,
@@ -507,7 +507,7 @@ CREATE TABLE `tb_company` (
   CONSTRAINT `tb_company_ibfk_1` FOREIGN KEY (`ag_id`) REFERENCES `tb_agent` (`id`) ON DELETE SET NULL,
   CONSTRAINT `tb_company_ibfk_2` FOREIGN KEY (`mb_id`) REFERENCES `tb_member` (`id`) ON DELETE SET NULL,
   CONSTRAINT `tb_company_ibfk_3` FOREIGN KEY (`te_id`) REFERENCES `tb_tenant` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -525,24 +525,29 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `tb_company_member`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `tb_company_member` (
-  `id` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '가입회사 사용자 고유 ID',
-  `te_id` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'tenant id',
-  `mb_id` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '사용자 ID',
-  `co_id` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '가입회사 대행사 고유 ID',
-  `cm_otp` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'OTP 암호',
-  `cm_status` int NOT NULL DEFAULT '0' COMMENT '상태 flag(-3: blocked, -2: withdrawal, -1: dormant, 0:wait, 1:company-otp-ceritified)',
-  `cm_level` int NOT NULL DEFAULT '10' COMMENT '레벨 flag(0:guest, 10:co member, 11:co manager, 12:co admin)',
+  `id` char(36) CHARACTER SET utf8mb4 NOT NULL COMMENT '가입회사 사용자 고유 ID',
+  `te_id` char(36) CHARACTER SET utf8mb4 NOT NULL COMMENT 'tenant id',
+  `mb_id` char(36) CHARACTER SET utf8mb4 DEFAULT NULL COMMENT '사용자 ID',
+  `co_id` char(36) CHARACTER SET utf8mb4 DEFAULT NULL COMMENT '가입회사 대행사 고유 ID',
+  `cm_otp` varchar(32) CHARACTER SET utf8mb4 DEFAULT NULL COMMENT 'OTP 암호',
+  `cm_status` int(10) NOT NULL DEFAULT '0' COMMENT '상태 flag(-3: blocked, -2: withdrawal, -1: dormant, 0:wait, 1:company-otp-ceritified)',
+  `cm_level` int(10) NOT NULL DEFAULT '10' COMMENT '레벨 flag(0:guest, 10:co member, 11:co manager, 12:co admin)',
   `reg_datetime` datetime NOT NULL COMMENT '등록시각',
   `mod_datetime` datetime NOT NULL COMMENT '변경시각',
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE KEY `te_co_mb_uidx` (`te_id`,`co_id`,`mb_id`) USING BTREE,
+  UNIQUE KEY `co_mb_uidx` (`co_id`,`mb_id`) USING BTREE,
+  KEY `mb_id` (`mb_id`) USING BTREE,
+  KEY `te_id` (`te_id`) USING BTREE,
   KEY `reg_datetime` (`reg_datetime`) USING BTREE,
   KEY `mod_datetime` (`mod_datetime`) USING BTREE,
   KEY `cm_status` (`cm_status`) USING BTREE,
-  KEY `cm_level` (`cm_level`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  KEY `cm_level` (`cm_level`) USING BTREE,
+  CONSTRAINT `tb_company_member_ibfk_1` FOREIGN KEY (`co_id`) REFERENCES `tb_company` (`id`) ON DELETE SET NULL ON UPDATE NO ACTION,
+  CONSTRAINT `tb_company_member_ibfk_2` FOREIGN KEY (`mb_id`) REFERENCES `tb_member` (`id`) ON DELETE SET NULL ON UPDATE NO ACTION,
+  CONSTRAINT `tb_company_member_ibfk_3` FOREIGN KEY (`te_id`) REFERENCES `tb_tenant` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -560,12 +565,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `tb_continent`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `tb_continent` (
   `id` varchar(36) NOT NULL,
   `name` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='continent table';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='continent table';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -584,13 +589,13 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `tb_country`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `tb_country` (
   `id` varchar(36) NOT NULL,
   `name` varchar(255) NOT NULL,
   `continent_id` varchar(32) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='country table';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='country table';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -609,16 +614,16 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `tb_group`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `tb_group` (
   `id` char(36) NOT NULL,
   `te_id` char(36) NOT NULL COMMENT 'tenant id',
   `gr_name` varchar(36) NOT NULL,
   `gr_subject` varchar(255) NOT NULL,
-  `gr_device` int NOT NULL DEFAULT '2' COMMENT '0:pc, 1:mobile, 2:both',
+  `gr_device` int(11) NOT NULL DEFAULT '2' COMMENT '0:pc, 1:mobile, 2:both',
   `gr_admin` varchar(255) DEFAULT NULL,
-  `gr_use_access` int NOT NULL DEFAULT '0',
-  `gr_order` int NOT NULL DEFAULT '0',
+  `gr_use_access` int(11) NOT NULL DEFAULT '0',
+  `gr_order` int(11) NOT NULL DEFAULT '0',
   `gr_1_subj` varchar(255) DEFAULT NULL,
   `gr_2_subj` varchar(255) DEFAULT NULL,
   `gr_3_subj` varchar(255) DEFAULT NULL,
@@ -646,7 +651,7 @@ CREATE TABLE `tb_group` (
   KEY `reg_datetime` (`reg_datetime`),
   KEY `mod_datetime` (`mod_datetime`),
   KEY `te_id` (`te_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -664,7 +669,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `tb_member`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `tb_member` (
   `id` char(36) NOT NULL,
   `te_id` char(36) NOT NULL COMMENT 'tenant id',
@@ -672,9 +677,9 @@ CREATE TABLE `tb_member` (
   `mb_mobile_hash` char(64) NOT NULL COMMENT 'member sha256(mobile)',
   `mb_password` varchar(255) NOT NULL COMMENT 'member password',
   `mb_name` varchar(64) NOT NULL COMMENT 'member name',
-  `mb_level` int NOT NULL DEFAULT '0' COMMENT 'member level(0:guest, 1:user, 10:company, 11:company user, 30:agent, 31:agent user, 1000:admin',
-  `mb_point` bigint NOT NULL DEFAULT '0' COMMENT 'member point value',
-  `mb_status` int NOT NULL DEFAULT '0' COMMENT 'member email or mobile certification flag(-3: blocked, -2: withdrawal, -1: dormant, 0:wait for certification, 1:email-only, 2:mobile-only, 3:both)',
+  `mb_level` int(11) NOT NULL DEFAULT '0' COMMENT 'member level(0:guest, 1:user, 10:company, 11:company user, 30:agent, 31:agent user, 1000:admin',
+  `mb_point` bigint(20) NOT NULL DEFAULT '0' COMMENT 'member point value',
+  `mb_status` int(11) NOT NULL DEFAULT '0' COMMENT 'member email or mobile certification flag(-3: blocked, -2: withdrawal, -1: dormant, 0:wait for certification, 1:email-only, 2:mobile-only, 3:both)',
   `reg_datetime` datetime NOT NULL,
   `mod_datetime` datetime NOT NULL,
   PRIMARY KEY (`id`),
@@ -686,7 +691,7 @@ CREATE TABLE `tb_member` (
   KEY `mod_datetime` (`mod_datetime`),
   KEY `te_id` (`te_id`),
   CONSTRAINT `tb_member_ibfk_1` FOREIGN KEY (`te_id`) REFERENCES `tb_tenant` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -704,7 +709,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `tb_member_detail`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `tb_member_detail` (
   `mb_id` char(36) DEFAULT NULL COMMENT 'member join id(uuid)',
   `mb_mobile` varchar(32) NOT NULL,
@@ -741,8 +746,8 @@ CREATE TABLE `tb_member_detail` (
   `mb_open_date` date DEFAULT NULL,
   `mb_greeting` text,
   `mb_memo_call` varchar(255) DEFAULT NULL,
-  `mb_memo_cnt` int DEFAULT NULL,
-  `mb_scrap_cnt` int DEFAULT NULL,
+  `mb_memo_cnt` int(11) DEFAULT NULL,
+  `mb_scrap_cnt` int(11) DEFAULT NULL,
   `mb_1` varchar(255) DEFAULT NULL,
   `mb_2` varchar(255) DEFAULT NULL,
   `mb_3` varchar(255) DEFAULT NULL,
@@ -757,7 +762,7 @@ CREATE TABLE `tb_member_detail` (
   UNIQUE KEY `mb_mobile` (`mb_mobile`),
   UNIQUE KEY `mb_id` (`mb_id`),
   CONSTRAINT `tb_member_detail_ibfk_1` FOREIGN KEY (`mb_id`) REFERENCES `tb_member` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -775,24 +780,24 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `tb_tenant`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `tb_tenant` (
   `id` varchar(36) NOT NULL,
   `name` varchar(64) NOT NULL,
-  `type` int NOT NULL DEFAULT '1',
+  `type` int(11) NOT NULL DEFAULT '1',
   `description` varchar(255) DEFAULT NULL,
   `jdbc_host` varchar(255) DEFAULT NULL,
   `jdbc_user` varchar(32) DEFAULT NULL,
   `jdbc_pass` varchar(32) DEFAULT NULL,
   `country_id` varchar(32) NOT NULL,
-  `host_url` varchar(255) DEFAULT NULL,
-  `enable` tinyint(1) NOT NULL DEFAULT '1',
+  `host_url` varchar(255) NOT NULL,
+  `ENABLE` bit(1) NOT NULL DEFAULT b'1',
   `reg_datetime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `mod_datetime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `tenant_id_uindex` (`id`),
   UNIQUE KEY `tenant_name_country_uindex` (`name`,`country_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='tenant table';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='tenant table';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -801,7 +806,7 @@ CREATE TABLE `tb_tenant` (
 
 LOCK TABLES `tb_tenant` WRITE;
 /*!40000 ALTER TABLE `tb_tenant` DISABLE KEYS */;
-INSERT INTO `tb_tenant` VALUES ('abb:oem:cn','ABB',1,'ABB China',NULL,NULL,NULL,'CN','http://47.98.59.87/',1,'2022-03-31 17:45:07','2022-03-31 17:45:39'),('abb:oem:de','ABB',1,'ABB Germany',NULL,NULL,NULL,'DE','http://ag0513.emoldino.com/',1,'2022-03-31 17:45:07','2022-03-31 17:45:39'),('abb:oem:it','ABB',1,'ABB Italy',NULL,NULL,NULL,'IT','http://18.221.152.61/',0,'2022-03-31 17:45:07','2022-03-31 17:45:39'),('bd:oem:mx','BD',1,'BD Mexico',NULL,NULL,NULL,'MX','http://3.18.124.254/',0,'2022-03-31 17:45:07','2022-03-31 17:45:39'),('beiersdorf:oem:de','Beiersdorf',1,'Beiersdorf Germany',NULL,NULL,NULL,'DE','https://bg0824.emoldino.com/',1,'2022-03-31 17:45:07','2022-03-31 17:45:39'),('boticario:oem:br','Boticario',1,'Boticario Brazil',NULL,NULL,NULL,'BR','https://bb0703.emoldino.com/',1,'2022-03-31 17:45:07','2022-03-31 17:45:39'),('continental:oem:br','Continental',1,'Continental Brazil',NULL,NULL,NULL,'BR','https://cb0413.emoldino.com/',1,'2022-03-31 17:45:07','2022-03-31 17:45:39'),('dana:oem:us','Dana',1,'Dana',NULL,NULL,NULL,'US','http://49.247.200.147:82/',1,'2022-03-31 17:45:07','2022-03-31 17:45:39'),('de\'longhi:oem:it','De\'Longhi',1,'De\'Longhi Italy',NULL,NULL,NULL,'IT','https://di0402.emoldino.com/',1,'2022-03-31 17:45:07','2022-03-31 17:45:39'),('denso:oem:it','Denso',1,'Denso Italy',NULL,NULL,NULL,'IT','https://fc0616.emoldino.com/',1,'2022-03-31 17:45:07','2022-03-31 17:45:39'),('dyson:oem:sg','Dyson',1,'Dyson',NULL,NULL,NULL,'SG','https://ds0124.emoldino.com/',1,'2022-03-31 17:45:07','2022-03-31 17:45:39'),('eaton:oem:pr','Eaton',1,'Eaton Puerto Rico',NULL,NULL,NULL,'PR','https://ep1111.emoldino.com/',1,'2022-03-31 17:45:07','2022-03-31 17:45:39'),('electrolux:oem:br','Electrolux',1,'Electrolux Brazil',NULL,NULL,NULL,'BR','https://eb0702.emoldino.com/',1,'2022-03-31 17:45:07','2022-03-31 17:45:39'),('foehl:oem:cn','Foehl',1,'Foehl China',NULL,NULL,NULL,'CN','http://47.111.178.125/l',0,'2022-03-31 17:45:07','2022-03-31 17:45:39'),('icee:oem:us','ICEE',1,'ICEE',NULL,NULL,NULL,'US','http://49.247.200.147:81/',1,'2022-03-31 17:45:07','2022-03-31 17:45:39'),('l\'oreal:oem:fr','L\'Oreal',1,'L\'Oreal France',NULL,NULL,NULL,'FR','https://lf0408.emoldino.com/',1,'2022-03-31 17:45:07','2022-03-31 17:45:39'),('mabe:oem:mx','Mabe',1,'Mabe Mexico',NULL,NULL,NULL,'MX','https://mm0427.emoldino.com/',1,'2022-03-31 17:45:07','2022-03-31 17:45:39'),('megatech-industries:oem:cz','Megatech-industries',1,'Megatech-industries Cezch',NULL,NULL,NULL,'CZ','https://ml0421.emoldino.com/',1,'2022-03-31 17:45:07','2022-03-31 17:45:39'),('nestle:oem:ch','Nestle',1,'Nestle Switerland',NULL,NULL,NULL,'CH','https://ns0407.emoldino.com/',1,'2022-03-31 17:45:07','2022-03-31 17:45:39'),('p&g:oem:ch','P&G',1,'P&G Switzerland',NULL,NULL,NULL,'CH','https://ps0611.emoldino.com/',1,'2022-03-31 17:45:07','2022-03-31 17:45:39'),('philips:oem:id','Philips',1,'Philips Indonisia',NULL,NULL,NULL,'ID','http://18.189.137.58/',0,'2022-03-31 17:45:07','2022-03-31 17:45:39'),('philips:oem:ro','Philips',1,'Philips Romania',NULL,NULL,NULL,'RO','https://pr0202.emoldino.com/',1,'2022-03-31 17:45:07','2022-03-31 17:45:39'),('sbd:oem:in','SBD',1,'SBD India',NULL,NULL,NULL,'IN','https://su0901.emoldino.com/',1,'2022-03-31 17:45:07','2022-03-31 17:45:39'),('schaffler:oem:de','Schaeffler',1,'Schaeffler Germany',NULL,NULL,NULL,'DE','http://sg0527.emoldino.com/',1,'2022-03-31 17:45:07','2022-03-31 17:45:39'),('unilever:oem:gb','Unilever',1,'Unilever',NULL,NULL,NULL,'GB','http://49.247.200.147:85/',1,'2022-03-31 17:45:07','2022-03-31 17:45:39'),('volvo:oem:fr','Volvo',1,'Volvo France',NULL,NULL,NULL,'FR','https://vf0616.emoldino.com/',1,'2022-03-31 17:45:07','2022-03-31 17:45:39'),('zebra:oem:cn','Zebra',1,'Zebra China',NULL,NULL,NULL,'CN','http://114.55.66.143/',1,'2022-03-31 17:45:07','2022-03-31 17:45:39');
+INSERT INTO `tb_tenant` VALUES ('abb-oem-cn','ABB',1,'ABB China',NULL,NULL,NULL,'CN','http://47.98.59.87/','','2022-03-31 17:45:07','2022-03-31 17:45:39'),('abb-oem-de','ABB',1,'ABB Germany',NULL,NULL,NULL,'DE','http://ag0513.emoldino.com/','','2022-03-31 17:45:07','2022-03-31 17:45:39'),('abb-oem-it','ABB',1,'ABB Italy',NULL,NULL,NULL,'IT','http://18.221.152.61/','\0','2022-03-31 17:45:07','2022-03-31 17:45:39'),('bd-oem-mx','BD',1,'BD Mexico',NULL,NULL,NULL,'MX','http://3.18.124.254/','\0','2022-03-31 17:45:07','2022-03-31 17:45:39'),('beiersdorf-oem-de','Beiersdorf',1,'Beiersdorf Germany',NULL,NULL,NULL,'DE','https://bg0824.emoldino.com/','','2022-03-31 17:45:07','2022-03-31 17:45:39'),('boticario-oem-br','Boticario',1,'Boticario Brazil',NULL,NULL,NULL,'BR','https://bb0703.emoldino.com/','','2022-03-31 17:45:07','2022-03-31 17:45:39'),('continental-oem-br','Continental',1,'Continental Brazil',NULL,NULL,NULL,'BR','https://cb0413.emoldino.com/','','2022-03-31 17:45:07','2022-03-31 17:45:39'),('dana-oem-us','Dana',1,'Dana',NULL,NULL,NULL,'US','http://49.247.200.147:82/','','2022-03-31 17:45:07','2022-03-31 17:45:39'),('delonghi-oem-it','DeLonghi',1,'De\'Longhi Italy',NULL,NULL,NULL,'IT','https://di0402.emoldino.com/','','2022-03-31 17:45:07','2022-03-31 17:45:39'),('denso-oem-it','Denso',1,'Denso Italy',NULL,NULL,NULL,'IT','https://fc0616.emoldino.com/','','2022-03-31 17:45:07','2022-03-31 17:45:39'),('dyson-oem-sg','Dyson',1,'Dyson',NULL,NULL,NULL,'SG','https://ds0124.emoldino.com/','','2022-03-31 17:45:07','2022-03-31 17:45:39'),('eaton-oem-pr','Eaton',1,'Eaton Puerto Rico',NULL,NULL,NULL,'PR','https://ep1111.emoldino.com/','','2022-03-31 17:45:07','2022-03-31 17:45:39'),('electrolux-oem-br','Electrolux',1,'Electrolux Brazil',NULL,NULL,NULL,'BR','https://eb0702.emoldino.com/','','2022-03-31 17:45:07','2022-03-31 17:45:39'),('emoldinoDemo-own-kr','eMoldinoDemo',0,'eMoldino-demo test server',NULL,NULL,NULL,'KR','https://demo.emoldino.com/','','2022-04-25 12:01:39','2022-04-25 12:01:39'),('emoldinoDev-own-kr','eMoldinoDev',0,'eMoldino-dev test server',NULL,NULL,NULL,'KR','https://dev.emoldino.com/','','2022-04-25 11:59:53','2022-04-25 11:59:53'),('emoldinoDevFeature-own-kr','eMoldinoDevFeature',0,'eMoldino-dev-feature test server',NULL,NULL,NULL,'KR','https://dev-feature.emoldino.com/','','2022-04-25 11:59:53','2022-04-25 11:59:53'),('emoldinoNew-own-kr','eMoldinoNew',0,'eMoldino-new sensor test server',NULL,NULL,NULL,'KR','https://new.emoldino.com/','','2022-04-25 11:59:53','2022-04-25 11:59:53'),('foehl-oem-cn','Foehl',1,'Foehl China',NULL,NULL,NULL,'CN','http://47.111.178.125/l','\0','2022-03-31 17:45:07','2022-03-31 17:45:39'),('icee-oem-us','ICEE',1,'ICEE',NULL,NULL,NULL,'US','http://49.247.200.147:81/','','2022-03-31 17:45:07','2022-03-31 17:45:39'),('loreal-oem-fr','Loreal',1,'L\'Oreal France',NULL,NULL,NULL,'FR','https://lf0408.emoldino.com/','','2022-03-31 17:45:07','2022-03-31 17:45:39'),('mabe-oem-mx','Mabe',1,'Mabe Mexico',NULL,NULL,NULL,'MX','https://mm0427.emoldino.com/','','2022-03-31 17:45:07','2022-03-31 17:45:39'),('megatechIndustries-oem-cz','MegatechIndustries',1,'Megatech-industries Cezch',NULL,NULL,NULL,'CZ','https://ml0421.emoldino.com/','','2022-03-31 17:45:07','2022-03-31 17:45:39'),('nestle-oem-ch','Nestle',1,'Nestle Switerland',NULL,NULL,NULL,'CH','https://ns0407.emoldino.com/','','2022-03-31 17:45:07','2022-03-31 17:45:39'),('philips-oem-id','Philips',1,'Philips Indonisia',NULL,NULL,NULL,'ID','http://18.189.137.58/','\0','2022-03-31 17:45:07','2022-03-31 17:45:39'),('philips-oem-ro','Philips',1,'Philips Romania',NULL,NULL,NULL,'RO','https://pr0202.emoldino.com/','','2022-03-31 17:45:07','2022-03-31 17:45:39'),('png-oem-ch','png',1,'P&G Switzerland',NULL,NULL,NULL,'CH','https://ps0611.emoldino.com/','','2022-03-31 17:45:07','2022-03-31 17:45:39'),('sbd-oem-in','SBD',1,'SBD India',NULL,NULL,NULL,'IN','https://su0901.emoldino.com/','','2022-03-31 17:45:07','2022-03-31 17:45:39'),('schaffler-oem-de','Schaeffler',1,'Schaeffler Germany',NULL,NULL,NULL,'DE','http://sg0527.emoldino.com/','','2022-03-31 17:45:07','2022-03-31 17:45:39'),('unilever-oem-gb','Unilever',1,'Unilever',NULL,NULL,NULL,'GB','http://49.247.200.147:85/','','2022-03-31 17:45:07','2022-03-31 17:45:39'),('volvo-oem-fr','Volvo',1,'Volvo France',NULL,NULL,NULL,'FR','https://vf0616.emoldino.com/','','2022-03-31 17:45:07','2022-03-31 17:45:39'),('zebra-oem-cn','Zebra',1,'Zebra China',NULL,NULL,NULL,'CN','http://114.55.66.143/','','2022-03-31 17:45:07','2022-03-31 17:45:39');
 /*!40000 ALTER TABLE `tb_tenant` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -814,4 +819,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-04-13 14:27:53
+-- Dump completed on 2022-05-02  7:14:26

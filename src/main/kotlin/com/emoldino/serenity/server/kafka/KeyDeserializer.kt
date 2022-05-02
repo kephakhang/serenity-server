@@ -1,8 +1,8 @@
 package com.emoldino.serenity.server.kafka
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.KotlinModule
+//import com.fasterxml.jackson.databind.ObjectMapper
+//import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+//import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.emoldino.serenity.server.env.Env
 import mu.KotlinLogging
 import org.apache.kafka.common.serialization.Deserializer
@@ -11,9 +11,9 @@ import java.nio.charset.Charset
 private val logger = KotlinLogging.logger {}
 
 class KeyDeserializer(
-  private val objectMapper: ObjectMapper = ObjectMapper()
-    .registerModule(JavaTimeModule())
-    .registerModule(KotlinModule())
+//  private val objectMapper: ObjectMapper = ObjectMapper()
+//    .registerModule(JavaTimeModule())
+//    .registerModule(KotlinModule())
 ) : Deserializer<String?> {
 
   override fun deserialize(topic: String, data: ByteArray): String {

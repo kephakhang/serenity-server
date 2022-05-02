@@ -17,11 +17,11 @@ buildscript {
 
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_plugin_version"
-        classpath "com.github.jengelman.gradle.plugins:shadow:$shadow_version"
+        classpath "com.github.johnrengelman.shadow:com.github.johnrengelman.shadow.gradle.plugin:$shadow_version"
         classpath "org.jetbrains.kotlin:kotlin-noarg:$kotlin_plugin_version"
         classpath "org.jetbrains.kotlin:kotlin-allopen:$kotlin_plugin_version"
         classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_plugin_version"
-//        classpath "org.jetbrains.kotlin.kapt:org.jetbrains.kotlin.kapt.gradle.plugin:$kotlin_plugin_version"
+        classpath "org.jetbrains.kotlin.kapt:org.jetbrains.kotlin.kapt.gradle.plugin:$kotlin_plugin_version"
         classpath "org.openapitools:openapi-generator-gradle-plugin:$openapi_generator_version"
     }
 }
@@ -80,15 +80,15 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinx_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-reactor:$kotlinx_version"
     implementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_plugin_version"
-//    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:$kotlin_serialization_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlin_serialization_version"
     implementation "ch.qos.logback:logback-classic:$logback_version"
     implementation "ch.qos.logback:logback-core:$logback_version"
     implementation "org.slf4j:slf4j-api:$slf4j_version"
 
     implementation "org.codehaus.janino:janino:$janino_version"
-    implementation "org.eclipse.jetty:jetty-http:$jetty_version"
-    implementation "org.eclipse.jetty:jetty-io:$jetty_version"
-    implementation "org.eclipse.jetty:jetty-util:$jetty_version"
+//    implementation "org.eclipse.jetty:jetty-http:$jetty_version"
+//    implementation "org.eclipse.jetty:jetty-io:$jetty_version"
+//    implementation "org.eclipse.jetty:jetty-util:$jetty_version"
     //    implementation "io.swagger.core.v3:swagger-annotations:$swagger_version"
 //    implementation "io.swagger.core.v3:swagger-core:$swagger_version"
     implementation "org.hibernate:hibernate-core:$hibernate_version"
@@ -117,17 +117,12 @@ dependencies {
     implementation "io.ktor:ktor-server-call-logging:$ktor_version"
     implementation "io.ktor:ktor-server-content-negotiation:$ktor_version"
     implementation "io.ktor:ktor-network-tls-jvm:$ktor_version"
-    implementation "io.ktor:ktor-serialization-kotlinx-cbor:$ktor_version"
+    implementation "io.ktor:ktor-jackson:1.6.8"
+    implementation "io.ktor:ktor-serialization-jackson:$ktor_version"
     implementation "io.ktor:ktor-server-forwarded-header:$ktor_version"
-    implementation "io.ktor:ktor-serialization-kotlinx-json:$ktor_version"
     testImplementation "io.ktor:ktor-server-tests-jvm:$ktor_version"
     kapt("com.querydsl:querydsl-apt:$querydsl_version:jpa")
     annotationProcessor("com.google.dagger:dagger-compiler:$dagger_version")
-    implementation("io.jsonwebtoken:jjwt-api:$jjwt_version")
-    implementation("io.jsonwebtoken:jjwt-impl:$jjwt_version")
-    // Uncomment the next line if you want to use RSASSA-PSS (PS256, PS384, PS512) algorithms
-    //runtime("org.bouncycastle:bcprov-jdk15on:$bcprov_version")
-    implementation("io.jsonwebtoken:jjwt-jackson:$jjwt_version")
     // https://mvnrepository.com/artifact/io.reactivex.rxjava3/rxkotlin
     //runtimeOnly("io.reactivex.rxjava3:rxkotlin:$rxkotlin_version")
     implementation "com.zaxxer:HikariCP:$hikaricp_version"
@@ -138,18 +133,20 @@ dependencies {
     implementation "io.github.microutils:kotlin-logging:$kotlin_logging_version"
     implementation "javax.persistence:javax.persistence-api:$javax_persistence_version"
     implementation "javax.annotation:javax.annotation-api:$javax_annotation_version"
-//    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$fasterxml_version"
-//    implementation "com.fasterxml.jackson.module:jackson-module-kotlin:$fasterxml_version"
-//    implementation("com.fasterxml.jackson.datatype:jackson-datatype-hibernate5:$fasterxml_version")
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$fasterxml_version"
+    implementation "com.fasterxml.jackson.module:jackson-module-kotlin:$fasterxml_version"
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-hibernate5:$fasterxml_version")
+
     implementation "org.hibernate.ogm:hibernate-ogm-redis:$ogm_redis_version"
     implementation "com.sultanofcardio:mailman:$mail_version"
     implementation "org.mindrot:jbcrypt:$jbcrypt_version"
     implementation "p6spy:p6spy:$p6spy_version"
     implementation "com.google.code.gson:gson:$gson_version"
-//    implementation("org.openapitools:openapi-generator:$openapi_generator_version") {
-//        exclude group: "org.slf4j", module: "slf4j-simple"
-//    }
- //   implementation "org.openapitools:openapi-generator-cli:$openapi_generator_version"
+//    runtimeOnly "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version"
+    implementation("org.openapitools:openapi-generator:$openapi_generator_version") {
+        exclude group: "org.slf4j", module: "slf4j-simple"
+    }
+    implementation "org.openapitools:openapi-generator-cli:$openapi_generator_version"
 
     // QueryDSL
     implementation("com.querydsl:querydsl-core:${querydsl_version}")
