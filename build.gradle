@@ -23,6 +23,7 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_plugin_version"
         classpath "org.jetbrains.kotlin.kapt:org.jetbrains.kotlin.kapt.gradle.plugin:$kotlin_plugin_version"
         classpath "org.openapitools:openapi-generator-gradle-plugin:$openapi_generator_version"
+        classpath "org.liquibase:liquibase-gradle-plugin:$liquibase_gradle_version"
     }
 }
 
@@ -35,6 +36,7 @@ apply plugin: "com.github.johnrengelman.shadow"
 apply plugin: "org.jetbrains.kotlin.plugin.allopen"
 apply plugin: "org.jetbrains.kotlin.plugin.noarg"
 apply plugin: "org.jetbrains.kotlin.plugin.serialization"
+apply plugin: "org.liquibase.gradle"
 apply plugin: "application"
 
 
@@ -73,6 +75,7 @@ dependencies {
     subprojects.forEach {
         implementation(project(it.path))
     }
+    implementation("org.liquibase:liquibase-core:$liquibase_version")
     implementation("com.google.devtools.ksp:symbol-processing-api:$ksp_version")
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
@@ -81,11 +84,12 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-reactor:$kotlinx_version"
     implementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_plugin_version"
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlin_serialization_version"
-    implementation "ch.qos.logback:logback-classic:$logback_version"
-    implementation "ch.qos.logback:logback-core:$logback_version"
-    implementation "org.slf4j:slf4j-api:$slf4j_version"
+//    implementation "ch.qos.logback:logback-classic:$logback_version"
+//    implementation "ch.qos.logback:logback-core:$logback_version"
+//    implementation "org.slf4j:slf4j-api:$slf4j_version"
+//    implementation "org.slf4j:slf4j-ext:$slf4j_version"
 
-    implementation "org.codehaus.janino:janino:$janino_version"
+//    implementation "org.codehaus.janino:janino:$janino_version"
 //    implementation "org.eclipse.jetty:jetty-http:$jetty_version"
 //    implementation "org.eclipse.jetty:jetty-io:$jetty_version"
 //    implementation "org.eclipse.jetty:jetty-util:$jetty_version"
@@ -143,9 +147,9 @@ dependencies {
     implementation "p6spy:p6spy:$p6spy_version"
     implementation "com.google.code.gson:gson:$gson_version"
 //    runtimeOnly "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version"
-    implementation("org.openapitools:openapi-generator:$openapi_generator_version") {
-        exclude group: "org.slf4j", module: "slf4j-simple"
-    }
+//    implementation("org.openapitools:openapi-generator:$openapi_generator_version") {
+//        exclude group: "org.slf4j", module: "slf4j-simple"
+//    }
     implementation "org.openapitools:openapi-generator-cli:$openapi_generator_version"
 
     // QueryDSL

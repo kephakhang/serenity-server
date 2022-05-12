@@ -6,23 +6,18 @@ import com.emoldino.serenity.exception.EmolException
 import com.emoldino.serenity.exception.ErrorCode
 import com.emoldino.serenity.exception.SessionNotFoundException
 import com.emoldino.serenity.extensions.stackTraceString
-import com.emoldino.serenity.server.auth.JwtConfig
 import com.emoldino.serenity.server.env.Env
 import com.emoldino.serenity.server.jpa.own.dto.Response
 import com.emoldino.serenity.server.jpa.own.dto.UserDto
-import com.emoldino.serenity.server.service.UserService
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.http.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
-import io.ktor.server.routing.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import mu.KotlinLogging
-import java.util.concurrent.TimeUnit
 
 val logger = KotlinLogging.logger {}
 const val CRLF = "\n"
@@ -137,7 +132,7 @@ fun loggging(
     }
 }
 
-inline fun aop(call: ApplicationCall, withAuth: Boolean = true, body: () -> Unit): UserDto? {
+inline suspend fun aop(call: ApplicationCall, withAuth: Boolean = true, body: () -> Unit): UserDto? {
     val CRLF = "\n"
     val REQUEST_PREFIX = "Request: "
     val RESPONSE_PREFIX = "Response: "
@@ -150,30 +145,34 @@ inline fun aop(call: ApplicationCall, withAuth: Boolean = true, body: () -> Unit
     val startTime = System.nanoTime()
 
     try {
-        val session = call.request.call.authentication.principal<UserDto>() ?: throw SessionNotFoundException(
-            null,
-            "User Not Found"
-        )
+        if (withAuth) {
+            val session = call.request.call.authentication.principal<UserDto>() ?: throw SessionNotFoundException(
+                null,
+                "User Not Found"
+            )
+        }
         body()
     } catch (ex: EmolException) {
         logger.error("routing error : ${ex.stackTraceString}")
         isException = true
-        val err = EmolError.error(ex)
+
+        val err = Env.error(ex)
+        val errStatus = if (ex.httpStatus === null) err.status else ex.httpStatus
         val response = Response(err as Any, tid, requestUri, method.uppercase())
-        CoroutineScope(Dispatchers.Main).launch {
+        //CoroutineScope(Dispatchers.Main).launch {
             // background coroutine like thread
-            call.respond(HttpStatusCode(err.status, err.description), response)
-        }
+            call.respond(HttpStatusCode(errStatus, err.description), response)
+        //}
     } catch (t: Throwable) {
         logger.error("routing error : ${t.stackTraceString}")
         isException = true
-        val err = EmolError.error(ErrorCode.E00000)
+        val err = Env.error(ErrorCode.E00000)
         err.description = t.localizedMessage
         val response = Response(err as Any, tid, requestUri, method.uppercase())
-        CoroutineScope(Dispatchers.Main).launch {
+        //CoroutineScope(Dispatchers.Main).launch {
             // background coroutine like thread
             call.respond(HttpStatusCode(err.status, err.description), response)
-        }
+        //}
 
     } finally {
         if (logger.isDebugEnabled) {

@@ -1,0 +1,13 @@
+{"requestId": "89c96d94-bf98-11ec-9d64-0242ac120002","tenantId": "emoldinoDev-own-kr",
+    "type": "ai",
+"data":{"aiType": "EM-AI-ANOM",
+ "dataType": ["shotCount", "temperature", "cycleTime", "LST"],
+ "moldId": "test",
+ "paramsNum": 4,
+ "period": {"endTime": "20220429185846", "startTime": "20220329185846"},//one month period // the end time is the one coming from serenity server through launch "lst"
+ "scale": {"daily":"TRUE",
+  "hourly":"TRUE",
+  "monthly":"FALSE",
+  "weekly":"TRUE",
+  "yearly":"FALSE"}}
+}

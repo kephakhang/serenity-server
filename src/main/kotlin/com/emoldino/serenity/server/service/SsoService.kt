@@ -1,5 +1,6 @@
 package com.emoldino.serenity.server.service
 
+import com.emoldino.serenity.common.KeyGenerator
 import com.sultanofcardio.models.Email
 import com.emoldino.serenity.exception.EmolException
 import com.emoldino.serenity.exception.ErrorCode
@@ -20,6 +21,7 @@ import com.emoldino.serenity.server.jpa.own.enum.UserStatus
 import com.emoldino.serenity.server.jpa.own.repository.MemberDetailRepository
 import com.emoldino.serenity.server.jpa.own.repository.MemberRepository
 import mu.KotlinLogging
+import java.sql.SQLIntegrityConstraintViolationException
 import java.time.Clock
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -65,25 +67,28 @@ class SsoService(val db: MemberRepository, val detailDB: MemberDetailRepository)
       mbName = signup.name
       mbPassword = BcryptHasher.hashPassword(signup.password)
       mbLevel = UserLevel.USER.no
-      mbLevel = UserStatus.WAIT.no
+      mbStatus = UserStatus.WAIT.no
     }
+
+    member.teId = Env.emoldinoTenantId
 
     var memberDetail = MemberDetail()
     db.transaction {
-      member = db.insert(member) ?: throw EmolException(ErrorCode.E10003)
+      member = db.insert(member)
       memberDetail.apply {
         mbId = member.id!!
         mbEmail = signup.email
         mbMobile = signup.mobile
         mbEmailCertify = LocalDateTime.now(Clock.systemUTC())
-        mbEmailCertify2 = com.emoldino.serenity.common.KeyGenerator.generateMobileAuth()
+        mbEmailCertify2 = KeyGenerator.generateMobileAuth()
       }
+      memberDetail.mbTodayLogin = memberDetail.mbEmailCertify
       memberDetail = detailDB.insert(memberDetail)
       member.detail = memberDetail
     }
 
-    val content = Env.confirmEmailContent.replace("{{action_url}}", Env.apiHostUrl + "/sso/confirm/email?id=${member.id}&confirm=${memberDetail.mbEmailCertify2}")
-    Env.mailSender.sendEmail(Email(Env.email, "[eMoldino] Thank you for singup ::: Email Certification", content, memberDetail.mbEmail!!))
+//    val content = Env.confirmEmailContent.replace("{{action_url}}", Env.apiHostUrl + "/sso/confirm/email?id=${member.id}&confirm=${memberDetail.mbEmailCertify2}")
+//    Env.mailSender.sendEmail(Email(Env.email, "[eMoldino] Thank you for singup ::: Email Certification", content, memberDetail.mbEmail!!))
     return member.toUserDto()
   }
 

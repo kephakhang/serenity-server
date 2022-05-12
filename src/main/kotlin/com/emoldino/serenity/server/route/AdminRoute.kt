@@ -15,14 +15,18 @@ import kotlin.jvm.Throws
 fun Route.admin(adminService: AdminService) {
 
     post("/sso/admin/login") {
-        val login = call.receive<LoginDto>()
-        val user = adminService.login(login)
-        call.respond(user)
+        aop(call, false) {
+            val login = call.receive<LoginDto>()
+            val user = adminService.login(login)
+            call.respond(user)
+        }
     }
 
     post("/sso/admin/signup") {
-        val signup = call.receive<SignupDto>()
-        val user = adminService.register(signup)
-        call.respond(user)
+        aop(call, false) {
+            val signup = call.receive<SignupDto>()
+            val user = adminService.register(signup)
+            call.respond(user)
+        }
     }
 }

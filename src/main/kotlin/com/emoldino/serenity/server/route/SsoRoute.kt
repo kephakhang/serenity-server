@@ -24,36 +24,45 @@ fun Route.sso(ssoService: SsoService) {
     }
 
     post("/sso/login") {
-        val login: LoginDto = call.receive<LoginDto>()
-        val user = ssoService.login(login)
-        call.respond(user)
+        aop(call, false) {
+            val login: LoginDto = call.receive<LoginDto>()
+            val user = ssoService.login(login)
+            call.respond(user)
+        }
     }
 
     get("/sso/check") {
-        val loginId: String = call.parameters["loginId"].toString()
-        if (ssoService.checkAvailable(loginId)) {
-            call.respond(OK)
-        } else {
-            call.respond(HttpStatusCode.Found, NOK)
+        aop(call, false) {
+            val loginId: String = call.parameters["loginId"].toString()
+            if (ssoService.checkAvailable(loginId)) {
+                call.respond(OK)
+            } else {
+                call.respond(HttpStatusCode.Found, NOK)
+            }
         }
     }
 
     post("/sso/signup") {
-        val signup = call.receive<SignupDto>()
-        logger.debug("/sso/signup", Json.encodeToString(signup))
-        val user = ssoService.register(signup)
-        call.respond(user)
+        aop(call, false) {
+            val signup = call.receive<SignupDto>()
+            logger.debug("/sso/signup", Env.gson.toJson(signup))
+            val user = ssoService.register(signup)
+            call.respond(user)
+        }
     }
 
     get("/sso/confirm/email") {
-        val email: ConfirmDto = call.receive<ConfirmDto>()
-        val uid = email.uid
-        val confirm = email.confirm
-        val ret: String? = ssoService.confirmEmail(uid, confirm)
-        if (ret == null) {
-            call.respondRedirect(Env.confirmSuccessUrl)
-        } else {
-            call.respondRedirect(Env.confirmFailureUrl)
+        aop(call, false) {
+            val email: ConfirmDto = call.receive<ConfirmDto>()
+            val uid = email.uid
+            val confirm = email.confirm
+            val ret: String? = ssoService.confirmEmail(uid, confirm)
+            if (ret == null) {
+                call.respondRedirect(Env.confirmSuccessUrl)
+            } else {
+                call.respondRedirect(Env.confirmFailureUrl)
+            }
         }
     }
 }
+

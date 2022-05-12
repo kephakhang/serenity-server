@@ -63,7 +63,7 @@ class PushServer<Any>() {
         launch {
             try {
                 if (socket.isActive) {
-                    socket.outgoing.send(Frame.Text(Json.encodeToString(message)))
+                    socket.outgoing.send(Frame.Text(Env.gson.toJson(message)))
                 } else {
                     close(socket, CloseReason.Codes.GOING_AWAY, "sendTo : a socket error")
                 }
@@ -78,7 +78,7 @@ class PushServer<Any>() {
      */
     fun CoroutineScope.sendTo(socketList: List<WebSocketServerSession>, message: Message) {
         launch {
-            socketList.send(Frame.Text(Json.encodeToString(message)));
+            socketList.send(Frame.Text(Env.gson.toJson(message)));
         }
     }
 
@@ -414,7 +414,7 @@ class PushServer<Any>() {
 
                         FileOutputStream(File("./log/" + topic + dateStr + ".log"), true).bufferedWriter()
                             .use { writer ->
-                                writer.append(Json.encodeToString(message) + "\n")
+                                writer.append(Env.gson.toJson(message) + "\n")
                                 writer.close()
                             }
                     }
@@ -461,7 +461,7 @@ class PushServer<Any>() {
                 }
             }
         } finally {
-            logger.debug(Env.message("app.server.broadcast"), Json.encodeToString(message))
+            logger.debug(Env.message("app.server.broadcast"), Env.gson.toJson(message))
         }
     }
 

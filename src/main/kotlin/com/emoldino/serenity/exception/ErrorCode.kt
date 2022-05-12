@@ -10,6 +10,7 @@ enum class ErrorCode {
   E10004,
   E10005,
   E10006,
+  E10007,
 }
 
 enum class ErrorMessageLang {

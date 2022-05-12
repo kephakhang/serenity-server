@@ -1,0 +1,11 @@
+<databaseChangeLog
+        xmlns="https://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:ext="https://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="https://www.liquibase.org/xml/ns/dbchangelog-ext https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd https://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+    <changeSet id="20220511-153219" author="kepha">
+        <sqlFile dbms="mysql" encoding="UTF-8"
+                 path="master-data-sql/add-emolidno-tanant.sql"
+                 relativeToChangelogFile="true" stripComments="true"/>
+    </changeSet>
+</databaseChangeLog>

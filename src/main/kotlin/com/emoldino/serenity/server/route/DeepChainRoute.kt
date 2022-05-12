@@ -45,54 +45,64 @@ fun Route.deepchain() {
     }
 
     post("/api/ai/launch") {
-        val body: Body = call.receive<Body>()
-        val strBody = Env.gson.toJson(body)
-        logger.debug(Env.aiServerUrl + "/api/deepchain/launch : ${strBody}")
-        GlobalScope.launch {
-            sendTo(Env.aiServerUrl + "/api/deepchain/launch", strBody)
-        }
+        aop(call, false) {
+            val body: Body = call.receive<Body>()
+            val strBody = Env.gson.toJson(body)
+            logger.debug(Env.aiServerUrl + "/api/deepchain/launch : ${strBody}")
+            GlobalScope.launch {
+                sendTo(Env.aiServerUrl + "/api/deepchain/launch", strBody)
+            }
 
-        call.respond(HttpStatusCode.OK)
+            call.respond(HttpStatusCode.OK)
+        }
     }
 
     post("/api/ai/fetchData") {
-        val fetch: Body = call.receive<Body>()
-        val fetchStr = Env.gson.toJson(fetch)
-        logger.debug("/api/ai/fetchData : ${fetchStr}")
-        val event = KafkaEvent(MicroService.AI.no, Instant.now(), fetch)
-        try {
-            Env.kafkaEventServiceMap[fetch.tenantId]?.send(event)
-            logger.debug("/api/ai/fetchData : sendToKafka OK")
-            call.respond(mapOf("result" to "success"))
-        } catch (ex: Exception) {
-            logger.error("/api/ai/fetchData : sendToKafka ERROR : ${ex.stackTraceString}")
-            call.respond(mapOf("status" to 500, "result" to "failure", "reason" to ex.localizedMessage))
+        aop(call, false) {
+            val fetch: Body = call.receive<Body>()
+            val fetchStr = Env.gson.toJson(fetch)
+            logger.debug("/api/ai/fetchData : ${fetchStr}")
+            val event = KafkaEvent(MicroService.AI.no, Instant.now(), fetch)
+            try {
+                Env.kafkaEventServiceMap[fetch.tenantId]?.send(event)
+                logger.debug("/api/ai/fetchData : sendToKafka OK")
+                call.respond(mapOf("result" to "success"))
+            } catch (ex: Exception) {
+                logger.error("/api/ai/fetchData : sendToKafka ERROR : ${ex.stackTraceString}")
+                call.respond(mapOf("status" to 500, "result" to "failure", "reason" to ex.localizedMessage))
+            }
         }
     }
 
     post("/api/ai/status") {
-        val body = call.receive<Body>()
-        logger.debug("/api/ai/status from deepchain : ${Env.gson.toJson(body)}")
-        call.respond(HttpStatusCode.OK, body)
+        aop(call, false) {
+            val body = call.receive<Body>()
+            logger.debug("/api/ai/status from deepchain : ${Env.gson.toJson(body)}")
+            call.respond(HttpStatusCode.OK, body)
+        }
     }
 
     post("/api/ai/results") {
-        val body = call.receive<Body>()
-        val strBody = Env.gson.toJson(body)
-        logger.debug("/api/ai/results : requestBody : ${strBody}")
+        aop(call, false) {
+            val body = call.receive<Body>()
+            val strBody = Env.gson.toJson(body)
+            logger.debug("/api/ai/results : requestBody : ${strBody}")
 
-        if (body.tenantId.equals("test")) {
-            call.respond(HttpStatusCode.OK, body)
-        } else {
-            val url = Env.tenantMap[body.tenantId]?.hostUrl
-            if (url !== null) {
-                GlobalScope.launch {
-                    sendTo(url + "/api/integration/ai/results", strBody)
-                }
+            if (body.tenantId.equals("test")) {
                 call.respond(HttpStatusCode.OK, body)
-            } else { //error case
-                logger.error(Env.aiServerUrl + "/api/ai/results Error : ${strBody}")
-                call.respond(HttpStatusCode.ServiceUnavailable, "Unknown TenanatId : ${body.tenantId}")
+            } else {
+                val url = Env.tenantMap[body.tenantId]?.hostUrl
+                if (url !== null) {
+                    GlobalScope.launch {
+                        val fullUrl = url + "/api/integration/ai/results"
+
+                        sendTo(fullUrl.replace("//api", "/api"), strBody)
+                    }
+                    call.respond(HttpStatusCode.OK, body)
+                } else { //error case
+                    logger.error(Env.aiServerUrl + "/api/ai/results Error : ${strBody}")
+                    call.respond(HttpStatusCode.ServiceUnavailable, "Unknown TenanatId : ${body.tenantId}")
+                }
             }
         }
     }

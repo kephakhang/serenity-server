@@ -19,7 +19,7 @@
             <pattern>%relative [%thread] %-5level %logger{35} - %msg%n</pattern>
         </encoder>
     </appender>
-    <if condition='"${RUN_ENV}".contains("local")' >
+    <if condition='"${RUN_ENV}".equals("local")' >
         <then>
             <root level="debug">
                 <appender-ref ref="STDOUT"/>
@@ -47,7 +47,7 @@
             </logger>
         </then>
     </if>
-    <if condition='"${RUN_ENV}".contains("dev")' >
+    <if condition='"${RUN_ENV}".equals("dev")' >
         <then>
             <root level="debug">
                 <appender-ref ref="RUN"/>
@@ -69,7 +69,7 @@
             </logger>
         </then>
     </if>
-    <if condition='"${RUN_ENV}".contains("prod")' >
+    <if condition='"${RUN_ENV}".equals("prod")' >
         <then>
             <root level="error">
                 <appender-ref ref="RUN"/>

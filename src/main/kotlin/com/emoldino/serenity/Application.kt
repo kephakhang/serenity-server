@@ -220,7 +220,7 @@ fun Application.module(testing: Boolean = false) {
       logger.error("routing error : ${cause.stackTraceString}")
       val tid = call.callId
       val isException = true
-      val err = EmolError.error(cause)
+      val err = Env.error(cause)
       val requestUri: String = call.request.uri
       val method: String = call.request.httpMethod.value
       val response = Response(err as Any, tid, requestUri, method.uppercase())
@@ -245,7 +245,7 @@ fun Application.module(testing: Boolean = false) {
       logger.error("routing error : ${cause.stackTraceString}")
       val tid = call.callId
       val isException = true
-      val err = EmolError.error(ErrorCode.E00000)
+      val err = Env.error(ErrorCode.E00000)
       err.description = cause.localizedMessage
       val requestUri: String = call.request.uri
       val method: String = call.request.httpMethod.value

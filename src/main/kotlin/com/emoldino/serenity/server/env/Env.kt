@@ -2,6 +2,10 @@
 
 package com.emoldino.serenity.server.env
 
+import com.emoldino.serenity.exception.EmolError
+import com.emoldino.serenity.exception.EmolException
+import com.emoldino.serenity.exception.ErrorCode
+import com.emoldino.serenity.exception.ErrorMessageLang
 import com.emoldino.serenity.server.jpa.own.dto.TenantDto
 import com.emoldino.serenity.server.kafka.KafkaEventService
 import com.emoldino.serenity.server.model.ChannelList
@@ -38,6 +42,7 @@ private val logger = KotlinLogging.logger {}
 class Env {
     companion object {
         val owner = "emoldino"
+        val emoldinoTenantId = "emoldino-own-kr"
         val connectionsLimit = 10
         val lang = Locale.getDefault().language
         val topicConsumeCounts: ConcurrentHashMap<String, Int> = ConcurrentHashMap<String, Int>()
@@ -53,6 +58,7 @@ class Env {
 
 
         //    @UseExperimental(io.ktor.util.KtorExperimentalAPI::class)
+        val errorConfig = HoconApplicationConfig(ConfigFactory.load("i18n/error"))
         val messageConfig = HoconApplicationConfig(ConfigFactory.load("i18n/" + lang))
         val channelNum: Int = 2
         val greeting: String = "HELLO This is eMoldino's Serenity(Collaboration) Server !!!"
@@ -192,6 +198,40 @@ class Env {
                 logger.error("Env.message : " + e.stackTrace)
                 return ""
             }
+        }
+
+        fun error(code: ErrorCode, vararg args: Any?): EmolError {
+            try {
+                val errConf: ApplicationConfig = errorConfig.config("error." + code.name)
+                val errMessageConf: ApplicationConfig = errorConfig.config("error." + code.name + ".message")
+                val error: EmolError = EmolError(
+                    code.name,
+                    errConf.property("status").getString().toInt(),
+                    errConf.property("description").getString(),
+                    HashMap<String, String>(),
+                    errConf.property("origin").getString()
+                )
+                ErrorMessageLang.values().forEach {
+                    if (args.size > 0) {
+                        error.message.put(it.name, errMessageConf.property(it.name).getString().format(args))
+                    } else {
+                        error.message.put(it.name, errMessageConf.property(it.name).getString())
+                    }
+
+                }
+                return error
+            } catch (e: Throwable) {
+                com.emoldino.serenity.exception.logger.error("Env.message : " + e.stackTrace)
+                throw e
+            }
+        }
+
+        fun error(kex: EmolException): EmolError {
+            val error: EmolError = error(kex.code, kex.argList.toArray())
+            kex.cause?.let {
+                error.description = it.localizedMessage
+            }
+            return error
         }
 
         fun error(): Message {

@@ -1,0 +1,28 @@
+{"requestId": "89c96d94-bf98-11ec-9d64-0242ac120002","tenantId": "emoldinoDev-own-kr",
+ "type": "ai",
+"data":{"aiType": "EM-AI-ANOM",
+          "lst": "20220429185846",    //Last Shot Time
+           "shotCount" : {
+              "hourly":[70,60,80,90,....],//the length of this list will be (30*24) assuming a month of 30 days
+              "weekly":[78,88,98.....],//the length of this list will be (4) // this list contains the average of hourly shot count for one week
+              //so for example we have (24*7) shot counts for a week then the average will be= TOTAL SHOT COUNT/ (24*3)
+               "daily": [34,56,75,65...] //length of this list will be (30)
+         },
+"cycleTime" : {
+              "hourly":  [700,600,800,900,....],//the length of this list will be (30*24) assuming a month of 30 days
+              "weekly":[700,600,800,900,....],//the length of this list will be (4)
+               "daily": [703,610,820,930,....]//length of this list will be (30)
+             },
+"temperature":{
+              "hourly":  [550,500,500,300,....],//the length of this list will be (30*24) assuming a month of 30 days
+              "weekly":[555,560,520,340,....],//the length of this list will be (4)
+               "daily": [554,510,570,330,....]//length of this list will be (30)
+             },
+"LST":{
+              "hourly":  ["20220329185846","20220329195846","20220329205846",....],//the length of this list will be (30*24) assuming a month of 30 days
+              "weekly":["20220329185846","20220406185846"....],//the length of this list will be (4)
+               "daily": ["20220429185846","20220430185846","20220401185846"....]//length of this list will be (30)//assumed the month of march is 30
+             },
+             
+      }
+}  
