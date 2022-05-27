@@ -69,6 +69,13 @@ kotlin {
             "--add-opens=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED",
             "--add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED"
     ]
+//    jvmToolchain {
+//        languageVersion.set(JavaLanguageVersion.of(11))
+//    }
+}
+
+sourceSets {
+    main.kotlin.srcDirs = ["src/main/kotlin", "src/main/resources"]
 }
 
 dependencies {
@@ -182,6 +189,7 @@ dependencies {
 
 compileKotlin {
     kotlinOptions.freeCompilerArgs = ["-Xuse-experimental=kotlin.Experimental"]
+//    kotlinOptions.jvmTarget = 11
 }
 
 import com.github.jengelman.gradle.plugins.shadow.transformers.ServiceFileTransformer

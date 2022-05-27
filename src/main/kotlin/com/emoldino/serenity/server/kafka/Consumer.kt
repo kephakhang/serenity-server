@@ -109,33 +109,35 @@ class Consumer<K, V>(private val consumer: KafkaConsumer<K, V>, val topic: Strin
         logger.debug("get data of AI from Kafka ${strMessage}")
 
         val requestBody: String = "{\n" +
-                "      \"requestId\": \"" + requestId + "\" ,\n" +
-                "      \"tenantId\": \"" + tenantId + "\" ,\n" +
-                "      \"type\": \"ai\" ,\n" +
-                "      \"data\": {\n" +
-                "        \"moldId\": \"" + moldId + "\" ,\n" +
-                "        \"lst\": \"" + lst + "\" ,\n" +
-                "        \"aiType\": \"" + aiType + "\" ,\n" +
-                "        \"cycleTime\": {\n" +
-                "          \"hourly\": [30],\n" +
-                "          \"weyekly\": [33],\n" +
-                "          \"daily\": [37]\n" +
-                "        },\n" +
-                "        \"shotCount\": {\n" +
-                "          \"hourly\": [300],\n" +
-                "          \"weyekly\": [330],\n" +
-                "          \"daily\": [370]\n" +
-                "        },\n" +
-                "        \"temperature\": {\n" +
-                "          \"hourly\": [300, 400, 500],\n" +
-                "          \"weekly\": [300, 400, 500],\n" +
-                "          \"daily\": [300, 400, 500]\n" +
-                "        }\n" +
-                "    }\n" +
-                "}"
+            "      \"requestId\": \"" + requestId + "\" ,\n" +
+            "      \"tenantId\": \"" + tenantId + "\" ,\n" +
+            "      \"type\": \"ai\" ,\n" +
+            "      \"data\": {\n" +
+            "        \"moldId\": \"" + moldId + "\" ,\n" +
+            "        \"lst\": \"" + lst + "\" ,\n" +
+            "        \"aiType\": \"" + aiType + "\" ,\n" +
+            "        \"cycleTime\": {\n" +
+            "          \"hourly\": [30],\n" +
+            "          \"weyekly\": [33],\n" +
+            "          \"daily\": [37]\n" +
+            "        },\n" +
+            "        \"shotCount\": {\n" +
+            "          \"hourly\": [300],\n" +
+            "          \"weyekly\": [330],\n" +
+            "          \"daily\": [370]\n" +
+            "        },\n" +
+            "        \"temperature\": {\n" +
+            "          \"hourly\": [300, 400, 500],\n" +
+            "          \"weekly\": [300, 400, 500],\n" +
+            "          \"daily\": [300, 400, 500]\n" +
+            "        }\n" +
+            "    }\n" +
+            "}"
         logger.debug("/api/integration/ai/fetchData : requestBody : " + requestBody)
 
-        if (!body.tenantId.equals("test")) {
+        if (body.tenantId.equals("test")) {
+            sendCallbackToAi(HttpStatus.OK_200, requestBody)
+        } else {
             logger.debug("fetchDataFromMms : tenantId : ${body.tenantId}")
             var mmsUrl = Env.tenantMap[body.tenantId]?.hostUrl
             mmsUrl?.let {
@@ -163,8 +165,6 @@ class Consumer<K, V>(private val consumer: KafkaConsumer<K, V>, val topic: Strin
             if (mmsUrl === null) {
                 logger.error("fetchDataFromMms : mmsUrl is null")
             }
-        } else {
-            sendCallbackToAi(HttpStatus.OK_200, requestBody)
         }
     }
 

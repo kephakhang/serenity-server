@@ -8,8 +8,9 @@
         <file>logs/run.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- daily rollover -->
-            <fileNamePattern>c:/logs/run.%d{yyyy-MM-dd-HH-mm}.log</fileNamePattern>
+            <fileNamePattern>logs/run.%d{yyyy-MM-dd-HH-mm}.log</fileNamePattern>
             <maxHistory>30</maxHistory>
+            <totalSizeCap>1GB</totalSizeCap>
         </rollingPolicy>
         <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
             <maxFileSize>30MB</maxFileSize>

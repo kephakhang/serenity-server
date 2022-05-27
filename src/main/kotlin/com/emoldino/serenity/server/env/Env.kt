@@ -200,7 +200,7 @@ class Env {
             }
         }
 
-        fun error(code: ErrorCode, vararg args: Any?): EmolError {
+        fun error(code: ErrorCode, vararg args: String?): EmolError {
             try {
                 val errConf: ApplicationConfig = errorConfig.config("error." + code.name)
                 val errMessageConf: ApplicationConfig = errorConfig.config("error." + code.name + ".message")
@@ -213,7 +213,7 @@ class Env {
                 )
                 ErrorMessageLang.values().forEach {
                     if (args.size > 0) {
-                        error.message.put(it.name, errMessageConf.property(it.name).getString().format(args))
+                        error.message.put(it.name, errMessageConf.property(it.name).getString().format(*args))
                     } else {
                         error.message.put(it.name, errMessageConf.property(it.name).getString())
                     }
@@ -227,7 +227,7 @@ class Env {
         }
 
         fun error(kex: EmolException): EmolError {
-            val error: EmolError = error(kex.code, kex.argList.toArray())
+            val error: EmolError = error(kex.code, *kex.argList.toTypedArray())
             kex.cause?.let {
                 error.description = it.localizedMessage
             }

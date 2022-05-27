@@ -2,7 +2,8 @@ package com.emoldino.serenity.server.jpa.own.dto
 
 data class LoginDto(
   val id: String, // id could be mbId, email or mobile
-  val password: String
+  val password: String,
+  val rememberMe: Boolean
 )
 
 class LoginWrapper(val login: LoginDto)

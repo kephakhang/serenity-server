@@ -1,5 +1,6 @@
 #!/bin/sh
 
+gradle clean
 
 gradle build --exclude-task test --stacktrace
 

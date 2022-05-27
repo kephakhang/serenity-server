@@ -73,18 +73,27 @@ class SsoService(val db: MemberRepository, val detailDB: MemberDetailRepository)
     member.teId = Env.emoldinoTenantId
 
     var memberDetail = MemberDetail()
-    db.transaction {
-      member = db.insert(member)
-      memberDetail.apply {
-        mbId = member.id!!
-        mbEmail = signup.email
-        mbMobile = signup.mobile
-        mbEmailCertify = LocalDateTime.now(Clock.systemUTC())
-        mbEmailCertify2 = KeyGenerator.generateMobileAuth()
+    try {
+      db.transaction {
+        member = db.insert(member)
+        memberDetail.apply {
+          mbId = member.id!!
+          mbEmail = signup.email
+          mbMobile = signup.mobile
+          mbEmailCertify = LocalDateTime.now(Clock.systemUTC())
+          mbEmailCertify2 = KeyGenerator.generateMobileAuth()
+        }
+        memberDetail.mbTodayLogin = memberDetail.mbEmailCertify
+        memberDetail = detailDB.insert(memberDetail)
+        member.detail = memberDetail
       }
-      memberDetail.mbTodayLogin = memberDetail.mbEmailCertify
-      memberDetail = detailDB.insert(memberDetail)
-      member.detail = memberDetail
+    } catch(ex: EmolException) {
+      if (ex.code.name.equals(ErrorCode.E10007.name)) { // if db insert dup error
+        // The User is already registered.
+        throw EmolException(ErrorCode.E10008, ex, null, signup.email)
+      } else {
+        throw ex
+      }
     }
 
 //    val content = Env.confirmEmailContent.replace("{{action_url}}", Env.apiHostUrl + "/sso/confirm/email?id=${member.id}&confirm=${memberDetail.mbEmailCertify2}")
