@@ -134,8 +134,6 @@ dependencies {
     testImplementation "io.ktor:ktor-server-tests-jvm:$ktor_version"
     kapt("com.querydsl:querydsl-apt:$querydsl_version:jpa")
     annotationProcessor("com.google.dagger:dagger-compiler:$dagger_version")
-    // https://mvnrepository.com/artifact/io.reactivex.rxjava3/rxkotlin
-    implementation "io.reactivex.rxjava3:rxkotlin:$rxkotlin_version"
     implementation "com.zaxxer:HikariCP:$hikaricp_version"
     implementation "mysql:mysql-connector-java:$mysql_version"
     implementation "com.sksamuel.hoplite:hoplite-core:$hoplite_version"
@@ -157,9 +155,18 @@ dependencies {
 //    implementation("org.openapitools:openapi-generator:$openapi_generator_version") {
 //        exclude group: "org.slf4j", module: "slf4j-simple"
 //    }
+
     implementation "org.openapitools:openapi-generator-cli:$openapi_generator_version"
+
+    annotationProcessor "com.squareup.moshi:moshi-kotlin-codegen:$moshi_version"
+    implementation "com.squareup.moshi:moshi-kotlin:$moshi_version"
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:adapter-rxjava3:$retrofit_version"
+//    implementation "com.squareup.retrofit2:converter-moshi:$retrofit_version"
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_version"
+    implementation "io.reactivex.rxjava3:rxjava:$rxjava_version"
+    //implementation "io.reactivex.rxjava3:rxkotlin:$rxkotlin_version"
 
     // QueryDSL
     implementation("com.querydsl:querydsl-core:${querydsl_version}")

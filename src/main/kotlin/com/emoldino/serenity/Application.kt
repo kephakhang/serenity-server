@@ -36,7 +36,6 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.util.*
-import io.ktor.shared.serialization.jackson.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import mu.KotlinLogging
@@ -44,7 +43,7 @@ import java.time.Duration
 import kotlin.concurrent.thread
 import com.emoldino.serenity.server.route.deepchain
 import com.emoldino.serenity.server.service.TenantService
-import io.ktor.shared.serialization.kotlinx.jackson.*
+import io.ktor.serialization.jackson.*
 import io.ktor.server.plugins.cachingheaders.CachingHeaders
 import io.ktor.server.plugins.callid.*
 import io.ktor.server.plugins.callloging.CallLogging
@@ -57,7 +56,6 @@ import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.webjars.*
 import io.ktor.server.websocket.*
 import java.time.ZonedDateTime
-import kotlin.math.exp
 
 fun main(args: Array<String>): Unit = io.ktor.server.jetty.EngineMain.main(args)
 

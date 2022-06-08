@@ -9,6 +9,7 @@ import com.emoldino.serenity.exception.InvalidMessageException
 import com.emoldino.serenity.server.env.Env
 import com.emoldino.serenity.server.env.clientIp
 import com.emoldino.serenity.server.model.*
+import io.ktor.websocket.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import mu.KotlinLogging

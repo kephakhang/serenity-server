@@ -3,18 +3,15 @@ package com.emoldino.serenity.server.kafka
 import com.emoldino.serenity.common.ClosableJob
 import com.emoldino.serenity.extensions.stackTraceString
 import com.emoldino.serenity.server.env.Env
-import com.emoldino.serenity.server.jpa.own.entity.QCall.call
 import com.emoldino.serenity.server.jpa.own.enum.AiCall
 import com.emoldino.serenity.server.model.*
-import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.util.*
-import io.ktor.utils.io.core.*
 import mu.KotlinLogging
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.errors.WakeupException
 import retrofit2.Call
+import retrofit2.Callback
 import retrofit2.Response
 import java.time.Duration
 import java.time.temporal.ChronoUnit
@@ -22,13 +19,9 @@ import java.util.*
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
-import rx.functions.*
-import rx.Subscriber;
-import rx.internal.util.ActionSubscriber
-import rx.internal.util.InternalObservableUtils
+import kotlin.collections.LinkedHashMap
 
 private val logger = KotlinLogging.logger {}
-
 
 class Consumer<K, V>(private val consumer: KafkaConsumer<K, V>, val topic: String) : ClosableJob {
     private val closed: AtomicBoolean = AtomicBoolean(false)
@@ -115,17 +108,18 @@ class Consumer<K, V>(private val consumer: KafkaConsumer<K, V>, val topic: Strin
 
 
     fun launchAI(body: PostBody) {
-        val url = Env.aiServerUrl + "/api/deepchain/launch"
-        Env.deepChainService.getInstance().launch(body).subscribe(EmolSubscriber.suscriber(url))
+        val call = Env.deepChainService.getInstance().launch(body)
+        call.enqueue(EmolSubscriber.callback())
+
     }
 
     fun fetchDataFromMms(body: PostBody) {
 
         logger.debug("fetchDataFromMms : tenantId : ${body.tenantId}")
         val mmsService = Env.mmsServiceMap[body.tenantId]
-        val url = Env.tenantMap[body.tenantId]?.hostUrl + "/api/integration/ai/fetchData"
         mmsService?.let {
-            it.getInstance().fetchData(body).subscribe(EmolSubscriber.redirectSuscriber(url, ::sendCallbackToAi))
+            val call = it.getInstance().fetchData(body)
+            call.enqueue(EmolSubscriber.redirectCallback(::sendCallbackToAi))
         }
 
         if (mmsService === null) {
@@ -134,16 +128,15 @@ class Consumer<K, V>(private val consumer: KafkaConsumer<K, V>, val topic: Strin
     }
 
     fun sendCallbackToAi(body: PostBody) {
-
-        val url = Env.aiServerUrl + "/api/deepchain/callback"
-        Env.deepChainService.getInstance().callback(body).subscribe(EmolSubscriber.suscriber(url))
+        val call = Env.deepChainService.getInstance().callback(body)
+        call.enqueue(EmolSubscriber.callback())
     }
 
     fun sendResultsToMms(body: PostBody) {
         val mmsService = Env.mmsServiceMap[body.tenantId]
         mmsService?.let {
-            val url = Env.tenantMap[body.tenantId]?.hostUrl + "/api/integration/ai/fetchData"
-            it.getInstance().results(body).subscribe(EmolSubscriber.suscriber(url))
+            val call = it.getInstance().results(body)
+            call.enqueue(EmolSubscriber.callback())
         }
         if (mmsService === null) {
             logger.error("Unknown Tenant : ${body.tenantId}")
