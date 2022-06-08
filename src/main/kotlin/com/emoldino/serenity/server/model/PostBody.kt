@@ -7,7 +7,7 @@ enum class IntegrationType(val value: String, val no: Int) {
   TERMINAL("terminal", 3)
 }
 
-data class Body(
+data class PostBody(
   val requestId: String,
   val tenantId: String,
   val type: String,

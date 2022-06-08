@@ -3,28 +3,32 @@ package com.emoldino.serenity.server.kafka
 import com.emoldino.serenity.common.ClosableJob
 import com.emoldino.serenity.extensions.stackTraceString
 import com.emoldino.serenity.server.env.Env
+import com.emoldino.serenity.server.jpa.own.entity.QCall.call
+import com.emoldino.serenity.server.jpa.own.enum.AiCall
 import com.emoldino.serenity.server.model.*
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.util.*
-import kotlinx.serialization.json.Json
+import io.ktor.utils.io.core.*
 import mu.KotlinLogging
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.errors.WakeupException
-import org.eclipse.jetty.http.HttpStatus
-import java.net.URI
-import java.net.http.HttpClient
-import java.net.http.HttpRequest
-import java.net.http.HttpResponse
+import retrofit2.Call
+import retrofit2.Response
 import java.time.Duration
 import java.time.temporal.ChronoUnit
 import java.util.*
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.collections.LinkedHashMap
+import rx.functions.*
+import rx.Subscriber;
+import rx.internal.util.ActionSubscriber
+import rx.internal.util.InternalObservableUtils
 
 private val logger = KotlinLogging.logger {}
+
 
 class Consumer<K, V>(private val consumer: KafkaConsumer<K, V>, val topic: String) : ClosableJob {
     private val closed: AtomicBoolean = AtomicBoolean(false)
@@ -32,6 +36,14 @@ class Consumer<K, V>(private val consumer: KafkaConsumer<K, V>, val topic: Strin
 
     init {
         consumer.subscribe(listOf(topic))
+    }
+
+    override fun close() {
+        logger.info { Env.message("app.kafka.consumer.jobClose") }
+        closed.set(true)
+        consumer.wakeup()
+        finished.await(3000, TimeUnit.MILLISECONDS)
+        logger.info { Env.message("app.kafka.consumer.jobClosed") }
     }
 
     override fun run() {
@@ -59,11 +71,15 @@ class Consumer<K, V>(private val consumer: KafkaConsumer<K, V>, val topic: Strin
                         }
 
                         val message: KafkaEvent = record.value() as KafkaEvent
-                        val body: Body = message.data
+                        val body: PostBody = message.data
                         if (topic.equals(body.tenantId)) {
                             when (body.type) {
                                 IntegrationType.AI.value -> {
-                                    fetchDataFromMms(body)
+                                    when (message.uri) {
+                                        AiCall.LAUNCH.name -> launchAI(body)
+                                        AiCall.FETCH_DATA.name -> fetchDataFromMms(body)
+                                        AiCall.RESULTS.name -> sendResultsToMms(body)
+                                    }
                                 }
                             }
                         }
@@ -97,135 +113,45 @@ class Consumer<K, V>(private val consumer: KafkaConsumer<K, V>, val topic: Strin
         }
     }
 
-    fun fetchDataFromMms(body: Body) {
 
-        val requestId = body.requestId
-        val tenantId = body.tenantId
-        val moldId = body.data["moldId"] as String
-        val lst = "20210428101141" //body.data["lst"] as String
-        val aiType = "EM_AI_ANOM" //body.data["aiType"] as String
+    fun launchAI(body: PostBody) {
+        val url = Env.aiServerUrl + "/api/deepchain/launch"
+        Env.deepChainService.getInstance().launch(body).subscribe(EmolSubscriber.suscriber(url))
+    }
 
-        val strMessage = Env.gson.toJson(body)
-        logger.debug("get data of AI from Kafka ${strMessage}")
+    fun fetchDataFromMms(body: PostBody) {
 
-        val requestBody: String = "{\n" +
-            "      \"requestId\": \"" + requestId + "\" ,\n" +
-            "      \"tenantId\": \"" + tenantId + "\" ,\n" +
-            "      \"type\": \"ai\" ,\n" +
-            "      \"data\": {\n" +
-            "        \"moldId\": \"" + moldId + "\" ,\n" +
-            "        \"lst\": \"" + lst + "\" ,\n" +
-            "        \"aiType\": \"" + aiType + "\" ,\n" +
-            "        \"cycleTime\": {\n" +
-            "          \"hourly\": [30],\n" +
-            "          \"weyekly\": [33],\n" +
-            "          \"daily\": [37]\n" +
-            "        },\n" +
-            "        \"shotCount\": {\n" +
-            "          \"hourly\": [300],\n" +
-            "          \"weyekly\": [330],\n" +
-            "          \"daily\": [370]\n" +
-            "        },\n" +
-            "        \"temperature\": {\n" +
-            "          \"hourly\": [300, 400, 500],\n" +
-            "          \"weekly\": [300, 400, 500],\n" +
-            "          \"daily\": [300, 400, 500]\n" +
-            "        }\n" +
-            "    }\n" +
-            "}"
-        logger.debug("/api/integration/ai/fetchData : requestBody : " + requestBody)
+        logger.debug("fetchDataFromMms : tenantId : ${body.tenantId}")
+        val mmsService = Env.mmsServiceMap[body.tenantId]
+        val url = Env.tenantMap[body.tenantId]?.hostUrl + "/api/integration/ai/fetchData"
+        mmsService?.let {
+            it.getInstance().fetchData(body).subscribe(EmolSubscriber.redirectSuscriber(url, ::sendCallbackToAi))
+        }
 
-        if (body.tenantId.equals("test")) {
-            sendCallbackToAi(HttpStatus.OK_200, requestBody)
-        } else {
-            logger.debug("fetchDataFromMms : tenantId : ${body.tenantId}")
-            var mmsUrl = Env.tenantMap[body.tenantId]?.hostUrl
-            mmsUrl?.let {
-                it
-                var mmsApiUrl = it + "/api/integration/ai/fetchData"
-                mmsApiUrl = mmsApiUrl.replace("//api", "/api")
-                logger.debug("fetchDataFromMms : mmsUrl : ${mmsApiUrl}")
-                val client = HttpClient.newBuilder().build()
-                val request = HttpRequest.newBuilder()
-                    .uri(URI.create(mmsApiUrl))
-                    .header("Content-Type", "application/json")
-                    .POST(HttpRequest.BodyPublishers.ofString(strMessage))
-                    .build()
-                val response = client.send(request, HttpResponse.BodyHandlers.ofString())
-                logger.debug("/api/integration/ai/fetchData : responseBody " + response.body())
-                if (response.statusCode() === 200) {
-                    logger.debug("/api/integration/ai/fetchData : " + Env.gson.toJson(mapOf("result" to "success")))
-                    sendCallbackToAi(response.statusCode(), response.body())
-                } else {
-                    logger.error("/api/integration/ai/fetchData : Error : ${response.statusCode()} : + ${response.body()}")
-                    sendCallbackToAi(response.statusCode(), response.body())
-                }
-            }
-
-            if (mmsUrl === null) {
-                logger.error("fetchDataFromMms : mmsUrl is null")
-            }
+        if (mmsService === null) {
+            logger.error("Unknown Tenant : ${body.tenantId}")
         }
     }
 
-    fun sendCallbackToAi(status: Int, body: String) {
+    fun sendCallbackToAi(body: PostBody) {
 
-        val client = HttpClient.newBuilder().build()
-        val request = HttpRequest.newBuilder()
-            .uri(URI.create(Env.aiServerUrl + "/api/deepchain/callback"))
-            .header("Content-Type", "application/json")
-            .POST(HttpRequest.BodyPublishers.ofString(body))
-            .build()
-        val response = client.send(request, HttpResponse.BodyHandlers.ofString())
-        logger.debug("/api/deepchain/callback : responseBody " + response.body())
-        if (response.statusCode() === 200) {
-            logger.debug("/api/deepchain/callback : " + Env.gson.toJson(mapOf("result" to "success")))
-        } else {
-            logger.error("/api/deepchain/callback : Error : " + response.statusCode() + ":" + response.body())
+        val url = Env.aiServerUrl + "/api/deepchain/callback"
+        Env.deepChainService.getInstance().callback(body).subscribe(EmolSubscriber.suscriber(url))
+    }
+
+    fun sendResultsToMms(body: PostBody) {
+        val mmsService = Env.mmsServiceMap[body.tenantId]
+        mmsService?.let {
+            val url = Env.tenantMap[body.tenantId]?.hostUrl + "/api/integration/ai/fetchData"
+            it.getInstance().results(body).subscribe(EmolSubscriber.suscriber(url))
         }
-    }
-
-    override fun close() {
-        logger.info { Env.message("app.kafka.consumer.jobClose") }
-        closed.set(true)
-        consumer.wakeup()
-        finished.await(3000, TimeUnit.MILLISECONDS)
-        logger.info { Env.message("app.kafka.consumer.jobClosed") }
-    }
-
-    companion object {
-        @JvmStatic
-        fun main(argv: Array<String>) {
-            //ToDo : Just Test Code
-            val body = Json {
-                "requestId" to "12345678915"
-                "tenantId" to "dev:oem:us"
-                "moldId" to "test"
-                "data" to Json {
-                    "cycleTime" to Json {
-                        "hourly" to arrayOf(30)
-                        "weyekly" to arrayOf(33)
-                        "daily" to arrayOf(37)
-                    }
-                    "shotCount" to Json {
-                        "hourly" to arrayOf(300)
-                        "weyekly" to arrayOf(330)
-                        "daily" to arrayOf(370)
-                    }
-                    "temperature" to Json {
-                        "hourly" to arrayOf(300, 400, 500)
-                        "weekly" to arrayOf(300, 400, 500)
-                        "daily" to arrayOf(300, 400, 500)
-                    }
-                }
-            }
-
-            logger.debug(body.toString())
+        if (mmsService === null) {
+            logger.error("Unknown Tenant : ${body.tenantId}")
         }
     }
 }
 
-@KtorExperimentalAPI
+
 fun <K, V> buildConsumer(
     environment: ApplicationEnvironment,
     topic: String

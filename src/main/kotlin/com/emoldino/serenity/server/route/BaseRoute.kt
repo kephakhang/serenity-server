@@ -160,8 +160,8 @@ inline suspend fun aop(call: ApplicationCall, withAuth: Boolean = true, body: ()
         val errStatus = if (ex.httpStatus === null) err.status else ex.httpStatus
         val response = Response(err as Any, tid, requestUri, method.uppercase())
         //CoroutineScope(Dispatchers.Main).launch {
-            // background coroutine like thread
-            call.respond(HttpStatusCode(errStatus, err.description), response)
+        // background coroutine like thread
+        call.respond(HttpStatusCode(errStatus, err.description), response)
         //}
     } catch (t: Throwable) {
         logger.error("routing error : ${t.stackTraceString}")
@@ -170,8 +170,8 @@ inline suspend fun aop(call: ApplicationCall, withAuth: Boolean = true, body: ()
         err.description = t.localizedMessage
         val response = Response(err as Any, tid, requestUri, method.uppercase())
         //CoroutineScope(Dispatchers.Main).launch {
-            // background coroutine like thread
-            call.respond(HttpStatusCode(err.status, err.description), response)
+        // background coroutine like thread
+        call.respond(HttpStatusCode(err.status, err.description), response)
         //}
 
     } finally {

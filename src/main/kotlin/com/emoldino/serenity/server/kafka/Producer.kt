@@ -3,6 +3,7 @@ package com.emoldino.serenity.server.kafka
 import com.emoldino.serenity.extensions.stackTraceString
 import com.emoldino.serenity.server.env.Env
 import com.emoldino.serenity.server.jpa.own.entity.QAdmin.admin
+import com.emoldino.serenity.server.retrofit.MmsService
 import com.emoldino.serenity.server.service.TenantService
 import io.ktor.server.application.*
 import io.ktor.util.*
@@ -56,9 +57,16 @@ fun buildProducer(environment: ApplicationEnvironment, tenantService: TenantServ
         logger.debug("tenant list : ${tenantList}")
 
         for (i in tenantList.indices) {
+
+            // tenantMap 에 tenant 정보 추가
             val it = tenantList[i]
             Env.tenantMap.put(it.id!!, it)
-            if (!names.contains(it.id!!)) {
+
+            // Retrofit mmsServiceMap 에 tenant 별 서비스 추가
+            val mmsService = MmsService(it.hostUrl)
+            Env.mmsServiceMap.put(it.id!!, mmsService)
+
+            if (!names.contains(it.id!!)) { // tenantId 이름으로 Kafka 에 Topic 이 등록되어 있지 않으면 topic 신규 등록
                 val topic: NewTopic = NewTopic(it.id!!, 3, 3)
                 logger.debug("createTopics : ${topic}")
                 try {

@@ -127,15 +127,15 @@ dependencies {
     implementation "io.ktor:ktor-server-cors:$ktor_version"
     implementation "io.ktor:ktor-server-call-logging:$ktor_version"
     implementation "io.ktor:ktor-server-content-negotiation:$ktor_version"
-    implementation "io.ktor:ktor-network-tls-jvm:$ktor_version"
-    implementation "io.ktor:ktor-jackson:1.6.8"
     implementation "io.ktor:ktor-serialization-jackson:$ktor_version"
     implementation "io.ktor:ktor-server-forwarded-header:$ktor_version"
+    implementation 'io.ktor:ktor-server-content-negotiation-jvm:2.0.2'
+    implementation 'io.ktor:ktor-network-tls-jvm:2.0.2'
     testImplementation "io.ktor:ktor-server-tests-jvm:$ktor_version"
     kapt("com.querydsl:querydsl-apt:$querydsl_version:jpa")
     annotationProcessor("com.google.dagger:dagger-compiler:$dagger_version")
     // https://mvnrepository.com/artifact/io.reactivex.rxjava3/rxkotlin
-    //runtimeOnly("io.reactivex.rxjava3:rxkotlin:$rxkotlin_version")
+    implementation "io.reactivex.rxjava3:rxkotlin:$rxkotlin_version"
     implementation "com.zaxxer:HikariCP:$hikaricp_version"
     implementation "mysql:mysql-connector-java:$mysql_version"
     implementation "com.sksamuel.hoplite:hoplite-core:$hoplite_version"
@@ -158,6 +158,8 @@ dependencies {
 //        exclude group: "org.slf4j", module: "slf4j-simple"
 //    }
     implementation "org.openapitools:openapi-generator-cli:$openapi_generator_version"
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
 
     // QueryDSL
     implementation("com.querydsl:querydsl-core:${querydsl_version}")

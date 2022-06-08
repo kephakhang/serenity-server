@@ -2,7 +2,7 @@
 
 package com.emoldino.serenity.server.websocket
 
-import io.ktor.websocket.*
+import io.ktor.server.websocket.*
 import io.ktor.server.websocket.WebSocketServerSession
 import kotlinx.coroutines.*
 import com.emoldino.serenity.exception.InvalidMessageException

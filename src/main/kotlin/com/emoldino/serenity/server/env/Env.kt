@@ -11,6 +11,8 @@ import com.emoldino.serenity.server.kafka.KafkaEventService
 import com.emoldino.serenity.server.model.ChannelList
 import com.emoldino.serenity.server.model.Event
 import com.emoldino.serenity.server.model.Message
+import com.emoldino.serenity.server.retrofit.DeepChainService
+import com.emoldino.serenity.server.retrofit.MmsService
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -74,7 +76,31 @@ class Env {
         lateinit var email: String
         lateinit var confirmSuccessUrl: String
         lateinit var confirmFailureUrl: String
+        lateinit var deepChainService: DeepChainService
+        val mmsServiceMap: ConcurrentHashMap<String, MmsService> = ConcurrentHashMap<String, MmsService>()
         var confirmExpireTime: Long = 0L
+        var objectMapper: ObjectMapper = ObjectMapper()
+        val gson: Gson = Gson()
+
+
+        init {
+            val javaTimeModule = JavaTimeModule()
+            // Hack time module to allow 'Z' at the end of string (i.e. javascript json's)
+            javaTimeModule.addDeserializer(
+                LocalDateTime::class.java,
+                LocalDateTimeDeserializer(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS"))
+            )
+            objectMapper.registerModule(javaTimeModule)
+            //objectMapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
+            objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true)
+            objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL)
+            objectMapper.enable(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS)
+            objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
+            objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+            objectMapper.dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS")
+        }
 
         fun now(): LocalDateTime {
             return LocalDateTime.now(Clock.systemUTC())
@@ -127,29 +153,6 @@ class Env {
             confirmSuccessUrl = conf.property("confirmSuccessUrl").getString()
             confirmFailureUrl = conf.property("confirmFailureUrl").getString()
         }
-
-        var objectMapper: ObjectMapper = ObjectMapper()
-        val gson: Gson = Gson()
-
-        init {
-            val javaTimeModule = JavaTimeModule()
-            // Hack time module to allow 'Z' at the end of string (i.e. javascript json's)
-            javaTimeModule.addDeserializer(
-                LocalDateTime::class.java,
-                LocalDateTimeDeserializer(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS"))
-            )
-            objectMapper.registerModule(javaTimeModule)
-            //objectMapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
-            objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true)
-            objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL)
-            objectMapper.enable(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS)
-            objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
-            objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-            objectMapper.dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS")
-        }
-
 
         fun String.md5(): String {
             return hashString(this, "MD5")

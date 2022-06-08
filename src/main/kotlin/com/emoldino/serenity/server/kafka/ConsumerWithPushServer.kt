@@ -1,6 +1,5 @@
 package com.emoldino.serenity.server.kafka
 
-import com.emoldino.serenity.common.ClosableJob
 import com.emoldino.serenity.common.ComputerIdentifier
 import com.emoldino.serenity.extensions.stackTraceString
 import com.emoldino.serenity.server.env.Env
