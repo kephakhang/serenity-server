@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.emoldino.serenity.common.KeyGenerator
-import com.emoldino.serenity.exception.EmolError
 import com.emoldino.serenity.exception.EmolException
 import com.emoldino.serenity.exception.ErrorCode
 import com.emoldino.serenity.extensions.stackTraceString
@@ -43,6 +42,10 @@ import java.time.Duration
 import kotlin.concurrent.thread
 import com.emoldino.serenity.server.route.deepchain
 import com.emoldino.serenity.server.service.TenantService
+import de.nielsfalk.ktor.swagger.SwaggerSupport
+import de.nielsfalk.ktor.swagger.version.shared.Contact
+import de.nielsfalk.ktor.swagger.version.shared.Information
+import de.nielsfalk.ktor.swagger.version.v2.Swagger
 import io.ktor.serialization.jackson.*
 import io.ktor.server.plugins.cachingheaders.CachingHeaders
 import io.ktor.server.plugins.callid.*
@@ -73,6 +76,8 @@ fun Application.module(testing: Boolean = false) {
 
     val applicable: Boolean =
         environment.config.config("ktor.deployment").property("applicable").getString().toBoolean()
+    val enableKafka: Boolean =
+        environment.config.config("ktor.kafka").property("enable").getString().toBoolean()
     if (testing || !applicable) {
         return
     }
@@ -173,6 +178,22 @@ fun Application.module(testing: Boolean = false) {
     }
 
     logger.debug(Env.message("app.websocket.install"))
+
+    // This is a sample which combines [ktor](https://github.com/Kotlin/ktor) with [swaggerUi](https://swagger.io/). You find the sources on [github](https://github.com/nielsfalk/ktor-swagger
+    install(SwaggerSupport) {
+        path = "/swagger"
+        forwardRoot = true
+        swagger = Swagger()
+        swagger?.info = Information(
+            version = "0.1.0",
+            title = "Serenity Server API Specifications",
+            description = "Serenity Server API Specification V1",
+            contact = Contact(
+                name = "kepha.khang@emoldino.com",
+                url = Env.serenityServerUrl
+            )
+        )
+    }
 
     //ref : https://ktor.io/docs/call-id.html
     install(CallId) {
@@ -348,12 +369,14 @@ fun Application.module(testing: Boolean = false) {
         logger.debug("### Route completed: ${call.route} : ${call.callId} ]")
     }
 
-    Env.kafkaEventProducer = buildProducer(environment, tenantService)
-    logger.debug("buildProducer is OK")
+    if (enableKafka) {
+        Env.kafkaEventProducer = buildProducer(environment, tenantService)
+        logger.debug("buildProducer is OK")
+    }
 
     logger.debug("cosumerJobs are starting")
     val cosumerJobs: ArrayList<BackgroundJob> = ArrayList<BackgroundJob>()
-    if (applicable) { // Appicable="false" 이면 Consumer 를 띄우지 않는다.
+    if (enableKafka) {
         for (key in Env.tenantMap.keys()) {
             val topic: String = key
             logger.debug("cosumerJobs : ${topic}")
@@ -381,6 +404,7 @@ fun Application.module(testing: Boolean = false) {
     routing {
         authenticate("api") {
             user(userService)
+            tenant(tenantService)
         }
         admin(adminService)
         sso(ssoService)

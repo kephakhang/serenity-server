@@ -5,6 +5,7 @@ import com.emoldino.serenity.server.jpa.common.entity.BaseEntity
 import com.emoldino.serenity.server.jpa.own.dto.CallDto
 import com.emoldino.serenity.server.model.PostBody
 import com.fasterxml.jackson.annotation.JsonInclude
+import org.hibernate.search.annotations.Key
 import javax.persistence.*
 
 @Entity(name = "Call")
@@ -12,7 +13,7 @@ import javax.persistence.*
 @JsonInclude(JsonInclude.Include.NON_NULL)
 open class Call (
 
-  @Column(name = "ca_requst_id", nullable = false)
+  @Column(name = "ca_request_id", columnDefinition = "char(36)", nullable = false)
   var caRequestId: String = "",
 
   @Column(name = "ca_uri", nullable = false)
@@ -24,10 +25,12 @@ open class Call (
   @Column(name = "ca_method", nullable = false)
   var caMethod: String = "",
 
-  @Column(name = "ca_request_body", nullable = false)
+  @Lob
+  @Column(name = "ca_request_body", columnDefinition = "text")
   var caRequestBody: String,
 
-  @Column(name = "ca_response_body", nullable = false)
+  @Lob
+  @Column(name = "ca_response_body", columnDefinition = "text")
   var caResponseBody: String
 
   )  : BaseEntity() {

@@ -1,5 +1,6 @@
 package com.emoldino.serenity.server.jpa.own.dto
 
+import com.emoldino.serenity.common.DateUtil
 import java.time.LocalDateTime
 import com.emoldino.serenity.server.jpa.own.entity.Tenant as Tenant
 
@@ -18,9 +19,13 @@ data class TenantDto(
 
     val hostUrl: String = "",
 
-    val regDatetime: LocalDateTime = LocalDateTime.MIN,
+    val prefix: String = "",
 
-    val modDatetime: LocalDateTime = LocalDateTime.MIN,
+    val hostname: String = "",
+
+    val regDatetime: String = "",
+
+    val modDatetime: String ="",
 
     ) {
 
@@ -38,8 +43,10 @@ data class TenantDto(
             countryId = dto.countryCode
             hostUrl = dto.hostUrl
             enable = true
-            regDatetime = dto.regDatetime
-            modDatetime = dto.modDatetime
+            prefix = dto.prefix
+            hostname = dto.hostname
+            regDatetime = DateUtil.parseLocalDatetime(dto.regDatetime)
+            modDatetime = DateUtil.parseLocalDatetime(dto.modDatetime)
         }
     }
 }

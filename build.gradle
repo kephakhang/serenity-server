@@ -168,6 +168,12 @@ dependencies {
     implementation "io.reactivex.rxjava3:rxjava:$rxjava_version"
     //implementation "io.reactivex.rxjava3:rxkotlin:$rxkotlin_version"
 
+    implementation "org.webjars:swagger-ui:$swagger_version"
+    implementation "io.ktor:ktor-gson:1.6.8"
+    runtimeOnly "com.github.ajalt:clikt:2.8.0"
+//Thanks for using https://jar-download.com
+
+
     // QueryDSL
     implementation("com.querydsl:querydsl-core:${querydsl_version}")
     implementation("com.querydsl:querydsl-jpa:${querydsl_version}")

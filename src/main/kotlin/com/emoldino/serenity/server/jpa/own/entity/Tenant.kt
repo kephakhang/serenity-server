@@ -2,6 +2,7 @@ package com.emoldino.serenity.server.jpa.own.entity
 
 //import io.swagger.annotations.ApiModel
 //import io.swagger.annotations.ApiModelProperty
+import com.emoldino.serenity.common.DateUtil
 import com.emoldino.serenity.common.LocalDateTimeSerializer
 import com.emoldino.serenity.server.env.Env
 import com.emoldino.serenity.server.jpa.common.entity.BaseEntity
@@ -31,7 +32,7 @@ open class Tenant (
   @Column(name = "name", nullable = false)
   var name: String = "",
 
-  //  @ApiModelProperty("tenant type (0:unknown, 1:OEM, 2:MoldMaker, 3:Supply)")
+  //  @ApiModelProperty("tenant type (0:eMoldino, 1:OEM, 2:MoldMaker, 3:Supply)")
   @Column(name = "type", nullable = false)
   var type: Int = 0,
 
@@ -56,6 +57,13 @@ open class Tenant (
   @Column(name = "enable", columnDefinition = "BIT", nullable = false)
 //  @Type(type = "org.hibernate.type.NumericBooleanType")
   var enable: Boolean = true,
+
+  @Column(name = "prefix", nullable = false)
+  var prefix: String = "",
+
+  @Column(name = "hostname", nullable = false)
+  var hostname: String = "", // auto genrated hostnam by OEM hostname naming rule
+
 
   /**
    * 등록시각
@@ -84,9 +92,11 @@ open class Tenant (
       type = type,
       description = description,
       hostUrl = hostUrl,
+      prefix = prefix,
+      hostname = hostname,
       countryCode = countryId,
-      regDatetime =  regDatetime,
-      modDatetime = modDatetime
+      regDatetime =  DateUtil.localDatetimeToStr(regDatetime),
+      modDatetime = DateUtil.localDatetimeToStr(modDatetime)
     )
   }
 }

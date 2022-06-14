@@ -21,6 +21,7 @@
         <class>com.emoldino.serenity.server.jpa.own.entity.CompanyMember</class>
         <class>com.emoldino.serenity.server.jpa.own.entity.Group</class>
         <class>com.emoldino.serenity.server.jpa.own.entity.Tenant</class>
+        <class>com.emoldino.serenity.server.jpa.own.entity.Call</class>
         <properties>
             <!-- 속성 설정 -->
         </properties>

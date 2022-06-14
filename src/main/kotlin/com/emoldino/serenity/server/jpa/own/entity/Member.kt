@@ -1,5 +1,6 @@
 package com.emoldino.serenity.server.jpa.own.entity
 
+import com.emoldino.serenity.common.DateUtil
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.emoldino.serenity.server.env.Env
 import com.emoldino.serenity.server.jpa.common.entity.BaseEntity
@@ -52,8 +53,8 @@ open class Member(
       level = mbLevel,
       status = mbStatus,
       point = mbPoint,
-      regDatetime = regDatetime,
-      modDatetime = modDatetime,
+      regDatetime = DateUtil.localDatetimeToStr(regDatetime),
+      modDatetime = DateUtil.localDatetimeToStr(modDatetime),
       detail = detail?.toUserDetailDto()
     )
   }

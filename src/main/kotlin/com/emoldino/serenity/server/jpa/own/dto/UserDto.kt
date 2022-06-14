@@ -2,6 +2,7 @@ package com.emoldino.serenity.server.jpa.own.dto
 
 
 import com.auth0.jwt.interfaces.Payload
+import com.emoldino.serenity.common.DateUtil
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.emoldino.serenity.server.jpa.own.entity.Admin
 import com.emoldino.serenity.server.jpa.own.entity.Member
@@ -37,9 +38,9 @@ data class UserDto(
 
     val status: Int = 0,
 
-    val regDatetime: LocalDateTime = LocalDateTime.MIN,
+    val regDatetime: String = "",
 
-    val modDatetime: LocalDateTime = LocalDateTime.MIN,
+    val modDatetime: String ="",
 
     val detail: UserDetailDto? = null
 ) : Principal {
@@ -61,8 +62,8 @@ data class UserDto(
             mbLevel = level
             mbStatus = status
             mbPoint = point
-            regDatetime = dto.regDatetime
-            modDatetime = dto.modDatetime
+            regDatetime = DateUtil.parseLocalDatetime(dto.regDatetime)
+            modDatetime = DateUtil.parseLocalDatetime(dto.modDatetime)
             detail = dto.detail?.toMemberDetail()
         }
     }
@@ -78,8 +79,8 @@ data class UserDto(
             amName = dto.name
             amLevel = dto.level
             amStatus = dto.status
-            regDatetime = dto.regDatetime
-            modDatetime = dto.modDatetime
+            regDatetime = DateUtil.parseLocalDatetime(dto.regDatetime)
+            modDatetime = DateUtil.parseLocalDatetime(dto.modDatetime)
         }
     }
 }
