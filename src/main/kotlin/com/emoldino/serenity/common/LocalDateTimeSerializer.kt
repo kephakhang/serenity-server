@@ -13,7 +13,7 @@ class LocalDateTimeSerializer :
     return if (locDateTime === null) null else Timestamp.valueOf(locDateTime)
   }
 
-  override fun convertToEntityAttribute(sqlTimestamp: Timestamp): LocalDateTime? {
+  override fun convertToEntityAttribute(sqlTimestamp: Timestamp?): LocalDateTime? {
     return if (sqlTimestamp === null) null else sqlTimestamp.toLocalDateTime()
   }
 }

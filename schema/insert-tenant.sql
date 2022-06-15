@@ -1,4 +1,0 @@
-INSERT INTO `tb_tenant` (`id`, `name`, `type`, `description`, `jdbc_host`, `jdbc_user`, `jdbc_pass`, `country_id`, `host_url`, `enable`, `reg_datetime`, `mod_datetime`) VALUES
-	('emoldino-dev:own:kr', 'eMoldino-dev', 1, 'eMoldino-dev test server', NULL, NULL, NULL, 'KR', 'https://dev.emoldino.com/', 1, now(), now()),
-    ('emoldino-new:own:kr', 'eMoldino-new', 1, 'eMoldino-new sensor test server', NULL, NULL, NULL, 'KR', 'https://new.emoldino.com/', 1, now(), now()),
-    ('emoldino-dev-feature:own:kr', 'eMoldino-dev-feature', 1, 'eMoldino-dev-feature test server', NULL, NULL, NULL, 'KR', 'https://dev-feature.emoldino.com/', 1, now(), now());
