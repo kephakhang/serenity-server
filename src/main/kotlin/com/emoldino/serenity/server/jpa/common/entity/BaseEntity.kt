@@ -21,7 +21,7 @@ class BaseEntity : Serializable {
    */
 //  @ApiModelProperty("고유 UUID")
   @Id
-  @Column(name = "id", columnDefinition = "char(36)")
+  @Column(name = "id")
   var id: String? = null
 
 
@@ -29,7 +29,7 @@ class BaseEntity : Serializable {
    * tenant ID(UUID)
    */
 //  @ApiModelProperty("고유 UUID")
-  @Column(name = "te_id", columnDefinition = "char(36)", nullable = false)
+  @Column(name = "te_id")
   var teId: String? = null
 
   /**

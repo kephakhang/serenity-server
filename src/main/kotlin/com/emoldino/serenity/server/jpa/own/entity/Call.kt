@@ -13,7 +13,7 @@ import javax.persistence.*
 @JsonInclude(JsonInclude.Include.NON_NULL)
 open class Call (
 
-  @Column(name = "ca_request_id", columnDefinition = "char(36)", nullable = false)
+  @Column(name = "ca_request_id", nullable = false)
   var caRequestId: String = "",
 
   @Column(name = "ca_uri", nullable = false)
@@ -38,6 +38,7 @@ open class Call (
   fun toCallDto(): CallDto {
     return CallDto(
       uuid = id,
+      tenantId = teId,
       requestId = caRequestId,
       uri = caUri,
       requestUrl = caRequestUrl,

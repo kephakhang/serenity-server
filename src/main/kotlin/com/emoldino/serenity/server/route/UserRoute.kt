@@ -2,6 +2,7 @@ package com.emoldino.serenity.server.route
 
 import com.emoldino.serenity.exception.SessionNotFoundException
 import com.emoldino.serenity.server.jpa.own.dto.UserDto
+import com.emoldino.serenity.server.jpa.own.enum.UserLevel
 import com.emoldino.serenity.server.service.UserService
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -14,9 +15,7 @@ fun Route.user(userService: UserService) {
 
     get("/api/v1/user") {
         aop(call, true) {
-            val session: UserDto =
-                call.authentication.principal<UserDto>() ?: throw SessionNotFoundException(null, "User Not Found")
-            call.respond(HttpStatusCode.OK, session)
+            call.respond(HttpStatusCode.OK, it!!)
         }
     }
 
@@ -33,12 +32,21 @@ fun Route.user(userService: UserService) {
         call.respond(HttpStatusCode.OK, mapOf("hello" to "user's world"))
     }
 
+    post("/api/v1/user") {
+        aop(call, true) {
+            val userDto: UserDto = call.receive<UserDto>()
+            if (it!!.level >= UserLevel.ADMIN.no) {
+                call.respond(userService.save(userDto))
+            } else {
+                throw SessionNotFoundException(null, "Wrong User Access")
+            }
+        }
+    }
+
     put("/api/v1/user") {
         aop(call, true) {
             val userDto: UserDto = call.receive<UserDto>()
-            val session: UserDto =
-                call.authentication.principal<UserDto>() ?: throw SessionNotFoundException(null, "User Not Found")
-            if (session.uuid.equals(userDto.uuid)) {
+            if (it!!.uuid.equals(userDto.uuid) || it!!.level > UserLevel.ADMIN.no) {
                 call.respond(userService.update(userDto))
             } else {
                 throw SessionNotFoundException(null, "Wrong User Access")

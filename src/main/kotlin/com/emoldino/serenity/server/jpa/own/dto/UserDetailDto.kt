@@ -5,6 +5,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 data class UserDetailDto(
+  val tenantId: String? = null,
   val mobile: String? = null,
   val email: String? = null,
   val image: String? = null,
@@ -56,6 +57,7 @@ data class UserDetailDto(
   fun toMemberDetail(): MemberDetail {
     val memberDetail = MemberDetail()
     return memberDetail.apply {
+      teId = tenantId
       mbEmail = email
       mbMobile = mobile
       mbImage = image

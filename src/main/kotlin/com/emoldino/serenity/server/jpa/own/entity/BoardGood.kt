@@ -12,13 +12,13 @@ import javax.persistence.Table
 @JsonInclude(JsonInclude.Include.NON_NULL)
 open class BoardGood(
 
-  @Column(name = "bo_id", columnDefinition = "char(36)", nullable = false)
+  @Column(name = "bo_id", nullable = false)
   var boId: String = "",
 
-  @Column(name = "wr_id", columnDefinition = "char(36)", nullable = false)
+  @Column(name = "wr_id", nullable = false)
   var wrId: String = "",
 
-  @Column(name = "mb_id", columnDefinition = "char(36)", nullable = false)
+  @Column(name = "mb_id", nullable = false)
   var mbId: String = "",
 
   @Column(name = "bg_flag", nullable = false)

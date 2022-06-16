@@ -26,7 +26,7 @@ open class Tenant (
    */
 //  @ApiModelProperty("고유 UUID")
   @Id
-  @Column(name = "id", columnDefinition = "char(36)")
+  @Column(name = "id")
   var id: String? = null,
 
   @Column(name = "name", nullable = false)

@@ -29,7 +29,7 @@ open class AgentDetail(
    */
   @Id
 //  @ApiModelProperty("대행사 고유 ID (join id)")
-  @Column(name = "ag_id", columnDefinition = "char(36)")
+  @Column(name = "ag_id")
   val agId: String? = null,
 
   @Column(name = "ag_mobile", nullable = false)
@@ -52,7 +52,7 @@ open class AgentDetail(
   @Column(name = "ag_fax")
   val agFax: String? = null,
 
-  @Column(name = "ag_zip", columnDefinition = "char(8)")
+  @Column(name = "ag_zip")
   val agZip: String? = null,
 
   @Column(name = "ag_addr1")
@@ -92,6 +92,6 @@ open class AgentDetail(
    * 과금 부과 member ID
    */
 //  @ApiModelProperty("과금 부과 member ID")
-  @Column(name = "ag_charge_id", columnDefinition = "char(36)")
+  @Column(name = "ag_charge_id")
   val agChargeId: String? = null
 ) : Serializable

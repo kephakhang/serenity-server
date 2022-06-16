@@ -15,7 +15,7 @@ class TenantRepository : Querydsl4RepositorySupport<Tenant>(Env.em, Tenant::clas
   val tenant: QTenant = QTenant.tenant
 
 
-  fun findByUuid(uuid: String): Tenant? {
+  fun findById(uuid: String): Tenant? {
     return selectFrom(tenant).where(tenant.id.eq(uuid)).fetchOne()
   }
 

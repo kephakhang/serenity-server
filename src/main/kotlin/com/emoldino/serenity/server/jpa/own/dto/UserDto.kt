@@ -19,7 +19,7 @@ data class UserDto(
 
     val uuid: String? = null,
 
-    val tenantId: String = "",
+    val tenantId: String? = "",
 
     @JsonIgnore
     val emailHash: String = "",

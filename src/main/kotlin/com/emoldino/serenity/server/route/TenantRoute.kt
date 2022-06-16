@@ -3,6 +3,7 @@ package com.emoldino.serenity.server.route
 import com.emoldino.serenity.exception.SessionNotFoundException
 import com.emoldino.serenity.server.jpa.own.dto.TenantDto
 import com.emoldino.serenity.server.jpa.own.dto.UserDto
+import com.emoldino.serenity.server.jpa.own.enum.UserLevel
 import com.emoldino.serenity.server.service.TenantService
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -15,9 +16,8 @@ fun Route.tenant(tenantService: TenantService) {
 
     get("/api/v1/tenant") {
         aop(call, true) {
-            val session: UserDto =
-                call.authentication.principal<UserDto>() ?: throw SessionNotFoundException(null, "User Session Not Found")
-            val tenant = tenantService.getTenant(session.tenantId) ?: throw SessionNotFoundException(null, "Tenant Not Found")
+            val tenantId = call.request.queryParameters["terminalId"]?.toString()?: throw SessionNotFoundException(null, "request parameter is missed : Tenant Id not found")
+            val tenant = tenantService.getTenant(tenantId) ?: throw SessionNotFoundException(null, "Tenant Not Found")
             call.respond(HttpStatusCode.OK, tenant)
         }
     }
@@ -35,10 +35,25 @@ fun Route.tenant(tenantService: TenantService) {
         call.respond(HttpStatusCode.OK, mapOf("hello" to "tenant's world"))
     }
 
+    post("/api/v1/tenant") {
+        aop(call, true) {
+            val tenantDto: TenantDto = call.receive<TenantDto>()
+            if (it!!.level > UserLevel.ADMIN.no) {
+                call.respond(tenantService.save(tenantDto))
+            } else {
+                throw SessionNotFoundException(null, "Wrong User Access")
+            }
+        }
+    }
+
     put("/api/v1/tenant") {
         aop(call, true) {
             val tenantDto: TenantDto = call.receive<TenantDto>()
-            call.respond(tenantService.update(tenantDto))
+            if (it!!.level > UserLevel.ADMIN.no) {
+                call.respond(tenantService.update(tenantDto))
+            } else {
+                throw SessionNotFoundException(null, "Wrong User Access")
+            }
         }
     }
 }

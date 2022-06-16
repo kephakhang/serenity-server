@@ -24,7 +24,7 @@ open class Admin(
    * admin sha256(email)
    */
  // @ApiModelProperty("admin sha256(email)")
-  @Column(name = "am_email_hash", columnDefinition = "char(64)", nullable = false)
+  @Column(name = "am_email_hash",  nullable = false)
   var amEmailHash: String = "",
 
   /**
@@ -87,14 +87,14 @@ open class Admin(
    * 등록자 admin ID
    */
   //@ApiModelProperty("등록자 admin ID")
-  @Column(name = "am_registrant_id", columnDefinition = "char(36)")
+  @Column(name = "am_registrant_id")
   var amRegistrantId: String? = null,
 
   /**
    * 수정자 admin ID
    */
   //@ApiModelProperty("수정자 admin ID")
-  @Column(name = "am_modifier_id", columnDefinition = "char(36)")
+  @Column(name = "am_modifier_id")
   var amModifierId: String? = null,
 
   /**
@@ -118,5 +118,4 @@ open class Admin(
       modDatetime = DateUtil.localDatetimeToStr(modDatetime)
     )
   }
-
 }

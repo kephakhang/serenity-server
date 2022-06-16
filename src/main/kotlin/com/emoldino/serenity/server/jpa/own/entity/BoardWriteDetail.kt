@@ -19,7 +19,7 @@ open class BoardWriteDetail(
   val boardWrite: BoardWrite? = null,
 
   @Id
-  @Column(name = "wr_id", columnDefinition = "char(36)", updatable = false)
+  @Column(name = "wr_id", updatable = false)
   private val wrId: String? = null,
 
   @Column(name = "wr_content", columnDefinition = "text", nullable = false)

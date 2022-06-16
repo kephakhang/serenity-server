@@ -17,7 +17,7 @@ open class CompanyMember(
 
   @JsonIgnore
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "co_id", columnDefinition = "char(36)", insertable = false, updatable = false)
+  @JoinColumn(name = "co_id", insertable = false, updatable = false)
   open var company: Company? = null,
 
 
@@ -25,20 +25,20 @@ open class CompanyMember(
    * 가입회사 대행사 고유 ID
    */
 //  @ApiModelProperty("가입회사 대행사 고유 ID")
-  @Column(name = "co_id", columnDefinition = "char(36)", nullable = true, updatable = false)
+  @Column(name = "co_id", nullable = true, updatable = false)
   var coId: String = "",
 
 
   @JsonIgnore
   @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "mb_id", columnDefinition = "char(36)", insertable = false, updatable = false)
+  @JoinColumn(name = "mb_id", insertable = false, updatable = false)
   var member: Member? = null,
 
   /**
    * 가입회사 사용자 ID
    */
 //  @ApiModelProperty("사용자 ID")
-  @Column(name = "mb_id", columnDefinition = "char(36)", nullable = true, updatable = false)
+  @Column(name = "mb_id", nullable = true, updatable = false)
   var mbId: String = "",
 
   /**

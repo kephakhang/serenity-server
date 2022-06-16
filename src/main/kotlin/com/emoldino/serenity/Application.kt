@@ -14,17 +14,11 @@ import com.emoldino.serenity.server.auth.JwtConfig
 import com.emoldino.serenity.server.env.Env
 import com.emoldino.serenity.server.jpa.own.dto.Response
 import com.emoldino.serenity.server.jpa.own.dto.UserDto
-import com.emoldino.serenity.server.jpa.own.repository.AdminRepository
-import com.emoldino.serenity.server.jpa.own.repository.MemberDetailRepository
-import com.emoldino.serenity.server.jpa.own.repository.MemberRepository
-import com.emoldino.serenity.server.jpa.own.repository.TenantRepository
+import com.emoldino.serenity.server.jpa.own.repository.*
 import com.emoldino.serenity.server.kafka.buildConsumer
 import com.emoldino.serenity.server.kafka.buildProducer
 import com.emoldino.serenity.server.retrofit.DeepChainService
 import com.emoldino.serenity.server.route.*
-import com.emoldino.serenity.server.service.AdminService
-import com.emoldino.serenity.server.service.SsoService
-import com.emoldino.serenity.server.service.UserService
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
@@ -41,7 +35,7 @@ import mu.KotlinLogging
 import java.time.Duration
 import kotlin.concurrent.thread
 import com.emoldino.serenity.server.route.deepchain
-import com.emoldino.serenity.server.service.TenantService
+import com.emoldino.serenity.server.service.*
 import de.nielsfalk.ktor.swagger.SwaggerSupport
 import de.nielsfalk.ktor.swagger.version.shared.Contact
 import de.nielsfalk.ktor.swagger.version.shared.Information
@@ -217,6 +211,8 @@ fun Application.module(testing: Boolean = false) {
     val userService: UserService = UserService(MemberRepository())
     val ssoService: SsoService = SsoService(MemberRepository(), MemberDetailRepository())
     val tenantService: TenantService = TenantService(TenantRepository())
+    val terminalService: TerminalService = TerminalService(TerminalRepository(), CounterRepository())
+    val counterService: CounterService = CounterService(CounterRepository())
 
     // ref : https://github.com/AndreasVolkmann/realworld-kotlin-ktor
     install(Authentication) {
@@ -410,6 +406,7 @@ fun Application.module(testing: Boolean = false) {
         sso(ssoService)
         test()
         deepchain()
+        terminal(terminalService, counterService)
     }
 
     logger.debug("Application start... OK")

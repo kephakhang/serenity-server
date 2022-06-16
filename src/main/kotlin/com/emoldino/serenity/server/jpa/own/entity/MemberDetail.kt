@@ -24,9 +24,17 @@ open class MemberDetail(
   @JoinColumn(name = "mb_id", insertable = false, updatable = false)
   var member: Member? = null,
 
+
   @Id
-  @Column(name = "mb_id", columnDefinition = "char(36)", updatable = false)
+  @Column(name = "mb_id", updatable = false)
   var mbId: String? = null,
+
+  /**
+   * tenant ID(UUID)
+   */
+//  @ApiModelProperty("고유 UUID")
+  @Column(name = "te_id")
+  var teId: String? = null,
 
   @Column(name = "mb_mobile", nullable = false)
   var mbMobile: String? = null,
@@ -52,7 +60,7 @@ open class MemberDetail(
   @Column(name = "mb_married")
   var mbMarried: Boolean = false,
 
-  @Column(name = "mb_zip", columnDefinition = "char(8)")
+  @Column(name = "mb_zip")
   var mbZip: String? = null,
 
   @Column(name = "mb_addr1")
@@ -173,6 +181,7 @@ open class MemberDetail(
 
   fun toUserDetailDto(): UserDetailDto {
     return UserDetailDto(
+      tenantId = teId,
       email = mbEmail,
       mobile = mbMobile,
       homepage = mbHomepage,

@@ -9,7 +9,7 @@ class TenantService(val db: TenantRepository) {
 
     @Throws(Exception::class)
     fun getTenant(id: String): TenantDto {
-        val tenant = db.findByUuid(id) ?: throw SessionNotFoundException(null, "Tenant Not Found")
+        val tenant = db.findById(id) ?: throw SessionNotFoundException(null, "Tenant Not Found")
         return tenant.toTenantDto()
     }
 

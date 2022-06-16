@@ -1,0 +1,14 @@
+databaseChangeLog:
+  -  preConditions:
+  -  runningAs:
+       username:  emoldino
+
+  -  changeSet:
+       id: 20220611-01
+       author: Kepha
+       - sqlFile:
+           dbms: mysql
+           encoding: UTF-9
+           path: src/main/resources/master-data-sql/20220615-alter-table-terminal.sql
+           relativeToChangelogFile: true
+           stripComments: true

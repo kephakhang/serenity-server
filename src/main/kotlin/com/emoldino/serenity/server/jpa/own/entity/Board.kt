@@ -25,7 +25,7 @@ open class Board(
    * 게시판 그룹 고유 ID
    */
 //  @ApiModelProperty("게시판 그룹 고유 ID")
-  @Column(name = "gr_id", columnDefinition = "char(36)", nullable = false)
+  @Column(name = "gr_id", nullable = false)
   var grId: String? = null,
 
   @Column(name = "bo_subject", nullable = false)

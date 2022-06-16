@@ -15,10 +15,10 @@ import javax.persistence.*
 @JsonInclude(JsonInclude.Include.NON_NULL)
 open class Member(
 
-  @Column(name = "mb_email_hash", columnDefinition = "char(64)", nullable = false)
+  @Column(name = "mb_email_hash",  nullable = false)
   var mbEmailHash: String = "",
 
-  @Column(name = "mb_mobile_hash", columnDefinition = "char(64)", nullable = false)
+  @Column(name = "mb_mobile_hash",  nullable = false)
   var mbMobileHash: String = "",
 
   @Column(name = "mb_password", nullable = false)

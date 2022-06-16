@@ -132,7 +132,7 @@ fun loggging(
     }
 }
 
-inline suspend fun aop(call: ApplicationCall, withAuth: Boolean = true, body: () -> Unit): UserDto? {
+inline suspend fun aop(call: ApplicationCall, withAuth: Boolean = true, body: (session: UserDto?) -> Unit): UserDto? {
     val CRLF = "\n"
     val REQUEST_PREFIX = "Request: "
     val RESPONSE_PREFIX = "Response: "
@@ -146,12 +146,12 @@ inline suspend fun aop(call: ApplicationCall, withAuth: Boolean = true, body: ()
 
     try {
         if (withAuth) {
-            val session = call.request.call.authentication.principal<UserDto>() ?: throw SessionNotFoundException(
-                null,
-                "User Not Found"
-            )
+            val session = call.request.call.authentication.principal<UserDto>() ?: throw SessionNotFoundException(null, "User Not Found")
+            body(session)
+        } else {
+            body(null)
         }
-        body()
+
     } catch (ex: EmolException) {
         logger.error("routing error : ${ex.stackTraceString}")
         isException = true

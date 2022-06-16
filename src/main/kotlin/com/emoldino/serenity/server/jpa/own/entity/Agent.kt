@@ -21,14 +21,14 @@ open class Agent(
    * agent sha256(email)
    */
 //  @ApiModelProperty("agent sha256(email)")
-  @Column(name = "ag_email_hash", columnDefinition = "char(64)", nullable = false)
+  @Column(name = "ag_email_hash",  nullable = false)
   var agEmailHash: String? = null,
 
   /**
    * agent sha256(email)
    */
 //  @ApiModelProperty("agent sha256(email)")
-  @Column(name = "ag_mobile_hash", columnDefinition = "char(64)", nullable = false)
+  @Column(name = "ag_mobile_hash",  nullable = false)
   var agMobileHash: String? = null,
 
   /**

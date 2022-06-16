@@ -19,12 +19,12 @@ open class BoardFile(
    * 게시판 정보 테이블 Join ID
    */
 //  @ApiModelProperty("게시판 정보 테이블 Join ID")
-  @Column(name = "bo_id", columnDefinition = "char(36)", nullable = false)
+  @Column(name = "bo_id", nullable = false)
   var boId: String = "",
   /**
    * 게시판 작성(write) 글 고유 ID
    */
-  @Column(name = "wr_id", columnDefinition = "char(36)", nullable = false)
+  @Column(name = "wr_id", nullable = false)
 //  @ApiModelProperty("게시판 작성(write) 글 고유 ID")
   var wrId: String = "",
 

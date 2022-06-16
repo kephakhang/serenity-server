@@ -11,6 +11,8 @@ data class CallDto(
 
     val uuid: String? = null,
 
+    val tenantId: String? = "",
+
     val requestId: String = "",
 
     val uri: String = "",
@@ -39,19 +41,9 @@ data class CallDto(
                 caResponseBody = Env.gson.toJson(dto.responseBody!!)
         )
         call.id = dto.uuid
+        call.teId = dto.tenantId
         call.regDatetime = dto.regDatetime
         call.modDatetime = dto.modDatetime
-//        call.apply {
-//            id = dto.uuid
-//            caRequestId = dto.requestId
-//            caUri = dto.uri
-//            caRequestUrl = dto.requestUrl
-//            caMethod = dto.method
-//            caRequestBody = Env.gson.toJson(dto.requestBody!!)
-//            caResponseBody = Env.gson.toJson(dto.responseBody!!)
-//            regDatetime =  dto.regDatetime
-//            modDatetime = dto.modDatetime
-//        }
 
         return call
     }

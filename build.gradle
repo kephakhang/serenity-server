@@ -82,7 +82,9 @@ dependencies {
     subprojects.forEach {
         implementation(project(it.path))
     }
-    implementation("org.liquibase:liquibase-core:$liquibase_version")
+    runtimeOnly("org.liquibase:liquibase-core:$liquibase_version")
+    runtimeOnly("org.yaml:snakeyaml:1.29")
+
     implementation("com.google.devtools.ksp:symbol-processing-api:$ksp_version")
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
@@ -244,3 +246,21 @@ task generateJks(type: JavaExec, dependsOn: "classes") {
 }
 
 getTasksByName("run", false).first().dependsOn("generateJks")
+
+liquibase {
+    activities.register("main") {
+        val db_url by System.getenv('EMOL_SERENITY_LIQUIBASE_URL')
+        val db_user by System.getenv('EMOL_SERENITY_LIQUIBASE_USER')
+        val db_password by System.getenv('EMOL_SERENITY_LIQUIBASE_PASSWORD')
+
+        this.arguments = mapOf(
+                "logLevel" to "info",
+                "changeLogFile" to "src/main/resources/db/changelog/master.data.changelog.yml",
+                "url" to db_url,
+                "username" to db_user,
+                "password" to db_password,
+                "driver" to "com.mysql.cj.jdbc.Driver"
+        )
+    }
+    runList = "main"
+}

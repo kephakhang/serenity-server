@@ -17,21 +17,21 @@ open class Company(
 
   @JsonIgnore
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "ag_id", columnDefinition = "char(36)", insertable = false, updatable = false)
+  @JoinColumn(name = "ag_id", insertable = false, updatable = false)
   var agent: Agent? = null,
 
   /**
    * 가입회사 대행사 고유 ID
    */
 //  @ApiModelProperty("가입회사 대행사 고유 ID")
-  @Column(name = "ag_id", columnDefinition = "char(36)")
+  @Column(name = "ag_id")
   var agId: String? = null,
 
   /**
    * 가입회사 등록 member 고유 ID
    */
 //  @ApiModelProperty("가입회사 등록 member 고유 ID")
-  @Column(name = "mb_id", columnDefinition = "char(36)")
+  @Column(name = "mb_id")
   var mbId: String? = null,
 
   /**
@@ -90,7 +90,7 @@ open class Company(
   @Column(name = "co_fax")
   var coFax: String? = null,
 
-  @Column(name = "co_zip", columnDefinition = "char(8)")
+  @Column(name = "co_zip")
   var coZip: String? = null,
 
   @Column(name = "co_addr1")

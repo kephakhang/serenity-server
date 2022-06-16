@@ -11,10 +11,10 @@ import javax.persistence.*
 @JsonInclude(JsonInclude.Include.NON_NULL)
 open class BoardWrite(
 
-  @Column(name = "bo_id", columnDefinition = "char(36)", nullable = false)
+  @Column(name = "bo_id", nullable = false)
   var boId: String = "",
 
-  @Column(name = "mb_id", columnDefinition = "char(36)", nullable = false)
+  @Column(name = "mb_id", nullable = false)
   var mbId: String? = null,
 
   @Column(name = "wr_subject", nullable = false)

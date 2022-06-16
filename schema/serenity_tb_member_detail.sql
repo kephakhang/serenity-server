@@ -1,0 +1,6 @@
+SET FOREIGN_KEY_CHECKS=0;
+
+INSERT INTO serenity.tb_member_detail (mb_id, te_id, mb_mobile, mb_email, mb_homepage, mb_image, mb_gender, mb_married, mb_birthday, mb_adult, mb_zip, mb_addr1, mb_addr2, mb_addr3, mb_addr_jibeon, mb_latitude, mb_longitude, mb_signature, mb_recommend, mb_today_login, mb_login_ip, mb_ip, mb_leave_date, mb_intercept_date, mb_email_certify, mb_email_certify2, mb_mobile_certify, mb_mobile_certify2, mb_memo, mb_lost_certify, mb_mailling, mb_sms, mb_open, mb_open_date, mb_greeting, mb_memo_call, mb_memo_cnt, mb_scrap_cnt, mb_1, mb_2, mb_3, mb_4, mb_5, mb_6, mb_7, mb_8, mb_9, mb_10) VALUES ('b6f7a14f-3131-4957-93c4-6462f328de9f', '', '01099902251', 'kepha.khang@emoldino.com', null, null, null, false, null, false, null, null, null, null, null, null, null, null, null, '2022-05-12 20:14:35', null, null, null, null, '2022-05-12 20:14:35', '1783641', null, null, null, null, false, false, false, null, null, null, 0, 0, null, null, null, null, null, null, null, null, null, null);
+
+
+SET FOREIGN_KEY_CHECKS=1;
