@@ -22,6 +22,8 @@ import javax.persistence.*
 open class Terminal (
 
   //Terimainl.Id should be lower than 16 bytes : H/W Team suggestion
+  @Column(name = "country_id", nullable = false)
+  var countryId: String = "",
 
   @Column(name = "tr__version", nullable = false)
   var trVersion: Int = 3,
@@ -43,6 +45,7 @@ open class Terminal (
     return TerminalDto(
       id = id,
       tenantId = teId,
+      countryCode = countryId,
       version = trVersion,
       status = trStatus,
       ip = trIp,

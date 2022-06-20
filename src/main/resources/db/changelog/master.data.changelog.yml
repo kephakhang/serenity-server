@@ -1,14 +1,25 @@
 databaseChangeLog:
-  -  preConditions:
-  -  runningAs:
-       username:  emoldino
 
   -  changeSet:
-       id: 20220611-01
+       id: 20220601-02
        author: Kepha
+       changes:
+         - sqlFile:
+             dbms: mysql
+             encoding: UTF-8
+             path: master-data-sql/20220601-add-procedures.sql
+             relativeToChangelogFile: true
+             stripComments: false
+             endDelimiter: \nZZZ
+
+  -  changeSet:
+       id: 20220611-04
+       author: Kepha
+       changes:
        - sqlFile:
            dbms: mysql
-           encoding: UTF-9
-           path: src/main/resources/master-data-sql/20220615-alter-table-terminal.sql
+           encoding: UTF-8
+           path: master-data-sql/20220615-alter-table-terminal.sql
            relativeToChangelogFile: true
-           stripComments: true
+           stripComments: false
+           endDelimiter: ";"
