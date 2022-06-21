@@ -13,8 +13,8 @@ class BoardWriteRepository : Querydsl4RepositorySupport<BoardWrite>(Env.em, Boar
   val boardWrite: QBoardWrite = QBoardWrite.boardWrite
 
 
-  fun findByUuid(uuid: String): BoardWrite? {
-    return selectFrom(boardWrite).where(boardWrite.id.eq(uuid)).fetchOne()
+  fun findById(id: String): BoardWrite? {
+    return selectFrom(boardWrite).where(boardWrite.id.eq(id)).fetchOne()
   }
 
 }

@@ -14,8 +14,8 @@ class BoardFileRepository : Querydsl4RepositorySupport<BoardFile>(Env.em, Board:
   val boardFile: QBoardFile = QBoardFile.boardFile
 
 
-  fun findByUuid(uuid: String): BoardFile? {
-    return selectFrom(boardFile).where(boardFile.id.eq(uuid)).fetchOne()
+  fun findById(id: String): BoardFile? {
+    return selectFrom(boardFile).where(boardFile.id.eq(id)).fetchOne()
   }
 
 }

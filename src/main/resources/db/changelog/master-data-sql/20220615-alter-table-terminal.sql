@@ -59,19 +59,20 @@ alter table tb_counter add column mod_datetime datetime not null default CURRENT
 
 alter table tb_group modify column id varchar(36) not null;
 
+call dropColumnIfExists('tb_member', 'mb_jwt');
+alter table tb_member add column mb_jwt varchar(255) default null;
 alter table tb_member modify column id varchar(36) not null;
 alter table tb_member modify column mb_email_hash varchar(64) not null;
 alter table tb_member modify column mb_mobile_hash varchar(64) not null;
 alter table tb_member_detail modify column mb_zip varchar(8) default null;
+alter table tb_member_detail modify column mb_id varchar(36) not NULL;
 
 alter table tb_terminal modify column id varchar(16) not null;
 alter table tb_terminal modify column te_id varchar(36) not NULL;
 
-call dropColumnIfExists('tb_terminal', 'country_id');
 call dropColumnIfExists('tb_terminal', 'tr_ip');
 call dropColumnIfExists('tb_terminal', 'reg_datetime');
 call dropColumnIfExists('tb_terminal', 'mod_datetime');
-alter table tb_terminal add column country_id VARCHAR(36) default NULL;
 alter table tb_terminal add column tr_ip varchar(16) default null;
 alter table tb_terminal add column reg_datetime datetime not null default CURRENT_TIMESTAMP;
 alter table tb_terminal add column mod_datetime datetime not null default CURRENT_TIMESTAMP;
@@ -79,7 +80,7 @@ alter table tb_terminal add column mod_datetime datetime not null default CURREN
 call dropColumnIfExists('tb_call', 'ca_ip');
 alter table tb_call add column ca_ip varchar(16) default null;
 
-alter table tb_member_detail modify column mb_id varchar(36) not NULL;
+
 
 
 SET FOREIGN_KEY_CHECKS=1;

@@ -1,19 +1,15 @@
 package com.emoldino.serenity.server.jpa.own.entity
 
-//import kotlinx.serialization.Serializable
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.emoldino.serenity.server.env.Env
 import com.emoldino.serenity.server.jpa.own.dto.UserDetailDto
-//import io.swagger.annotations.ApiModel
-import org.hibernate.annotations.Type
 import java.io.Serializable
 import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity(name = "MemberDetail")
-//@ApiModel("사용자 상세정보")
 @Table(name = Env.tablePrefix + "member_detail")
 @Cacheable
 @JsonInclude(JsonInclude.Include.NON_NULL)

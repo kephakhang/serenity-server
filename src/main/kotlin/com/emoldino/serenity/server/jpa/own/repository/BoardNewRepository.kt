@@ -14,8 +14,8 @@ class BoardNewRepository : Querydsl4RepositorySupport<BoardNew>(Env.em, Board::c
   val boardNew: QBoardNew = QBoardNew.boardNew
 
 
-  fun findByUuid(uuid: String): BoardNew? {
-    return selectFrom(boardNew).where(boardNew.id.eq(uuid)).fetchOne()
+  fun findById(id: String): BoardNew? {
+    return selectFrom(boardNew).where(boardNew.id.eq(id)).fetchOne()
   }
 
 }

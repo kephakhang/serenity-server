@@ -13,8 +13,8 @@ class AdminRepository : Querydsl4RepositorySupport<Admin>(Env.em, Admin::class a
   val admin: QAdmin = QAdmin.admin
 
 
-  fun findByUuid(uuid: String): Admin? {
-    return selectFrom(admin).where(admin.id.eq(uuid)).fetchOne()
+  fun findById(id: String): Admin? {
+    return selectFrom(admin).where(admin.id.eq(id)).fetchOne()
   }
 
   fun findByEmail(email: String): Admin? {

@@ -3,9 +3,6 @@
 package com.emoldino.serenity
 
 import com.emoldino.serenity.common.BackgroundJob
-import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.emoldino.serenity.common.KeyGenerator
 import com.emoldino.serenity.exception.EmolException
 import com.emoldino.serenity.exception.ErrorCode
@@ -19,40 +16,42 @@ import com.emoldino.serenity.server.kafka.buildConsumer
 import com.emoldino.serenity.server.kafka.buildProducer
 import com.emoldino.serenity.server.retrofit.DeepChainService
 import com.emoldino.serenity.server.route.*
+import com.emoldino.serenity.server.service.*
+import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import de.nielsfalk.ktor.swagger.SwaggerSupport
+import de.nielsfalk.ktor.swagger.version.shared.Contact
+import de.nielsfalk.ktor.swagger.version.shared.Information
+import de.nielsfalk.ktor.swagger.version.v2.Swagger
+import io.ktor.http.*
+import io.ktor.serialization.jackson.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
-import io.ktor.http.*
 import io.ktor.server.http.content.*
 import io.ktor.server.locations.*
+import io.ktor.server.plugins.cachingheaders.*
+import io.ktor.server.plugins.callid.*
+import io.ktor.server.plugins.callloging.*
+import io.ktor.server.plugins.compression.*
+import io.ktor.server.plugins.contentnegotiation.*
+import io.ktor.server.plugins.cors.*
+import io.ktor.server.plugins.dataconversion.*
+import io.ktor.server.plugins.forwardedheaders.*
+import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.server.webjars.*
+import io.ktor.server.websocket.*
 import io.ktor.util.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import mu.KotlinLogging
 import java.time.Duration
-import kotlin.concurrent.thread
-import com.emoldino.serenity.server.route.deepchain
-import com.emoldino.serenity.server.service.*
-import de.nielsfalk.ktor.swagger.SwaggerSupport
-import de.nielsfalk.ktor.swagger.version.shared.Contact
-import de.nielsfalk.ktor.swagger.version.shared.Information
-import de.nielsfalk.ktor.swagger.version.v2.Swagger
-import io.ktor.serialization.jackson.*
-import io.ktor.server.plugins.cachingheaders.CachingHeaders
-import io.ktor.server.plugins.callid.*
-import io.ktor.server.plugins.callloging.CallLogging
-import io.ktor.server.plugins.compression.Compression
-import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.server.plugins.cors.CORS
-import io.ktor.server.plugins.dataconversion.DataConversion
-import io.ktor.server.plugins.forwardedheaders.*
-import io.ktor.server.plugins.statuspages.*
-import io.ktor.server.webjars.*
-import io.ktor.server.websocket.*
 import java.time.ZonedDateTime
+import kotlin.concurrent.thread
 
 fun main(args: Array<String>): Unit = io.ktor.server.jetty.EngineMain.main(args)
 
@@ -110,6 +109,21 @@ fun Application.module(testing: Boolean = false) {
 
     install(Compression)
     install(Locations)
+
+//    var dataSource = Env.emf.properties["javax.persistence.jtaDataSource"]
+//    var flywayFolders = arrayOf("db.changelog/master-data-sql")
+//    install(FlywayFeature) {
+//        dataSource = dataSource
+//        locations = flywayFolders
+//    }
+
+//    val cli = LiquibaseCommandLine()
+//    try {
+//        cli.execute(listOf("--defaults-file", "src/main/resources/liquibase.properties").toTypedArray())
+//    } catch(ex: Exception) {
+//        logger.error("liquibase ERROR : ${ex.stackTraceString}")
+//        System.exit(-1)
+//    }
 
     install(CORS) {
         anyHost()
@@ -401,12 +415,14 @@ fun Application.module(testing: Boolean = false) {
         authenticate("api") {
             user(userService)
             tenant(tenantService)
+            terminal(terminalService, counterService)
+            counter(counterService)
         }
         admin(adminService)
         sso(ssoService)
         test()
         deepchain()
-        terminal(terminalService, counterService)
+
     }
 
     logger.debug("Application start... OK")

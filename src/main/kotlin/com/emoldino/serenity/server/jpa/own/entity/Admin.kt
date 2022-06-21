@@ -5,8 +5,6 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.emoldino.serenity.server.env.Env
 import com.emoldino.serenity.server.jpa.common.entity.BaseEntity
 import com.emoldino.serenity.server.jpa.own.dto.UserDto
-//import io.swagger.annotations.ApiModel
-//import io.swagger.annotations.ApiModelProperty
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Table
@@ -108,7 +106,7 @@ open class Admin(
 
   fun toUserDto(): UserDto {
     return UserDto(
-      uuid = id!!,
+      id = id!!,
       tenantId = teId!!,
       password = amPassword,
       name = amName,

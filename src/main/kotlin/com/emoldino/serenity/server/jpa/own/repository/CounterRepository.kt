@@ -13,14 +13,14 @@ class CounterRepository : Querydsl4RepositorySupport<Counter>(Env.em, Counter::c
   val counter: QCounter = QCounter.counter
 
 
-  fun findById(uuid: String): Counter? {
-    return selectFrom(counter).where(counter.id.eq(uuid)).fetchOne()
+  fun findById(id: String): Counter? {
+    return selectFrom(counter).where(counter.id.eq(id)).fetchOne()
   }
 
   fun findAll(tenantId: String?, terminalId: String?): List<Counter> {
     return selectFrom(counter).where(WhereBuilder()
               .optionalAnd(tenantId, { counter.teId.eq(tenantId) })
-              .optionalAnd(tenantId, { counter.trId.eq(terminalId) })
+              .optionalAnd(terminalId, { counter.trId.eq(terminalId) })
     ).fetch()
   }
 }

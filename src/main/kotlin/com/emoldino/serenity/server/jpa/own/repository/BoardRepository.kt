@@ -13,7 +13,7 @@ class BoardRepository : Querydsl4RepositorySupport<Board>(Env.em, Board::class a
   val board: QBoard = QBoard.board
 
 
-  fun findByUuid(uuid: String): Board? {
-    return selectFrom(board).where(board.id.eq(uuid)).fetchOne()
+  fun findById(id: String): Board? {
+    return selectFrom(board).where(board.id.eq(id)).fetchOne()
   }
 }

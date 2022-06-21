@@ -4,8 +4,6 @@ package com.emoldino.serenity.server.jpa.own.entity
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.emoldino.serenity.server.env.Env
-//import io.swagger.annotations.ApiModel
-//import io.swagger.annotations.ApiModelProperty
 import java.io.Serializable
 import java.time.LocalDate
 import javax.persistence.*
@@ -14,7 +12,6 @@ import javax.persistence.*
  * 대행사 상세
  */
 @Entity(name = "AgentDetail")
-//@ApiModel("대행사 상세")
 @Table(name = Env.tablePrefix + "agent_detail")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 open class AgentDetail(

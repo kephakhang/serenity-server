@@ -15,11 +15,11 @@ data class CounterDto(
 
     val version: Int = 3, // v3
 
-    val status: Int = 0,
+    val status: Int = 0, // 0:available, 1:installed
 
     val regDatetime: String = "",
 
-    val modDatetime: String ="",
+    val modDatetime: String = "",
 
     ) {
 

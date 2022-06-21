@@ -38,7 +38,7 @@ class KeyGenerator {
 
     /*
     *  randomUUID 생성
-    * @return  uuid 스트링
+    * @return  id 스트링
     */
     fun uuid(): String {
       return UUID.randomUUID().toString()

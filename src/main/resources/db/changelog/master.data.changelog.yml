@@ -13,7 +13,7 @@ databaseChangeLog:
              endDelimiter: \nZZZ
 
   -  changeSet:
-       id: 20220611-04
+       id: 20220611-08
        author: Kepha
        changes:
        - sqlFile:

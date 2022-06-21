@@ -4,15 +4,12 @@ package com.emoldino.serenity.server.jpa.own.entity
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.emoldino.serenity.server.env.Env
 import com.emoldino.serenity.server.jpa.common.entity.BaseEntity
-//import io.swagger.annotations.ApiModel
-//import io.swagger.annotations.ApiModelProperty
 import javax.persistence.*
 
 /**
  * 대행사
  */
 @Entity(name = "Agent")
-//@ApiModel("대행사")
 @Table(name = Env.tablePrefix + "agent")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 open class Agent(

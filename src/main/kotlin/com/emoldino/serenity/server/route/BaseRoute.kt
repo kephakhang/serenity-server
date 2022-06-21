@@ -69,7 +69,7 @@ fun loggging(
     ) msg.append('?').append(req.queryString())
     msg.append(" ").append(req)
     if (session != null) {
-        msg.append(CRLF).append("SESSION ID: ").append(session.uuid)
+        msg.append(CRLF).append("SESSION ID: ").append(session.id)
         session.token?.let {
             msg.append(CRLF).append("Authentication: ").append(session.token.id).append(CRLF)
         }

@@ -11,8 +11,6 @@ data class TerminalDto(
 
     val tenantId: String? = "",
 
-    val countryCode: String = "",
-
     val version: Int = 3, // v3
 
     val status: Int = 0,

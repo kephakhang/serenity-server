@@ -15,8 +15,8 @@ class MemberRepository : Querydsl4RepositorySupport<Member>(Env.em, Member::clas
   val member: QMember = QMember.member
 
 
-  fun findByUuid(uuid: String): Member? {
-    return selectFrom(member).where(member.id.eq(uuid)).fetchOne()
+  fun findById(id: String): Member? {
+    return selectFrom(member).where(member.id.eq(id)).fetchOne()
   }
 
   fun findByEmail(email: String): Member? {

@@ -5,7 +5,6 @@ import com.emoldino.serenity.server.jpa.common.entity.BaseEntity
 import com.emoldino.serenity.server.jpa.own.dto.CallDto
 import com.emoldino.serenity.server.model.PostBody
 import com.fasterxml.jackson.annotation.JsonInclude
-import org.hibernate.search.annotations.Key
 import javax.persistence.*
 
 @Entity(name = "Call")
@@ -37,7 +36,7 @@ open class Call (
 
   fun toCallDto(): CallDto {
     return CallDto(
-      uuid = id,
+      id = id,
       tenantId = teId,
       requestId = caRequestId,
       uri = caUri,

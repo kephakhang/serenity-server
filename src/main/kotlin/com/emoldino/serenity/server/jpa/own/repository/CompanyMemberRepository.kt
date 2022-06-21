@@ -12,8 +12,8 @@ class CompanyMemberRepository : Querydsl4RepositorySupport<CompanyMember>(Env.em
   val path: PathBuilder<CompanyMember> = PathBuilder<CompanyMember>(CompanyMember::class.java, "companyMember")
   val companyMember: QCompanyMember = QCompanyMember.companyMember
 
-  fun findByUuid(uuid: String): CompanyMember? {
-    return selectFrom(companyMember).where(companyMember.id.eq(uuid)).fetchOne()
+  fun findById(id: String): CompanyMember? {
+    return selectFrom(companyMember).where(companyMember.id.eq(id)).fetchOne()
   }
 
   fun findByCoIdAndMbId(coId: String, mbId: String): MutableList<CompanyMember>? {

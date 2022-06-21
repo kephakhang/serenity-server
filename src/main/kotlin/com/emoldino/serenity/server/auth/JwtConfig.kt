@@ -11,8 +11,8 @@ object JwtConfig {
   const val authHeader = "Authorization"
   private const val secret = "xE1x1o1x8qflc1iYtcRd"
   private const val subject = "sso:::authentication"
-  private const val issuer = "everytalk.io"
-  private const val audience = "everytalk:::web:::mobile:::client"
+  private const val issuer = "emoldino.com"
+  private const val audience = "emoldino:::web:::mobile:::client"
   const val realm = issuer
   private const val validityInMs = 36_000_000 // 10 hours
   private val algorithm = Algorithm.HMAC256(secret)
@@ -31,7 +31,7 @@ object JwtConfig {
     .withAudience(audience)
     .withIssuer(issuer)
     .withJWTId(if (jti == null) UUID.randomUUID().toString() else jti)
-    .withClaim("uid", user.uuid)
+    .withClaim("uid", user.id)
     .withClaim("name", user.name)
     .withClaim("level", user.level)
     .withClaim("status", user.status)

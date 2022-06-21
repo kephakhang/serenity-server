@@ -94,7 +94,7 @@ open class Querydsl4RepositorySupport<T>(val entityManager: EntityManager, val d
 
     fun update(entity: T): T {
         if (entity is BaseEntity) {
-            entity.modDatetime = entity.regDatetime
+            entity.modDatetime = LocalDateTime.now(Clock.systemUTC())
         }
         return entityManager.merge(entity)
     }

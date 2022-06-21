@@ -53,10 +53,10 @@ class AdminService(val db: AdminRepository) {
 
   fun updateAdmin(new: UserDto, current: UserDto): UserDto? {
 
-    val curMember = db.findByUuid(new.uuid!!) ?: throw SessionNotFoundException(null, "Not Found User")
+    val curMember = db.findById(new.id!!) ?: throw SessionNotFoundException(null, "Not Found User")
     var update = when {
-      new.password != null -> new.copy(uuid = curMember.id.toString(), password = BcryptHasher.hashPassword(new.password))
-      else -> new.copy(uuid = curMember.id.toString())
+      new.password != null -> new.copy(id = curMember.id.toString(), password = BcryptHasher.hashPassword(new.password))
+      else -> new.copy(id = curMember.id.toString())
     }
 
     db.transaction {

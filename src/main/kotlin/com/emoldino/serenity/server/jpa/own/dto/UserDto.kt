@@ -15,11 +15,11 @@ data class UserDto(
     @JsonIgnore
     val token: Payload? = null,  //Json Web Token after authentication
 
-    var jwt: String? = null,
-
-    val uuid: String? = null,
+    val id: String? = null,
 
     val tenantId: String? = "",
+
+    var jwt: String? = null,
 
     @JsonIgnore
     val emailHash: String = "",
@@ -53,8 +53,9 @@ data class UserDto(
         val dto = this
         val member = Member()
         return member.apply {
-            id = uuid
+            id = id
             teId = tenantId
+            mbJwt = jwt
             mbEmailHash = emailHash
             mbMobileHash = mobileHash
             mbPassword = password
@@ -72,7 +73,7 @@ data class UserDto(
         val dto = this
         val admin = Admin()
         return admin.apply {
-            id = dto.uuid
+            id = dto.id
             teId = dto.tenantId
             amEmailHash = dto.emailHash
             amPassword = dto.password

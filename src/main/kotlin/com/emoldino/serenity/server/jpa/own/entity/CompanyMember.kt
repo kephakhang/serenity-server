@@ -4,12 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.emoldino.serenity.server.env.Env
 import com.emoldino.serenity.server.jpa.common.entity.BaseEntity
-//import io.swagger.annotations.ApiModel
-//import io.swagger.annotations.ApiModelProperty
 import javax.persistence.*
 
 @Entity(name = "CompanyMember")
-//@ApiModel("가입한 회사 사용자 정보")
 @Table(name = Env.tablePrefix + "company_member")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 open class CompanyMember(

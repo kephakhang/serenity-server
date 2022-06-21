@@ -3,7 +3,6 @@ package com.emoldino.serenity.server.jpa.own.entity
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.emoldino.serenity.server.env.Env
 import com.emoldino.serenity.server.jpa.common.entity.BaseEntity
-//import io.swagger.annotations.ApiModelProperty
 import javax.persistence.*
 
 @Entity(name = "BoardWrite")

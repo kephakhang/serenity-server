@@ -1,21 +1,11 @@
 package com.emoldino.serenity.server.jpa.own.entity
 
-//import io.swagger.annotations.ApiModel
-//import io.swagger.annotations.ApiModelProperty
 import com.emoldino.serenity.common.DateUtil
-import com.emoldino.serenity.common.LocalDateTimeSerializer
 import com.emoldino.serenity.server.env.Env
 import com.emoldino.serenity.server.jpa.common.entity.BaseEntity
 import com.emoldino.serenity.server.jpa.own.dto.CounterDto
-import com.emoldino.serenity.server.jpa.own.dto.TenantDto
-import com.emoldino.serenity.server.jpa.own.dto.TerminalDto
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
-import org.eclipse.jdt.internal.compiler.parser.Parser.name
-import org.hibernate.annotations.CreationTimestamp
-import org.hibernate.annotations.Type
-import org.hibernate.annotations.UpdateTimestamp
-import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity(name = "Counter")
@@ -35,7 +25,7 @@ open class Counter (
   var trId: String? = "",
 
 
-  @Column(name = "co__version", nullable = false)
+  @Column(name = "co_version", nullable = false)
   var coVersion: Int = 3,
 
   //  @ApiModelProperty("terminal type (0:available, 1:installed")

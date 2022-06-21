@@ -12,8 +12,8 @@ class CompanyRepository : Querydsl4RepositorySupport<Company>(Env.em, Company::c
   val path: PathBuilder<Company> = PathBuilder<Company>(Company::class.java, "company")
   val company: QCompany = QCompany.company
 
-  fun findByUuid(uuid: String): Company? {
-    return selectFrom(company).where(company.id.eq(uuid)).fetchOne()
+  fun findById(id: String): Company? {
+    return selectFrom(company).where(company.id.eq(id)).fetchOne()
   }
 
 }

@@ -43,6 +43,8 @@ class SsoService(val db: MemberRepository, val detailDB: MemberDetailRepository)
     BcryptHasher.checkPassword(it.password, user)
     val jwt = JwtConfig.makeToken(user)
     user.jwt = jwt
+    member.mbJwt = jwt
+    db.update(member)
     return user
   }
 
@@ -104,7 +106,7 @@ class SsoService(val db: MemberRepository, val detailDB: MemberDetailRepository)
   @Throws(Exception::class)
   fun confirmEmail(uid: String, confirm: String): String? {
     try {
-      val member = db.findByUuid(uid) ?: return "User Not Found"
+      val member = db.findById(uid) ?: return "User Not Found"
       val now = Env.now()
       if ((now.toEpochSecond(ZoneOffset.UTC) - member.detail?.mbEmailCertify!!.toEpochSecond(ZoneOffset.UTC)) > Env.confirmExpireTime) {
         return "Confirmation time was expired !!!"
@@ -126,10 +128,10 @@ class SsoService(val db: MemberRepository, val detailDB: MemberDetailRepository)
 
   fun updateUser(new: UserDto, current: UserDto): UserDto? {
 
-    val curMember = db.findByUuid(new.uuid!!) ?: throw SessionNotFoundException(null, "Not Found User")
+    val curMember = db.findById(new.id!!) ?: throw SessionNotFoundException(null, "Not Found User")
     var update = when {
-      new.password != null -> new.copy(uuid = curMember.id.toString(), password = BcryptHasher.hashPassword(new.password))
-      else -> new.copy(uuid = curMember.id.toString())
+      new.password != null -> new.copy(id = curMember.id.toString(), password = BcryptHasher.hashPassword(new.password))
+      else -> new.copy(id = curMember.id.toString())
     }
 
     db.transaction {

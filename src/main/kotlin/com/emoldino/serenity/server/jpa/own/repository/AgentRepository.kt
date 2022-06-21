@@ -14,8 +14,8 @@ class AgentRepository : Querydsl4RepositorySupport<Agent>(Env.em, Agent::class a
   val agent: QAgent = QAgent.agent
 
 
-  fun findByUuid(uuid: String): Agent? {
-    return selectFrom(agent).where(agent.id.eq(uuid)).fetchOne()
+  fun findById(id: String): Agent? {
+    return selectFrom(agent).where(agent.id.eq(id)).fetchOne()
   }
 
   fun findByEmail(email: String): Agent? {

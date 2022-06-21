@@ -14,7 +14,7 @@ class UserService(val db: MemberRepository) {
 
     @Throws(Exception::class)
     fun getUser(id: String): UserDto {
-        val member = db.findByUuid(id) ?: throw SessionNotFoundException(null, "User Not Found")
+        val member = db.findById(id) ?: throw SessionNotFoundException(null, "User Not Found")
         return member.toUserDto()
     }
 

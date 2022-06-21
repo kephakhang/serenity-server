@@ -13,7 +13,7 @@ class GroupRepository : Querydsl4RepositorySupport<Group>(Env.em, Group::class a
   val group: QGroup = QGroup.group
 
 
-  fun findByUuid(uuid: String): Group? {
-    return selectFrom(group).where(group.id.eq(uuid)).fetchOne()
+  fun findById(id: String): Group? {
+    return selectFrom(group).where(group.id.eq(id)).fetchOne()
   }
 }

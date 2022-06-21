@@ -2,12 +2,10 @@ package com.emoldino.serenity.server.route
 
 import com.emoldino.serenity.exception.SessionNotFoundException
 import com.emoldino.serenity.server.jpa.own.dto.CounterDto
-import com.emoldino.serenity.server.jpa.own.dto.UserDto
 import com.emoldino.serenity.server.jpa.own.enum.UserLevel
 import com.emoldino.serenity.server.service.CounterService
 import io.ktor.server.application.*
 import io.ktor.http.*
-import io.ktor.server.auth.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*

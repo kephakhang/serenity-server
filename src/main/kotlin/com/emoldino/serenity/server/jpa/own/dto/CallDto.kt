@@ -9,7 +9,7 @@ import com.emoldino.serenity.server.jpa.own.entity.Tenant as Tenant
 
 data class CallDto(
 
-    val uuid: String? = null,
+    val id: String? = null,
 
     val tenantId: String? = "",
 
@@ -40,7 +40,7 @@ data class CallDto(
                 caRequestBody = Env.gson.toJson(dto.requestBody!!),
                 caResponseBody = Env.gson.toJson(dto.responseBody!!)
         )
-        call.id = dto.uuid
+        call.id = dto.id
         call.teId = dto.tenantId
         call.regDatetime = dto.regDatetime
         call.modDatetime = dto.modDatetime

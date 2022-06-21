@@ -13,17 +13,13 @@ class TerminalRepository : Querydsl4RepositorySupport<Terminal>(Env.em, Terminal
   val terminal: QTerminal = QTerminal.terminal
 
 
-  fun findById(uuid: String): Terminal? {
-    return selectFrom(terminal).where(terminal.id.eq(uuid)).fetchOne()
+  fun findById(id: String): Terminal? {
+    return selectFrom(terminal).where(terminal.id.eq(id)).fetchOne()
   }
 
   fun findAll(tenantId: String?): List<Terminal> {
     return selectFrom(terminal).where(WhereBuilder()
               .optionalAnd(tenantId, { terminal.teId.eq(tenantId) })
             ).fetch()
-  }
-
-  fun findAllByTeId(teId: String): List<Terminal> {
-    return selectFrom(terminal).where(terminal.teId.eq(teId)).fetch()
   }
 }

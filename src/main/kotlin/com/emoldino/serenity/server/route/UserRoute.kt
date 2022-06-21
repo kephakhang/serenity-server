@@ -46,7 +46,7 @@ fun Route.user(userService: UserService) {
     put("/api/v1/user") {
         aop(call, true) {
             val userDto: UserDto = call.receive<UserDto>()
-            if (it!!.uuid.equals(userDto.uuid) || it!!.level > UserLevel.ADMIN.no) {
+            if (it!!.id.equals(userDto.id) || it!!.level > UserLevel.ADMIN.no) {
                 call.respond(userService.update(userDto))
             } else {
                 throw SessionNotFoundException(null, "Wrong User Access")

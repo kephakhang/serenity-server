@@ -15,6 +15,9 @@ import javax.persistence.*
 @JsonInclude(JsonInclude.Include.NON_NULL)
 open class Member(
 
+  @Column(name = "mb_jwt")
+  var mbJwt: String? = null,
+
   @Column(name = "mb_email_hash",  nullable = false)
   var mbEmailHash: String = "",
 
@@ -46,8 +49,9 @@ open class Member(
 
   fun toUserDto(): UserDto {
     return UserDto(
-      uuid = id!!,
+      id = id!!,
       tenantId = teId!!,
+      jwt = mbJwt,
       password = mbPassword,
       name = mbName,
       level = mbLevel,
