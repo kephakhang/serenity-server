@@ -24,9 +24,9 @@ DROP TABLE IF EXISTS `tb_admin`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `tb_admin` (
-  `id` char(36) COLLATE utf8mb4_general_ci NOT NULL COMMENT '관리자 고유 ID',
+  `id` varchar(36) COLLATE utf8mb4_general_ci NOT NULL COMMENT '관리자 고유 ID',
   `te_id` varchar(36) COLLATE utf8mb4_general_ci NOT NULL,
-  `am_email_hash` char(64) COLLATE utf8mb4_general_ci NOT NULL COMMENT 'admin sha256(email)',
+  `am_email_hash` varchar(64) COLLATE utf8mb4_general_ci NOT NULL COMMENT 'admin sha256(email)',
   `am_password` varchar(255) COLLATE utf8mb4_general_ci NOT NULL COMMENT 'admin password',
   `am_name` varchar(64) COLLATE utf8mb4_general_ci NOT NULL COMMENT 'admin name',
   `am_mobile` varchar(64) COLLATE utf8mb4_general_ci NOT NULL COMMENT 'admin mobile',
@@ -35,8 +35,8 @@ CREATE TABLE `tb_admin` (
   `am_level` int DEFAULT '1000' COMMENT '레벨(1000:관리자)',
   `am_status` int DEFAULT '0' COMMENT '상태 flag(-3: blocked, -2: withdrawal, -1: dormant, 0:wait, 1:ceritified)',
   `am_memo` varchar(256) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '메모',
-  `am_registrant_id` char(36) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '등록자 admin ID',
-  `am_modifier_id` char(36) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '수정자 admin ID',
+  `am_registrant_id` varchar(36) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '등록자 admin ID',
+  `am_modifier_id` varchar(36) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '수정자 admin ID',
   `am_detail` varchar(255) COLLATE utf8mb4_general_ci DEFAULT 'Bory Inc.' COMMENT '관리자 상세정보',
   `reg_datetime` datetime NOT NULL COMMENT '등록 일시',
   `mod_datetime` datetime NOT NULL COMMENT '수정 일시',
@@ -66,10 +66,10 @@ DROP TABLE IF EXISTS `tb_agent`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `tb_agent` (
-  `id` char(36) COLLATE utf8mb4_general_ci NOT NULL COMMENT '대행사 고유 ID',
+  `id` varchar(36) COLLATE utf8mb4_general_ci NOT NULL COMMENT '대행사 고유 ID',
   `te_id` varchar(36) COLLATE utf8mb4_general_ci NOT NULL,
-  `ag_email_hash` char(64) COLLATE utf8mb4_general_ci NOT NULL COMMENT 'agent sha256(email)',
-  `ag_mobile_hash` char(64) COLLATE utf8mb4_general_ci NOT NULL COMMENT 'agent sha256(email)',
+  `ag_email_hash` varchar(64) COLLATE utf8mb4_general_ci NOT NULL COMMENT 'agent sha256(email)',
+  `ag_mobile_hash` varchar(64) COLLATE utf8mb4_general_ci NOT NULL COMMENT 'agent sha256(email)',
   `ag_password` varchar(255) COLLATE utf8mb4_general_ci NOT NULL COMMENT 'agent password',
   `ag_otp` varchar(32) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'OTP 암호',
   `ag_code` varchar(32) COLLATE utf8mb4_general_ci NOT NULL,
@@ -102,7 +102,7 @@ DROP TABLE IF EXISTS `tb_agent_detail`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `tb_agent_detail` (
-  `ag_id` char(36) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '대행사 고유 ID (join id)',
+  `ag_id` varchar(36) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '대행사 고유 ID (join id)',
   `te_id` varchar(36) COLLATE utf8mb4_general_ci NOT NULL,
   `ag_mobile` varchar(64) COLLATE utf8mb4_general_ci NOT NULL,
   `ag_email` varchar(64) COLLATE utf8mb4_general_ci NOT NULL,
@@ -110,7 +110,7 @@ CREATE TABLE `tb_agent_detail` (
   `ag_contract_end` date DEFAULT NULL,
   `ag_phone` varchar(64) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `ag_fax` varchar(64) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `ag_zip` char(8) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `ag_zip` varchar(8) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `ag_addr1` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `ag_addr2` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `ag_latitude` double DEFAULT NULL,
@@ -118,7 +118,7 @@ CREATE TABLE `tb_agent_detail` (
   `ag_homepage` varchar(64) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '대행사 홈페이지',
   `ag_charge_name` varchar(64) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '과금 부과 기관 사용자 명',
   `ag_charge_org` varchar(64) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '과금 부과 기관',
-  `ag_charge_id` char(36) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '과금 부과 member ID',
+  `ag_charge_id` varchar(36) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '과금 부과 member ID',
   `reg_datetime` datetime NOT NULL COMMENT '등록시각',
   `mod_datetime` datetime NOT NULL COMMENT '변경시각',
   UNIQUE KEY `ag_id` (`ag_id`),
@@ -144,10 +144,10 @@ DROP TABLE IF EXISTS `tb_board`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `tb_board` (
-  `id` char(36) COLLATE utf8mb4_general_ci NOT NULL COMMENT '게시판 고유 ID',
+  `id` varchar(36) COLLATE utf8mb4_general_ci NOT NULL COMMENT '게시판 고유 ID',
   `te_id` varchar(36) COLLATE utf8mb4_general_ci NOT NULL,
   `bo_table` varchar(20) COLLATE utf8mb4_general_ci NOT NULL COMMENT '게시판 테이블명',
-  `gr_id` char(36) COLLATE utf8mb4_general_ci NOT NULL COMMENT '게시판 그룹 고유 ID',
+  `gr_id` varchar(36) COLLATE utf8mb4_general_ci NOT NULL COMMENT '게시판 그룹 고유 ID',
   `bo_subject` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
   `bo_mobile_subject` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
   `bo_device` int NOT NULL DEFAULT '2' COMMENT '0:pc, 1:mobile, 2:both',
@@ -265,10 +265,10 @@ DROP TABLE IF EXISTS `tb_board_file`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `tb_board_file` (
-  `id` char(36) COLLATE utf8mb4_general_ci NOT NULL COMMENT '게시판 첨부파일 고유 ID',
+  `id` varchar(36) COLLATE utf8mb4_general_ci NOT NULL COMMENT '게시판 첨부파일 고유 ID',
   `te_id` varchar(36) COLLATE utf8mb4_general_ci NOT NULL,
-  `bo_id` char(36) COLLATE utf8mb4_general_ci NOT NULL COMMENT '게시판 정보 테이블 Join ID',
-  `wr_id` char(36) COLLATE utf8mb4_general_ci NOT NULL COMMENT '게시판 작성(write) 글 고유 ID',
+  `bo_id` varchar(36) COLLATE utf8mb4_general_ci NOT NULL COMMENT '게시판 정보 테이블 Join ID',
+  `wr_id` varchar(36) COLLATE utf8mb4_general_ci NOT NULL COMMENT '게시판 작성(write) 글 고유 ID',
   `bf_no` int NOT NULL DEFAULT '0' COMMENT '게시판 1개 글에 첨부된 파일 순번',
   `bf_source` varchar(64) COLLATE utf8mb4_general_ci NOT NULL COMMENT '첨부파일 원래 이름',
   `bf_fname` varchar(64) COLLATE utf8mb4_general_ci NOT NULL COMMENT '첨부파일 upload 후 생성된 파일명',
@@ -303,11 +303,11 @@ DROP TABLE IF EXISTS `tb_board_good`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `tb_board_good` (
-  `id` char(36) COLLATE utf8mb4_general_ci NOT NULL,
+  `id` varchar(36) COLLATE utf8mb4_general_ci NOT NULL,
   `te_id` varchar(36) COLLATE utf8mb4_general_ci NOT NULL,
-  `bo_id` char(36) COLLATE utf8mb4_general_ci NOT NULL,
-  `wr_id` char(36) COLLATE utf8mb4_general_ci NOT NULL,
-  `mb_id` char(36) COLLATE utf8mb4_general_ci NOT NULL,
+  `bo_id` varchar(36) COLLATE utf8mb4_general_ci NOT NULL,
+  `wr_id` varchar(36) COLLATE utf8mb4_general_ci NOT NULL,
+  `mb_id` varchar(36) COLLATE utf8mb4_general_ci NOT NULL,
   `bg_flag` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `reg_datetime` datetime NOT NULL COMMENT '등록시각',
   `mod_datetime` datetime NOT NULL COMMENT '변경시각',
@@ -332,12 +332,12 @@ DROP TABLE IF EXISTS `tb_board_new`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `tb_board_new` (
-  `id` char(36) COLLATE utf8mb4_general_ci NOT NULL,
+  `id` varchar(36) COLLATE utf8mb4_general_ci NOT NULL,
   `te_id` varchar(36) COLLATE utf8mb4_general_ci NOT NULL,
-  `bo_id` char(36) COLLATE utf8mb4_general_ci NOT NULL,
-  `wr_id` char(36) COLLATE utf8mb4_general_ci NOT NULL,
-  `wr_parent` char(36) COLLATE utf8mb4_general_ci NOT NULL,
-  `mb_id` char(36) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `bo_id` varchar(36) COLLATE utf8mb4_general_ci NOT NULL,
+  `wr_id` varchar(36) COLLATE utf8mb4_general_ci NOT NULL,
+  `wr_parent` varchar(36) COLLATE utf8mb4_general_ci NOT NULL,
+  `mb_id` varchar(36) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `reg_datetime` datetime NOT NULL COMMENT '등록시각',
   `mod_datetime` datetime NOT NULL COMMENT '변경시각',
   PRIMARY KEY (`id`),
@@ -361,10 +361,10 @@ DROP TABLE IF EXISTS `tb_board_write`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `tb_board_write` (
-  `id` char(36) COLLATE utf8mb4_general_ci NOT NULL,
+  `id` varchar(36) COLLATE utf8mb4_general_ci NOT NULL,
   `te_id` varchar(36) COLLATE utf8mb4_general_ci NOT NULL,
-  `bo_id` char(36) COLLATE utf8mb4_general_ci NOT NULL,
-  `mb_id` char(36) COLLATE utf8mb4_general_ci NOT NULL,
+  `bo_id` varchar(36) COLLATE utf8mb4_general_ci NOT NULL,
+  `mb_id` varchar(36) COLLATE utf8mb4_general_ci NOT NULL,
   `wr_subject` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
   `wr_name` varchar(64) COLLATE utf8mb4_general_ci NOT NULL,
   `wr_num` int NOT NULL DEFAULT '0',
@@ -402,7 +402,7 @@ DROP TABLE IF EXISTS `tb_board_write_detail`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `tb_board_write_detail` (
-  `wr_id` char(36) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `wr_id` varchar(36) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `te_id` varchar(36) COLLATE utf8mb4_general_ci NOT NULL,
   `wr_content` text COLLATE utf8mb4_general_ci NOT NULL,
   `wr_link1` text COLLATE utf8mb4_general_ci,
@@ -443,9 +443,9 @@ DROP TABLE IF EXISTS `tb_call`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `tb_call` (
-  `id` char(36) COLLATE utf8mb4_general_ci NOT NULL,
+  `id` varchar(36) COLLATE utf8mb4_general_ci NOT NULL,
   `te_id` varchar(36) COLLATE utf8mb4_general_ci NOT NULL,
-  `ca_request_id` char(36) COLLATE utf8mb4_general_ci NOT NULL,
+  `ca_request_id` varchar(36) COLLATE utf8mb4_general_ci NOT NULL,
   `ca_uri` varchar(64) COLLATE utf8mb4_general_ci NOT NULL,
   `ca_request_url` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
   `ca_method` varchar(8) COLLATE utf8mb4_general_ci NOT NULL,
@@ -472,10 +472,10 @@ DROP TABLE IF EXISTS `tb_company`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `tb_company` (
-  `id` char(36) COLLATE utf8mb4_general_ci NOT NULL COMMENT '가입회사 고유 ID',
+  `id` varchar(36) COLLATE utf8mb4_general_ci NOT NULL COMMENT '가입회사 고유 ID',
   `te_id` varchar(36) COLLATE utf8mb4_general_ci NOT NULL,
-  `ag_id` char(36) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '가입회사 대행사 고유 ID',
-  `mb_id` char(36) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '가입회사 등록 member 고유 ID',
+  `ag_id` varchar(36) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '가입회사 대행사 고유 ID',
+  `mb_id` varchar(36) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '가입회사 등록 member 고유 ID',
   `co_code` varchar(32) COLLATE utf8mb4_general_ci NOT NULL COMMENT '가입회사 코드',
   `co_name` varchar(64) COLLATE utf8mb4_general_ci NOT NULL COMMENT '가입회사명',
   `co_type` int NOT NULL DEFAULT '0' COMMENT '0:개인, 1:법인, 2:협동조합...',
@@ -486,7 +486,7 @@ CREATE TABLE `tb_company` (
   `co_prop` varchar(8192) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '상세정보 JSON',
   `co_phone` varchar(64) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `co_fax` varchar(64) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `co_zip` char(8) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `co_zip` varchar(8) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `co_addr1` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `co_addr2` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `co_latitude` double DEFAULT NULL,
@@ -520,10 +520,10 @@ DROP TABLE IF EXISTS `tb_company_member`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `tb_company_member` (
-  `id` char(36) NOT NULL COMMENT '가입회사 사용자 고유 ID',
+  `id` varchar(36) NOT NULL COMMENT '가입회사 사용자 고유 ID',
   `te_id` varchar(36) NOT NULL,
-  `mb_id` char(36) NOT NULL COMMENT '사용자 ID',
-  `co_id` char(36) NOT NULL COMMENT '가입회사 고유 ID',
+  `mb_id` varchar(36) NOT NULL COMMENT '사용자 ID',
+  `co_id` varchar(36) NOT NULL COMMENT '가입회사 고유 ID',
   `cm_otp` varchar(32) DEFAULT NULL COMMENT 'OTP 암호',
   `cm_status` int NOT NULL DEFAULT '0' COMMENT '상태 flag(-3: blocked, -2: withdrawal, -1: dormant, 0:wait, 1:company-otp-ceritified)',
   `cm_level` int NOT NULL DEFAULT '10' COMMENT '레벨 flag(0:guest, 10:co member, 11:co manager, 12:co admin)',
@@ -619,7 +619,7 @@ DROP TABLE IF EXISTS `tb_group`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `tb_group` (
-  `id` char(36) COLLATE utf8mb4_general_ci NOT NULL,
+  `id` varchar(36) COLLATE utf8mb4_general_ci NOT NULL,
   `te_id` varchar(36) COLLATE utf8mb4_general_ci NOT NULL,
   `gr_name` varchar(36) COLLATE utf8mb4_general_ci NOT NULL,
   `gr_subject` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
@@ -670,10 +670,10 @@ DROP TABLE IF EXISTS `tb_member`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `tb_member` (
-  `id` char(36) COLLATE utf8mb4_general_ci NOT NULL,
+  `id` varchar(36) COLLATE utf8mb4_general_ci NOT NULL,
   `te_id` varchar(36) COLLATE utf8mb4_general_ci NOT NULL,
-  `mb_email_hash` char(64) COLLATE utf8mb4_general_ci NOT NULL COMMENT 'member sha256(email)',
-  `mb_mobile_hash` char(64) COLLATE utf8mb4_general_ci NOT NULL COMMENT 'member sha256(mobile)',
+  `mb_email_hash` varchar(64) COLLATE utf8mb4_general_ci NOT NULL COMMENT 'member sha256(email)',
+  `mb_mobile_hash` varchar(64) COLLATE utf8mb4_general_ci NOT NULL COMMENT 'member sha256(mobile)',
   `mb_password` varchar(255) COLLATE utf8mb4_general_ci NOT NULL COMMENT 'member password',
   `mb_name` varchar(64) COLLATE utf8mb4_general_ci NOT NULL COMMENT 'member name',
   `mb_level` int NOT NULL DEFAULT '0' COMMENT 'member level(0:guest, 1:user, 10:company, 11:company user, 30:agent, 31:agent user, 1000:admin',
@@ -707,7 +707,7 @@ DROP TABLE IF EXISTS `tb_member_detail`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `tb_member_detail` (
-  `mb_id` char(36) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'member join id(uuid)',
+  `mb_id` varchar(36) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'member join id(uuid)',
   `te_id` varchar(36) COLLATE utf8mb4_general_ci NOT NULL,
   `mb_mobile` varchar(32) COLLATE utf8mb4_general_ci NOT NULL,
   `mb_email` varchar(64) COLLATE utf8mb4_general_ci NOT NULL,
@@ -717,7 +717,7 @@ CREATE TABLE `tb_member_detail` (
   `mb_married` bit(1) DEFAULT b'0' COMMENT 'member IsMarried flag(0:not married, 1:married)',
   `mb_birthday` date DEFAULT NULL,
   `mb_adult` bit(1) DEFAULT NULL,
-  `mb_zip` char(8) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `mb_zip` varchar(8) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `mb_addr1` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `mb_addr2` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `mb_addr3` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
