@@ -40,7 +40,28 @@ serenity-server
 -  datetime   : LocalDateTime
 -  date       : LocalDate
 
+### [using Tables]
+- tb_continent : Continent Table
+- tb_country : Country Table
+- tb_call : Http Request Call logging Table
+- tb_member : User(Member) Master Table
+- tb_member_detail : User(Member) Detail Sub Table
+- tb_tenant : Tenant Information Table
+- tb_terminal : Terminal V3 Information Table
+- tb_counter : Counter V3 Iot Sensor Information Table
 
+### [reserved Tables for the future]
+- tb_admin
+- tb_agent
+- tb_agent_detail
+- tb_board
+- tb_board_file
+- tb_borad_good
+- tb_board_new
+- tb_board_write
+- tb_board_write_detail
+- tb_company
+- tb_company_member
 
 <br/>
 -  실행 명령 :  gradle -Pprofile=local run
