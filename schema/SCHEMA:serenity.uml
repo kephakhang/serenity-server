@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>DATABASE</ID>
+  <OriginalElement>9820674d-462f-462c-83ac-799a41c759b5.SCHEMA:serenity</OriginalElement>
+  <nodes>
+    <node x="207.0" y="1363.0">9820674d-462f-462c-83ac-799a41c759b5.TABLE:serenity.tb_board_new</node>
+    <node x="495.0" y="1363.0">9820674d-462f-462c-83ac-799a41c759b5.TABLE:serenity.tb_board_good</node>
+    <node x="1470.83" y="-1318.0">9820674d-462f-462c-83ac-799a41c759b5.TABLE:serenity.tb_board_write</node>
+    <node x="718.3616666666667" y="-1318.0">9820674d-462f-462c-83ac-799a41c759b5.TABLE:serenity.tb_tenant</node>
+    <node x="187.0" y="-362.0">9820674d-462f-462c-83ac-799a41c759b5.TABLE:serenity.tb_member_detail</node>
+    <node x="783.0" y="1363.0">9820674d-462f-462c-83ac-799a41c759b5.TABLE:serenity.tb_counter</node>
+    <node x="-185.0" y="-1318.0">9820674d-462f-462c-83ac-799a41c759b5.TABLE:serenity.tb_board</node>
+    <node x="-185.0" y="1363.0">9820674d-462f-462c-83ac-799a41c759b5.TABLE:serenity.tb_company_member</node>
+    <node x="2503.83" y="-1318.0">9820674d-462f-462c-83ac-799a41c759b5.TABLE:serenity.tb_call</node>
+    <node x="1136.0" y="1363.0">9820674d-462f-462c-83ac-799a41c759b5.TABLE:serenity.tb_terminal</node>
+    <node x="1835.83" y="-1318.0">9820674d-462f-462c-83ac-799a41c759b5.TABLE:serenity.tb_group</node>
+    <node x="1761.0" y="1363.0">9820674d-462f-462c-83ac-799a41c759b5.TABLE:serenity.tb_continent</node>
+    <node x="2123.83" y="-1318.0">9820674d-462f-462c-83ac-799a41c759b5.TABLE:serenity.tb_board_file</node>
+    <node x="1507.0" y="1363.0">9820674d-462f-462c-83ac-799a41c759b5.TABLE:serenity.tb_country</node>
+    <node x="1521.33" y="-712.0">9820674d-462f-462c-83ac-799a41c759b5.TABLE:serenity.tb_board_write_detail</node>
+    <node x="1105.83" y="-866.0">9820674d-462f-462c-83ac-799a41c759b5.TABLE:serenity.tb_admin</node>
+    <node x="912.0" y="15.0">9820674d-462f-462c-83ac-799a41c759b5.TABLE:serenity.tb_agent_detail</node>
+    <node x="756.83" y="-801.0">9820674d-462f-462c-83ac-799a41c759b5.TABLE:serenity.tb_agent</node>
+    <node x="291.9150000000001" y="-801.0">9820674d-462f-462c-83ac-799a41c759b5.TABLE:serenity.tb_member</node>
+    <node x="576.0" y="-24.5">9820674d-462f-462c-83ac-799a41c759b5.TABLE:serenity.tb_company</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="9820674d-462f-462c-83ac-799a41c759b5.TABLE:serenity.tb_board_write_detail" target="9820674d-462f-462c-83ac-799a41c759b5.TABLE:serenity.tb_board_write" relationship="REFERENCES">
+      <point x="0.0" y="-316.5" />
+      <point x="0.0" y="278.0" />
+    </edge>
+    <edge source="9820674d-462f-462c-83ac-799a41c759b5.TABLE:serenity.tb_company" target="9820674d-462f-462c-83ac-799a41c759b5.TABLE:serenity.tb_tenant" relationship="REFERENCES">
+      <point x="0.0" y="-304.0" />
+      <point x="734.0" y="-388.0" />
+      <point x="728.8616666666667" y="-388.0" />
+      <point x="728.8616666666667" y="-892.0" />
+      <point x="903.3616666666667" y="-892.0" />
+      <point x="0.0" y="200.0" />
+    </edge>
+    <edge source="9820674d-462f-462c-83ac-799a41c759b5.TABLE:serenity.tb_agent_detail" target="9820674d-462f-462c-83ac-799a41c759b5.TABLE:serenity.tb_tenant" relationship="REFERENCES">
+      <point x="84.25" y="-264.5" />
+      <point x="1164.75" y="-388.0" />
+      <point x="1095.33" y="-388.0" />
+      <point x="1095.33" y="-892.0" />
+      <point x="903.3616666666667" y="-892.0" />
+      <point x="0.0" y="200.0" />
+    </edge>
+    <edge source="9820674d-462f-462c-83ac-799a41c759b5.TABLE:serenity.tb_member_detail" target="9820674d-462f-462c-83ac-799a41c759b5.TABLE:serenity.tb_member" relationship="REFERENCES">
+      <point x="0.0" y="-641.5" />
+      <point x="371.5" y="-388.0" />
+      <point x="460.9150000000001" y="-388.0" />
+      <point x="0.0" y="161.0" />
+    </edge>
+    <edge source="9820674d-462f-462c-83ac-799a41c759b5.TABLE:serenity.tb_company" target="9820674d-462f-462c-83ac-799a41c759b5.TABLE:serenity.tb_member" relationship="REFERENCES">
+      <point x="-105.33333333333331" y="-304.0" />
+      <point x="628.6666666666667" y="-388.0" />
+      <point x="460.9150000000001" y="-388.0" />
+      <point x="0.0" y="161.0" />
+    </edge>
+    <edge source="9820674d-462f-462c-83ac-799a41c759b5.TABLE:serenity.tb_agent" target="9820674d-462f-462c-83ac-799a41c759b5.TABLE:serenity.tb_tenant" relationship="REFERENCES">
+      <point x="0.0" y="-161.0" />
+      <point x="920.8299999999999" y="-892.0" />
+      <point x="903.3616666666667" y="-892.0" />
+      <point x="0.0" y="200.0" />
+    </edge>
+    <edge source="9820674d-462f-462c-83ac-799a41c759b5.TABLE:serenity.tb_agent_detail" target="9820674d-462f-462c-83ac-799a41c759b5.TABLE:serenity.tb_agent" relationship="REFERENCES">
+      <point x="-84.25" y="-264.5" />
+      <point x="996.25" y="-388.0" />
+      <point x="920.8299999999999" y="-388.0" />
+      <point x="0.0" y="161.0" />
+    </edge>
+    <edge source="9820674d-462f-462c-83ac-799a41c759b5.TABLE:serenity.tb_company" target="9820674d-462f-462c-83ac-799a41c759b5.TABLE:serenity.tb_agent" relationship="REFERENCES">
+      <point x="105.33333333333333" y="-304.0" />
+      <point x="839.3333333333333" y="-388.0" />
+      <point x="920.8299999999999" y="-388.0" />
+      <point x="0.0" y="161.0" />
+    </edge>
+    <edge source="9820674d-462f-462c-83ac-799a41c759b5.TABLE:serenity.tb_admin" target="9820674d-462f-462c-83ac-799a41c759b5.TABLE:serenity.tb_tenant" relationship="REFERENCES">
+      <point x="0.0" y="-226.0" />
+      <point x="1265.83" y="-892.0" />
+      <point x="903.3616666666667" y="-892.0" />
+      <point x="0.0" y="200.0" />
+    </edge>
+    <edge source="9820674d-462f-462c-83ac-799a41c759b5.TABLE:serenity.tb_member" target="9820674d-462f-462c-83ac-799a41c759b5.TABLE:serenity.tb_tenant" relationship="REFERENCES">
+      <point x="0.0" y="-161.0" />
+      <point x="460.9150000000001" y="-892.0" />
+      <point x="903.3616666666667" y="-892.0" />
+      <point x="0.0" y="200.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic" zoom="0.30225513295186807" showDependencies="false" x="1829.2099109131402" y="157.5" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Columns</Category>
+    <Category>Comments</Category>
+    <Category>Key columns</Category>
+    <Category>Virtual foreign keys</Category>
+  </Categories>
+</Diagram>
+
