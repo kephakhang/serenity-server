@@ -23,7 +23,7 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_plugin_version"
         classpath "org.jetbrains.kotlin.kapt:org.jetbrains.kotlin.kapt.gradle.plugin:$kotlin_plugin_version"
         classpath "org.openapitools:openapi-generator-gradle-plugin:$openapi_generator_version"
-        classpath "org.liquibase:liquibase-gradle-plugin:$liquibase_gradle_version"
+//        classpath "org.liquibase:liquibase-gradle-plugin:$liquibase_gradle_version"
     }
 }
 
@@ -36,24 +36,24 @@ apply plugin: "com.github.johnrengelman.shadow"
 apply plugin: "org.jetbrains.kotlin.plugin.allopen"
 apply plugin: "org.jetbrains.kotlin.plugin.noarg"
 apply plugin: "org.jetbrains.kotlin.plugin.serialization"
-apply plugin: "org.liquibase.gradle"
+//apply plugin: "org.liquibase.gradle"
 apply plugin: "application"
 
 
-group "com.emoldino"
-version "0.0.1"
+group "com.siksinhot"
+version "1.0.0"
 mainClassName = "io.ktor.server.jetty.EngineMain"
 
 repositories {
+    maven { url = uri("https://repo.osgeo.org/repository/release/")}
+    maven { url = uri("https://repo1.maven.org/maven2") }
     mavenLocal()
-    jcenter()
     mavenCentral()
     maven { url = uri("https://plugins.gradle.org/m2/") }
     maven { url = uri("https://oss.jfrog.org/oss-snapshot-local/") }
     maven { url = uri("https://github.com/ktorio/ktor") }
     maven { url = uri("https://repo.sultanofcardio.com/artifactory/sultanofcardio") }
     maven { url = uri("https://maven.pkg.jetbrains.space/public/p/ktor/eap") }
-
 }
 kotlin {
     kotlinDaemonJvmArgs = [
@@ -82,10 +82,11 @@ dependencies {
     subprojects.forEach {
         implementation(project(it.path))
     }
-    liquibaseRuntime "org.liquibase:liquibase-core:$liquibase_version"
-    liquibaseRuntime "org.yaml:snakeyaml:1.29"
-    liquibaseRuntime "info.picocli:picocli:4.6.1"
-    liquibaseRuntime "mysql:mysql-connector-java:$mysql_version"
+
+//    liquibaseRuntime "org.yaml:snakeyaml:$snakeyaml_version"
+//    liquibaseRuntime "info.picocli:picocli:$picocli_version"
+//    liquibaseRuntime "mysql:mysql-connector-java:$mysql_version"
+    //    liquibaseRuntime "org.liquibase:liquibase-core:$liquibase_version"
 
 //    implementation("com.viartemev:ktor-flyway-feature:$ktor_flyway_feature_version")
 //    implementation "org.flywaydb:flyway-core:$flyway_version"
@@ -98,22 +99,32 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-reactor:$kotlinx_version"
     implementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_plugin_version"
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlin_serialization_version"
-//    implementation "ch.qos.logback:logback-classic:$logback_version"
-//    implementation "ch.qos.logback:logback-core:$logback_version"
-//    implementation "org.slf4j:slf4j-api:$slf4j_version"
-//    implementation "org.slf4j:slf4j-ext:$slf4j_version"
-
-//    implementation "org.codehaus.janino:janino:$janino_version"
-//    implementation "org.eclipse.jetty:jetty-http:$jetty_version"
-//    implementation "org.eclipse.jetty:jetty-io:$jetty_version"
-//    implementation "org.eclipse.jetty:jetty-util:$jetty_version"
-    //    implementation "io.swagger.core.v3:swagger-annotations:$swagger_version"
-//    implementation "io.swagger.core.v3:swagger-core:$swagger_version"
     implementation "org.hibernate:hibernate-core:$hibernate_version"
     implementation "org.hibernate:hibernate-entitymanager:$hibernate_version"
     implementation "org.hibernate:hibernate-validator:$hibernate_validator_version"
     implementation "org.hibernate:hibernate-c3p0:$hibernate_version"
     implementation "javax.validation:validation-api:2.0.1.Final"
+//    implementation "io.ktor:ktor-server-swagger:$ktor_version"
+    implementation "org.jasypt:jasypt:1.9.0"
+
+    // google 2fa
+    implementation("commons-codec:commons-codec:$commons_codec_version")
+    implementation("de.taimos:totp:$totp_version")
+    implementation("com.google.zxing:javase:$javase_version")
+
+    // 좌표 관련
+    implementation("org.locationtech.proj4j:proj4j:$locationtech_proj4j_version")
+
+    implementation(group = "org.geotools:gt-epsg-hsql:$geotools_version")
+    implementation(group = "org.geotools:gt-referencing:$geotools_version")
+    implementation(group = "org.geotools:gt-main:$geotools_version")
+    implementation(group = "org.geotools:gt-geojson:$geotools_version")
+    implementation(group = "org.geotools:gt-shapefile:$geotools_version")
+    implementation("javax.media:jai_core:$jai_version")
+
+    implementation("io.ktor:ktor-server-openapi:$ktor_version")
+    implementation("io.swagger.codegen.v3:swagger-codegen-generators:$swagger_codegen_version")
+
     implementation "io.ktor:ktor-server-jetty-jvm:$ktor_version"
     implementation "io.ktor:ktor-server-core-jvm:$ktor_version"
     implementation "io.ktor:ktor-server-content-negotiation-jvm:$ktor_version"
@@ -135,6 +146,7 @@ dependencies {
     implementation "io.ktor:ktor-server-call-logging:$ktor_version"
     implementation "io.ktor:ktor-server-content-negotiation:$ktor_version"
     implementation "io.ktor:ktor-serialization-jackson:$ktor_version"
+    implementation "io.ktor:ktor-serialization-gson:$ktor_version"
     implementation "io.ktor:ktor-server-forwarded-header:$ktor_version"
     implementation 'io.ktor:ktor-server-content-negotiation-jvm:2.0.2'
     implementation 'io.ktor:ktor-network-tls-jvm:2.0.2'
@@ -145,7 +157,7 @@ dependencies {
     implementation "mysql:mysql-connector-java:$mysql_version"
     implementation "com.sksamuel.hoplite:hoplite-core:$hoplite_version"
     implementation "com.sksamuel.hoplite:hoplite-yaml:$hoplite_version"
-    implementation "org.apache.kafka:kafka-clients:$kafka_version"
+//    implementation "org.apache.kafka:kafka-clients:$kafka_version"
     implementation "io.github.microutils:kotlin-logging:$kotlin_logging_version"
     implementation "javax.persistence:javax.persistence-api:$javax_persistence_version"
     implementation "javax.annotation:javax.annotation-api:$javax_annotation_version"
@@ -175,9 +187,9 @@ dependencies {
     implementation "io.reactivex.rxjava3:rxjava:$rxjava_version"
     //implementation "io.reactivex.rxjava3:rxkotlin:$rxkotlin_version"
 
-    implementation "org.webjars:swagger-ui:$swagger_version"
-    implementation "io.ktor:ktor-gson:1.6.8"
-    runtimeOnly "com.github.ajalt:clikt:2.8.0"
+//    implementation "org.webjars:swagger-ui:$swagger_version"
+    implementation "io.ktor:ktor-gson:$ktor_gson_version"
+    runtimeOnly "com.github.ajalt:clikt:$clikt_version"
 //Thanks for using https://jar-download.com
 
 
@@ -211,15 +223,13 @@ dependencies {
 
 compileKotlin {
     kotlinOptions.freeCompilerArgs = ["-Xuse-experimental=kotlin.Experimental"]
-//    kotlinOptions.jvmTarget = 11
+    kotlinOptions.jvmTarget = 11
 }
 
 import com.github.jengelman.gradle.plugins.shadow.transformers.ServiceFileTransformer
 
 shadowJar {
-    baseName = "serenity-server"
-    classifier = null
-    version = null
+    zip64 true
     transform(ServiceFileTransformer) {
         path = "META-INF/services"
         include "org.eclipse.jetty.http.HttpFieldPreEncoder"
@@ -247,23 +257,23 @@ noArg {
 
 task generateJks(type: JavaExec, dependsOn: "classes") {
     classpath = sourceSets.main.runtimeClasspath
-    main = "com.emoldino.serenity.common.CertificateGenerator"
+    main = "com.siksinhot.test.common.CertificateGenerator"
 }
 
 getTasksByName("run", false).first().dependsOn("generateJks")
 
-liquibase {
-    activities.register("main") {
-        def db_url  = System.getenv('EMOL_SERENITY_LIQUIBASE_URL')
-        def db_user = System.getenv('EMOL_SERENITY_LIQUIBASE_USER')
-        def db_password = System.getenv('EMOL_SERENITY_LIQUIBASE_PASS')
-
-        logLevel  "info"
-        changeLogFile  "src/main/resources/db/changelog/master.data.changelog.yml"
-        url  db_url
-        driver "com.mysql.cj.jdbc.Driver"
-        username  db_user
-        password  db_password
-    }
-    runList = "main"
-}
+//liquibase {
+//    activities.register("main") {
+//        def db_url  = System.getenv('EMOL_SERENITY_LIQUIBASE_URL')
+//        def db_user = System.getenv('EMOL_SERENITY_LIQUIBASE_USER')
+//        def db_password = System.getenv('EMOL_SERENITY_LIQUIBASE_PASS')
+//
+//        logLevel  "info"
+//        changeLogFile  "src/main/resources/db/changelog/master.data.changelog.yml"
+//        url  db_url
+//        driver "com.mysql.cj.jdbc.Driver"
+//        username  db_user
+//        password  db_password
+//    }
+//    runList = "main"
+//}

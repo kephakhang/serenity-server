@@ -44,7 +44,7 @@
                 <appender-ref ref="STDOUT"/>
                 <appender-ref ref="RUN"/>
             </logger>
-            <logger name="com.emoldino.serenity" level="debug">
+            <logger name="com.siksinhot.test" level="debug">
                 <appender-ref ref="STDOUT"/>
                 <appender-ref ref="RUN"/>
             </logger>
@@ -67,7 +67,7 @@
             <logger name="com.mchange" level="info">
                 <appender-ref ref="RUN"/>
             </logger>
-            <logger name="com.emoldino.serenity" level="debug">
+            <logger name="com.siksinhot.test" level="debug">
                 <appender-ref ref="RUN"/>
             </logger>
         </then>
@@ -83,7 +83,7 @@
             <logger name="io.netty" level="info">
                 <appender-ref ref="RUN"/>
             </logger>
-            <logger name="com.emoldino.serenity" level="info">
+            <logger name="com.siksinhot.test" level="info">
                 <appender-ref ref="RUN"/>
             </logger>
         </then>

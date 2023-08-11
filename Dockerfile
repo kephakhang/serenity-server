@@ -3,7 +3,7 @@ FROM amazoncorretto:latest
 ENV APPLICATION_USER emoldino
 ENV APP_NAME serenity-server
 
-MAINTAINER Developer <kepha.kahgn@emoldino.com>
+MAINTAINER Developer <kepha.kahgn@siksinhot.com>
 
 
 RUN mkdir -p /$APPLICATION_USER
